@@ -1,0 +1,139 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"dx_units.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	_ZN6plaits2fm13lut_cube_rootE
+  19              		.global	_ZN6plaits2fm25lut_pitch_mod_sensitivityE
+  20              		.global	_ZN6plaits2fm23lut_amp_mod_sensitivityE
+  21              		.global	_ZN6plaits2fm10lut_coarseE
+  22              		.section	.rodata._ZN6plaits2fm10lut_coarseE,"a"
+  23              		.align	2
+  26              	_ZN6plaits2fm10lut_coarseE:
+  27 0000 000040C1 		.word	-1052770304
+  28 0004 00000000 		.word	0
+  29 0008 00004041 		.word	1094713344
+  30 000c 0A289841 		.word	1100490762
+  31 0010 0000C041 		.word	1103101952
+  32 0014 B4E7DE41 		.word	1105127348
+  33 0018 0A28F841 		.word	1106782218
+  34 001c C7C00642 		.word	1107738823
+  35 0020 00001042 		.word	1108344832
+  36 0024 0A281842 		.word	1108879370
+  37 0028 DA731F42 		.word	1109357530
+  38 002c 7F0D2642 		.word	1109790079
+  39 0030 05142C42 		.word	1110184965
+  40 0034 019F3142 		.word	1110548225
+  41 0038 C7C03642 		.word	1110884551
+  42 003c DF873B42 		.word	1111197663
+  43 0040 00004042 		.word	1111490560
+  44 0044 BE324442 		.word	1111765694
+  45 0048 0A284842 		.word	1112025098
+  46 004c 88E64B42 		.word	1112270472
+  47 0050 DA734F42 		.word	1112503258
+  48 0054 CCD45242 		.word	1112724684
+  49 0058 7F0D5642 		.word	1112935807
+  50 005c 87215942 		.word	1113137543
+  51 0060 05145C42 		.word	1113330693
+  52 0064 B4E75E42 		.word	1113515956
+  53 0068 019F6142 		.word	1113693953
+  54 006c 0F3C6442 		.word	1113865231
+  55 0070 C7C06642 		.word	1114030279
+  56 0074 DF2E6942 		.word	1114189535
+  57 0078 DF876B42 		.word	1114343391
+  58 007c 2ACD6D42 		.word	1114492202
+  59              		.section	.rodata._ZN6plaits2fm13lut_cube_rootE,"a"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s 			page 2
+
+
+  60              		.align	2
+  63              	_ZN6plaits2fm13lut_cube_rootE:
+  64 0000 00000000 		.word	0
+  65 0004 0130CB3E 		.word	1053503489
+  66 0008 0000003F 		.word	1056964608
+  67 000c 0486123F 		.word	1058178564
+  68 0010 1D45213F 		.word	1059144989
+  69 0014 09B92D3F 		.word	1059961097
+  70 0018 A69B383F 		.word	1060674470
+  71 001c 7D57423F 		.word	1061312381
+  72 0020 F82F4B3F 		.word	1061892088
+  73 0024 C952533F 		.word	1062425289
+  74 0028 80E05A3F 		.word	1062920320
+  75 002c 3CF1613F 		.word	1063383356
+  76 0030 6A97683F 		.word	1063819114
+  77 0034 78E16E3F 		.word	1064231288
+  78 0038 EFDA743F 		.word	1064622831
+  79 003c 318D7A3F 		.word	1064996145
+  80 0040 0000803F 		.word	1065353216
+  81              		.section	.rodata._ZN6plaits2fm23lut_amp_mod_sensitivityE,"a"
+  82              		.align	2
+  85              	_ZN6plaits2fm23lut_amp_mod_sensitivityE:
+  86 0000 00000000 		.word	0
+  87 0004 6F81843E 		.word	1048871279
+  88 0008 2CD4DA3E 		.word	1054528556
+  89 000c 0000803F 		.word	1065353216
+  90              		.section	.rodata._ZN6plaits2fm25lut_pitch_mod_sensitivityE,"a"
+  91              		.align	2
+  94              	_ZN6plaits2fm25lut_pitch_mod_sensitivityE:
+  95 0000 00000000 		.word	0
+  96 0004 0000A03D 		.word	1033895936
+  97 0008 0000203E 		.word	1042284544
+  98 000c 0000843E 		.word	1048838144
+  99 0010 0000DC3E 		.word	1054605312
+ 100 0014 0000383F 		.word	1060634624
+ 101 0018 0000993F 		.word	1066991616
+ 102 001c 00000040 		.word	1073741824
+ 103              		.text
+ 104              	.Letext0:
+ 105              		.file 1 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 106              		.file 2 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 107              		.file 3 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/type_traits"
+ 108              		.file 4 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/debug/debug.h"
+ 109              		.file 5 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cstdlib"
+ 110              		.file 6 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7
+ 111              		.file 7 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/algorithmfwd.h"
+ 112              		.file 8 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_pair.h"
+ 113              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/exception_ptr.h"
+ 114              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 115              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/predefined_ops.h
+ 116              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 117              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdlib.h"
+ 118              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 119              		.file 15 "mi/stmlib/stmlib.h"
+ 120              		.file 16 "mi/plaits/dsp/fm/patch.h"
+ 121              		.file 17 "<built-in>"
+ 122              		.file 18 "mi/plaits/dsp/fm/dx_units.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s 			page 3
+
+
+ 123              		.file 19 "mi/plaits/dsp/fm/dx_units.cpp"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 dx_units.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:63     .rodata._ZN6plaits2fm13lut_cube_rootE:0000000000000000 _ZN6plaits2fm13lut_cube_rootE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:94     .rodata._ZN6plaits2fm25lut_pitch_mod_sensitivityE:0000000000000000 _ZN6plaits2fm25lut_pitch_mod_sensitivityE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:85     .rodata._ZN6plaits2fm23lut_amp_mod_sensitivityE:0000000000000000 _ZN6plaits2fm23lut_amp_mod_sensitivityE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:26     .rodata._ZN6plaits2fm10lut_coarseE:0000000000000000 _ZN6plaits2fm10lut_coarseE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:23     .rodata._ZN6plaits2fm10lut_coarseE:0000000000000000 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:60     .rodata._ZN6plaits2fm13lut_cube_rootE:0000000000000000 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:82     .rodata._ZN6plaits2fm23lut_amp_mod_sensitivityE:0000000000000000 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc14U29W.s:91     .rodata._ZN6plaits2fm25lut_pitch_mod_sensitivityE:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

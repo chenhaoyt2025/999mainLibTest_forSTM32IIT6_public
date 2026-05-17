@@ -1,0 +1,2303 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"fm_engine.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text._ZN6plaits8FMEngine12LoadUserDataEPKh,"axG",%progbits,_ZN6plaits8FMEngine12LoadUser
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.weak	_ZN6plaits8FMEngine12LoadUserDataEPKh
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	_ZN6plaits8FMEngine12LoadUserDataEPKh:
+  27              	.LVL0:
+  28              	.LFB609:
+  29              		.file 1 "mi/plaits/dsp/engine/fm_engine.h"
+   1:mi/plaits/dsp/engine/fm_engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/fm_engine.h **** //
+   3:mi/plaits/dsp/engine/fm_engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/fm_engine.h **** //
+   5:mi/plaits/dsp/engine/fm_engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/fm_engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/fm_engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/fm_engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/fm_engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/fm_engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/fm_engine.h **** // 
+  12:mi/plaits/dsp/engine/fm_engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/fm_engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/fm_engine.h **** // 
+  15:mi/plaits/dsp/engine/fm_engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/fm_engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/fm_engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/fm_engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/fm_engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/fm_engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/fm_engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/fm_engine.h **** // 
+  23:mi/plaits/dsp/engine/fm_engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/fm_engine.h **** //
+  25:mi/plaits/dsp/engine/fm_engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/fm_engine.h **** //
+  27:mi/plaits/dsp/engine/fm_engine.h **** // Classic 2-op FM, as found in Braids, Rings and Elements.
+  28:mi/plaits/dsp/engine/fm_engine.h **** 
+  29:mi/plaits/dsp/engine/fm_engine.h **** #ifndef PLAITS_DSP_ENGINE_FM_ENGINE_H_
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 2
+
+
+  30:mi/plaits/dsp/engine/fm_engine.h **** #define PLAITS_DSP_ENGINE_FM_ENGINE_H_
+  31:mi/plaits/dsp/engine/fm_engine.h **** 
+  32:mi/plaits/dsp/engine/fm_engine.h **** #include "plaits/dsp/engine/engine.h"
+  33:mi/plaits/dsp/engine/fm_engine.h **** 
+  34:mi/plaits/dsp/engine/fm_engine.h **** namespace plaits {
+  35:mi/plaits/dsp/engine/fm_engine.h ****   
+  36:mi/plaits/dsp/engine/fm_engine.h **** class FMEngine : public Engine {
+  37:mi/plaits/dsp/engine/fm_engine.h ****  public:
+  38:mi/plaits/dsp/engine/fm_engine.h ****   FMEngine() { }
+  39:mi/plaits/dsp/engine/fm_engine.h ****   ~FMEngine() { }
+  40:mi/plaits/dsp/engine/fm_engine.h ****   
+  41:mi/plaits/dsp/engine/fm_engine.h ****   virtual void Init(stmlib::BufferAllocator* allocator);
+  42:mi/plaits/dsp/engine/fm_engine.h ****   virtual void Reset();
+  43:mi/plaits/dsp/engine/fm_engine.h ****   virtual void LoadUserData(const uint8_t* user_data) { }
+  30              		.loc 1 43 16 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35              		.loc 1 43 57 is_stmt 0 view .LVU1
+  36 0000 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE609:
+  40 0002 00BF     		.section	.text._ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE,"ax",%progbits
+  41              		.align	1
+  42              		.p2align 2,,3
+  43              		.global	_ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  48              	_ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE:
+  49              	.LVL1:
+  50              	.LFB664:
+  51              		.file 2 "mi/plaits/dsp/engine/fm_engine.cpp"
+   1:mi/plaits/dsp/engine/fm_engine.cpp **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/fm_engine.cpp **** //
+   3:mi/plaits/dsp/engine/fm_engine.cpp **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/fm_engine.cpp **** //
+   5:mi/plaits/dsp/engine/fm_engine.cpp **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/fm_engine.cpp **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/fm_engine.cpp **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/fm_engine.cpp **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/fm_engine.cpp **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/fm_engine.cpp **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/fm_engine.cpp **** // 
+  12:mi/plaits/dsp/engine/fm_engine.cpp **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/fm_engine.cpp **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/fm_engine.cpp **** // 
+  15:mi/plaits/dsp/engine/fm_engine.cpp **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/fm_engine.cpp **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/fm_engine.cpp **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/fm_engine.cpp **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/fm_engine.cpp **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/fm_engine.cpp **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/fm_engine.cpp **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/fm_engine.cpp **** // 
+  23:mi/plaits/dsp/engine/fm_engine.cpp **** // See http://creativecommons.org/licenses/MIT/ for more information.
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 3
+
+
+  24:mi/plaits/dsp/engine/fm_engine.cpp **** //
+  25:mi/plaits/dsp/engine/fm_engine.cpp **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/fm_engine.cpp **** //
+  27:mi/plaits/dsp/engine/fm_engine.cpp **** // Classic 2-op FM found in Braids, Rings and Elements.
+  28:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  29:mi/plaits/dsp/engine/fm_engine.cpp **** #include "plaits/dsp/engine/fm_engine.h"
+  30:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  31:mi/plaits/dsp/engine/fm_engine.cpp **** #include "stmlib/dsp/parameter_interpolator.h"
+  32:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  33:mi/plaits/dsp/engine/fm_engine.cpp **** #include "plaits/dsp/oscillator/sine_oscillator.h"
+  34:mi/plaits/dsp/engine/fm_engine.cpp **** #include "plaits/dsp/downsampler/4x_downsampler.h"
+  35:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  36:mi/plaits/dsp/engine/fm_engine.cpp **** namespace plaits {
+  37:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  38:mi/plaits/dsp/engine/fm_engine.cpp **** using namespace stmlib;
+  39:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  40:mi/plaits/dsp/engine/fm_engine.cpp **** void FMEngine::Init(BufferAllocator* allocator) {
+  52              		.loc 2 40 49 is_stmt 1 view -0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  41:mi/plaits/dsp/engine/fm_engine.cpp ****   carrier_phase_ = 0;
+  57              		.loc 2 41 3 view .LVU3
+  42:mi/plaits/dsp/engine/fm_engine.cpp ****   modulator_phase_ = 0;
+  43:mi/plaits/dsp/engine/fm_engine.cpp ****   sub_phase_ = 0;
+  44:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  45:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_carrier_frequency_ = a0;
+  46:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_modulator_frequency_ = a0;
+  47:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_amount_ = 0.0f;
+  58              		.loc 2 47 20 is_stmt 0 view .LVU4
+  59 0000 0023     		movs	r3, #0
+  41:mi/plaits/dsp/engine/fm_engine.cpp ****   carrier_phase_ = 0;
+  60              		.loc 2 41 18 view .LVU5
+  61 0002 0022     		movs	r2, #0
+  45:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_modulator_frequency_ = a0;
+  62              		.loc 2 45 31 view .LVU6
+  63 0004 0449     		ldr	r1, .L4
+  64              	.LVL2:
+  43:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  65              		.loc 2 43 14 view .LVU7
+  66 0006 8261     		str	r2, [r0, #24]
+  45:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_modulator_frequency_ = a0;
+  67              		.loc 2 45 31 view .LVU8
+  68 0008 C161     		str	r1, [r0, #28]	@ float
+  46:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_amount_ = 0.0f;
+  69              		.loc 2 46 33 view .LVU9
+  70 000a 0162     		str	r1, [r0, #32]	@ float
+  71              		.loc 2 47 20 view .LVU10
+  72 000c 4362     		str	r3, [r0, #36]	@ float
+  48:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_feedback_ = 0.0f;
+  73              		.loc 2 48 22 view .LVU11
+  74 000e 8362     		str	r3, [r0, #40]	@ float
+  49:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_sample_ = 0.0f;
+  75              		.loc 2 49 20 view .LVU12
+  76 0010 C362     		str	r3, [r0, #44]	@ float
+  42:mi/plaits/dsp/engine/fm_engine.cpp ****   sub_phase_ = 0;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 4
+
+
+  77              		.loc 2 42 20 view .LVU13
+  78 0012 C0E90422 		strd	r2, r2, [r0, #16]
+  43:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  79              		.loc 2 43 3 is_stmt 1 view .LVU14
+  45:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_modulator_frequency_ = a0;
+  80              		.loc 2 45 3 view .LVU15
+  46:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_amount_ = 0.0f;
+  81              		.loc 2 46 3 view .LVU16
+  47:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_feedback_ = 0.0f;
+  82              		.loc 2 47 3 view .LVU17
+  48:mi/plaits/dsp/engine/fm_engine.cpp ****   previous_sample_ = 0.0f;
+  83              		.loc 2 48 3 view .LVU18
+  84              		.loc 2 49 3 view .LVU19
+  50:mi/plaits/dsp/engine/fm_engine.cpp **** }
+  85              		.loc 2 50 1 is_stmt 0 view .LVU20
+  86 0016 7047     		bx	lr
+  87              	.L5:
+  88              		.align	2
+  89              	.L4:
+  90 0018 5196963A 		.word	982947409
+  91              		.cfi_endproc
+  92              	.LFE664:
+  94              		.section	.text._ZN6plaits8FMEngine5ResetEv,"ax",%progbits
+  95              		.align	1
+  96              		.p2align 2,,3
+  97              		.global	_ZN6plaits8FMEngine5ResetEv
+  98              		.syntax unified
+  99              		.thumb
+ 100              		.thumb_func
+ 102              	_ZN6plaits8FMEngine5ResetEv:
+ 103              	.LVL3:
+ 104              	.LFB665:
+  51:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  52:mi/plaits/dsp/engine/fm_engine.cpp **** void FMEngine::Reset() {
+ 105              		.loc 2 52 24 is_stmt 1 view -0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		@ link register save eliminated.
+  53:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  54:mi/plaits/dsp/engine/fm_engine.cpp **** }
+ 110              		.loc 2 54 1 is_stmt 0 view .LVU22
+ 111 0000 7047     		bx	lr
+ 112              		.cfi_endproc
+ 113              	.LFE665:
+ 115 0002 00BF     		.section	.text._ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb,"ax",%progbits
+ 116              		.align	1
+ 117              		.p2align 2,,3
+ 118              		.global	_ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 119              		.syntax unified
+ 120              		.thumb
+ 121              		.thumb_func
+ 123              	_ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb:
+ 124              	.LVL4:
+ 125              	.LFB666:
+  55:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  56:mi/plaits/dsp/engine/fm_engine.cpp **** void FMEngine::Render(
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 5
+
+
+  57:mi/plaits/dsp/engine/fm_engine.cpp ****     const EngineParameters& parameters,
+  58:mi/plaits/dsp/engine/fm_engine.cpp ****     float* out,
+  59:mi/plaits/dsp/engine/fm_engine.cpp ****     float* aux,
+  60:mi/plaits/dsp/engine/fm_engine.cpp ****     size_t size,
+  61:mi/plaits/dsp/engine/fm_engine.cpp ****     bool* already_enveloped) {
+ 126              		.loc 2 61 30 is_stmt 1 view -0
+ 127              		.cfi_startproc
+ 128              		@ args = 8, pretend = 0, frame = 16
+ 129              		@ frame_needed = 0, uses_anonymous_args = 0
+  62:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  63:mi/plaits/dsp/engine/fm_engine.cpp ****   // 4x oversampling
+  64:mi/plaits/dsp/engine/fm_engine.cpp ****   const float note = parameters.note - 24.0f;
+ 130              		.loc 2 64 3 view .LVU24
+ 131              	.LBB125:
+ 132              	.LBB126:
+ 133              		.file 3 "mi/stmlib/dsp/dsp.h"
+   1:mi/stmlib/dsp/dsp.h **** // Copyright 2012 Emilie Gillet.
+   2:mi/stmlib/dsp/dsp.h **** //
+   3:mi/stmlib/dsp/dsp.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/dsp.h **** //
+   5:mi/stmlib/dsp/dsp.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/dsp.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/dsp.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/dsp.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/dsp.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/dsp.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/dsp.h **** // 
+  12:mi/stmlib/dsp/dsp.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/dsp.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/dsp.h **** // 
+  15:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/dsp.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/dsp.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/dsp.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/dsp.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/dsp.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/dsp.h **** // 
+  23:mi/stmlib/dsp/dsp.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/dsp.h **** //
+  25:mi/stmlib/dsp/dsp.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/dsp.h **** //
+  27:mi/stmlib/dsp/dsp.h **** // DSP utility routines.
+  28:mi/stmlib/dsp/dsp.h **** 
+  29:mi/stmlib/dsp/dsp.h **** #ifndef STMLIB_UTILS_DSP_DSP_H_
+  30:mi/stmlib/dsp/dsp.h **** #define STMLIB_UTILS_DSP_DSP_H_
+  31:mi/stmlib/dsp/dsp.h **** 
+  32:mi/stmlib/dsp/dsp.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/dsp.h **** 
+  34:mi/stmlib/dsp/dsp.h **** #include <cmath>
+  35:mi/stmlib/dsp/dsp.h **** #include <math.h>
+  36:mi/stmlib/dsp/dsp.h **** 
+  37:mi/stmlib/dsp/dsp.h **** namespace stmlib {
+  38:mi/stmlib/dsp/dsp.h **** 
+  39:mi/stmlib/dsp/dsp.h **** #define MAKE_INTEGRAL_FRACTIONAL(x) \
+  40:mi/stmlib/dsp/dsp.h ****   int32_t x ## _integral = static_cast<int32_t>(x); \
+  41:mi/stmlib/dsp/dsp.h ****   float x ## _fractional = x - static_cast<float>(x ## _integral);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 6
+
+
+  42:mi/stmlib/dsp/dsp.h **** 
+  43:mi/stmlib/dsp/dsp.h **** inline float Interpolate(const float* table, float index, float size) {
+  44:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 134              		.loc 3 44 9 is_stmt 0 view .LVU25
+ 135 0000 9FEDE75A 		vldr.32	s10, .L44
+ 136              	.LBE126:
+ 137              	.LBE125:
+ 138              		.loc 2 64 15 view .LVU26
+ 139 0004 B3EE086A 		vmov.f32	s12, #2.4e+1
+ 140              	.LBB132:
+ 141              	.LBB127:
+ 142              		.loc 3 44 9 view .LVU27
+ 143 0008 D1ED046A 		vldr.32	s13, [r1, #16]
+ 144              	.LBE127:
+ 145              	.LBE132:
+ 146              	.LBB133:
+ 147              	.LBB134:
+ 148              		.file 4 "mi/plaits/dsp/engine/engine.h"
+   1:mi/plaits/dsp/engine/engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/engine.h **** //
+   3:mi/plaits/dsp/engine/engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/engine.h **** //
+   5:mi/plaits/dsp/engine/engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/engine.h **** // 
+  12:mi/plaits/dsp/engine/engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/engine.h **** // 
+  15:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/engine.h **** // 
+  23:mi/plaits/dsp/engine/engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/engine.h **** //
+  25:mi/plaits/dsp/engine/engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/engine.h **** //
+  27:mi/plaits/dsp/engine/engine.h **** // Base class for all engines.
+  28:mi/plaits/dsp/engine/engine.h **** 
+  29:mi/plaits/dsp/engine/engine.h **** #ifndef PLAITS_DSP_ENGINE_ENGINE_H_
+  30:mi/plaits/dsp/engine/engine.h **** #define PLAITS_DSP_ENGINE_ENGINE_H_
+  31:mi/plaits/dsp/engine/engine.h **** 
+  32:mi/plaits/dsp/engine/engine.h **** #include "plaits/dsp/dsp.h"
+  33:mi/plaits/dsp/engine/engine.h **** 
+  34:mi/plaits/dsp/engine/engine.h **** #include "stmlib/dsp/units.h"
+  35:mi/plaits/dsp/engine/engine.h **** #include "stmlib/utils/buffer_allocator.h"
+  36:mi/plaits/dsp/engine/engine.h **** 
+  37:mi/plaits/dsp/engine/engine.h **** namespace plaits {
+  38:mi/plaits/dsp/engine/engine.h **** 
+  39:mi/plaits/dsp/engine/engine.h **** inline float NoteToFrequency(float midi_note) {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 7
+
+
+  40:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 149              		.loc 4 40 13 view .LVU28
+ 150 000c B2EE027A 		vmov.f32	s14, #9.0e+0
+ 151              	.LBE134:
+ 152              	.LBE133:
+ 153              		.loc 2 64 15 view .LVU29
+ 154 0010 D1ED017A 		vldr.32	s15, [r1, #4]
+ 155              	.LBB144:
+ 156              	.LBB128:
+ 157              		.loc 3 44 9 view .LVU30
+ 158 0014 66EE856A 		vmul.f32	s13, s13, s10
+ 159              	.LBE128:
+ 160              	.LBE144:
+ 161              	.LBB145:
+ 162              	.LBB141:
+  41:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 163              		.loc 4 41 3 view .LVU31
+ 164 0018 DFEDE24A 		vldr.32	s9, .L44+4
+ 165              	.LBE141:
+ 166              	.LBE145:
+ 167              		.loc 2 64 15 view .LVU32
+ 168 001c 77EEC67A 		vsub.f32	s15, s15, s12
+ 169              	.LVL5:
+  65:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  66:mi/plaits/dsp/engine/fm_engine.cpp ****   const float ratio = Interpolate(
+ 170              		.loc 2 66 3 is_stmt 1 view .LVU33
+ 171              	.LBB146:
+ 172              	.LBI125:
+  43:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 173              		.loc 3 43 14 view .LVU34
+ 174              	.LBB129:
+ 175              		.loc 3 44 3 view .LVU35
+  45:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 176              		.loc 3 45 3 view .LVU36
+ 177 0020 BDEEE66A 		vcvt.s32.f32	s12, s13
+ 178              	.LBE129:
+ 179              	.LBE146:
+  61:mi/plaits/dsp/engine/fm_engine.cpp ****   
+ 180              		.loc 2 61 30 is_stmt 0 view .LVU37
+ 181 0024 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 182              		.cfi_def_cfa_offset 36
+ 183              		.cfi_offset 4, -36
+ 184              		.cfi_offset 5, -32
+ 185              		.cfi_offset 6, -28
+ 186              		.cfi_offset 7, -24
+ 187              		.cfi_offset 8, -20
+ 188              		.cfi_offset 9, -16
+ 189              		.cfi_offset 10, -12
+ 190              		.cfi_offset 11, -8
+ 191              		.cfi_offset 14, -4
+ 192 0028 2DED088B 		vpush.64	{d8, d9, d10, d11}
+ 193              		.cfi_def_cfa_offset 68
+ 194              		.cfi_offset 80, -68
+ 195              		.cfi_offset 81, -64
+ 196              		.cfi_offset 82, -60
+ 197              		.cfi_offset 83, -56
+ 198              		.cfi_offset 84, -52
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 8
+
+
+ 199              		.cfi_offset 85, -48
+ 200              		.cfi_offset 86, -44
+ 201              		.cfi_offset 87, -40
+ 202 002c 85B0     		sub	sp, sp, #20
+ 203              		.cfi_def_cfa_offset 88
+  61:mi/plaits/dsp/engine/fm_engine.cpp ****   
+ 204              		.loc 2 61 30 view .LVU38
+ 205 002e CDE90223 		strd	r2, r3, [sp, #8]
+ 206              	.LBB147:
+ 207              	.LBB130:
+ 208              		.loc 3 45 3 view .LVU39
+ 209 0032 16EE102A 		vmov	r2, s12	@ int
+ 210              	.LVL6:
+ 211              		.loc 3 45 3 is_stmt 1 view .LVU40
+  46:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 212              		.loc 3 46 3 view .LVU41
+ 213              		.loc 3 46 9 is_stmt 0 view .LVU42
+ 214 0036 DC4B     		ldr	r3, .L44+8
+ 215              	.LVL7:
+  45:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 216              		.loc 3 45 3 view .LVU43
+ 217 0038 B8EEC66A 		vcvt.f32.s32	s12, s12
+ 218              	.LBE130:
+ 219              	.LBE147:
+  61:mi/plaits/dsp/engine/fm_engine.cpp ****   
+ 220              		.loc 2 61 30 view .LVU44
+ 221 003c 169D     		ldr	r5, [sp, #88]
+ 222              	.LBB148:
+ 223              	.LBB131:
+ 224              		.loc 3 46 9 view .LVU45
+ 225 003e 03EB8204 		add	r4, r3, r2, lsl #2
+  45:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 226              		.loc 3 45 3 view .LVU46
+ 227 0042 36EEC66A 		vsub.f32	s12, s13, s12
+ 228              	.LVL8:
+  47:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+  48:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 229              		.loc 3 48 17 view .LVU47
+ 230 0046 D4ED015A 		vldr.32	s11, [r4, #4]
+  46:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 231              		.loc 3 46 9 view .LVU48
+ 232 004a D4ED006A 		vldr.32	s13, [r4]
+ 233              	.LVL9:
+  47:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 234              		.loc 3 47 3 is_stmt 1 view .LVU49
+ 235              		.loc 3 48 3 view .LVU50
+ 236              		.loc 3 48 17 is_stmt 0 view .LVU51
+ 237 004e 75EEE65A 		vsub.f32	s11, s11, s13
+ 238              		.loc 3 48 24 view .LVU52
+ 239 0052 E6EE256A 		vfma.f32	s13, s12, s11
+ 240              	.LVL10:
+ 241              		.loc 3 48 24 view .LVU53
+ 242              	.LBE131:
+ 243              	.LBE148:
+  67:mi/plaits/dsp/engine/fm_engine.cpp ****       lut_fm_frequency_quantizer,
+  68:mi/plaits/dsp/engine/fm_engine.cpp ****       parameters.harmonics,
+  69:mi/plaits/dsp/engine/fm_engine.cpp ****       128.0f);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 9
+
+
+  70:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  71:mi/plaits/dsp/engine/fm_engine.cpp ****   float modulator_note = note + ratio;
+ 244              		.loc 2 71 3 is_stmt 1 view .LVU54
+ 245              		.loc 2 71 9 is_stmt 0 view .LVU55
+ 246 0056 77EEA66A 		vadd.f32	s13, s15, s13
+ 247              	.LVL11:
+  72:mi/plaits/dsp/engine/fm_engine.cpp ****   float target_modulator_frequency = NoteToFrequency(modulator_note);
+ 248              		.loc 2 72 3 is_stmt 1 view .LVU56
+ 249              	.LBB149:
+ 250              	.LBI133:
+  39:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 251              		.loc 4 39 14 view .LVU57
+ 252              	.LBB142:
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 253              		.loc 4 40 3 view .LVU58
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 254              		.loc 4 40 13 is_stmt 0 view .LVU59
+ 255 005a 36EEC77A 		vsub.f32	s14, s13, s14
+ 256              	.LVL12:
+ 257              		.loc 4 41 3 is_stmt 1 view .LVU60
+ 258 005e B4EEE47A 		vcmpe.f32	s14, s9
+ 259 0062 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 260 0066 0AD4     		bmi	.L20
+ 261              		.loc 4 41 3 view .LVU61
+ 262 0068 9FEDD06A 		vldr.32	s12, .L44+12
+ 263              	.LVL13:
+ 264              		.loc 4 41 3 is_stmt 0 view .LVU62
+ 265 006c B4EEC67A 		vcmpe.f32	s14, s12
+ 266 0070 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 267 0074 40F3D281 		ble	.L40
+ 268 0078 0023     		movs	r3, #0
+ 269 007a FF22     		movs	r2, #255
+ 270              	.LVL14:
+ 271              		.loc 4 41 3 view .LVU63
+ 272 007c 01E0     		b	.L8
+ 273              	.LVL15:
+ 274              	.L20:
+ 275              		.loc 4 41 3 view .LVU64
+ 276 007e 0023     		movs	r3, #0
+ 277 0080 1A46     		mov	r2, r3
+ 278              	.LVL16:
+ 279              	.L8:
+ 280              		.loc 4 41 40 is_stmt 1 view .LVU65
+  42:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 281              		.loc 4 42 3 view .LVU66
+ 282              	.LBB135:
+ 283              	.LBI135:
+ 284              		.file 5 "mi/stmlib/dsp/units.h"
+   1:mi/stmlib/dsp/units.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/units.h **** //
+   3:mi/stmlib/dsp/units.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/units.h **** //
+   5:mi/stmlib/dsp/units.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/units.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/units.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/units.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/units.h **** // copies of the Software, and to permit persons to whom the Software is
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 10
+
+
+  10:mi/stmlib/dsp/units.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/units.h **** // 
+  12:mi/stmlib/dsp/units.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/units.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/units.h **** // 
+  15:mi/stmlib/dsp/units.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/units.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/units.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/units.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/units.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/units.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/units.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/units.h **** // 
+  23:mi/stmlib/dsp/units.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/units.h **** //
+  25:mi/stmlib/dsp/units.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/units.h **** //
+  27:mi/stmlib/dsp/units.h **** // Conversion from semitones to frequency ratio.
+  28:mi/stmlib/dsp/units.h **** 
+  29:mi/stmlib/dsp/units.h **** #ifndef STMLIB_DSP_UNITS_H_
+  30:mi/stmlib/dsp/units.h **** #define STMLIB_DSP_UNITS_H_
+  31:mi/stmlib/dsp/units.h **** 
+  32:mi/stmlib/dsp/units.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/units.h **** #include "stmlib/dsp/dsp.h"
+  34:mi/stmlib/dsp/units.h **** 
+  35:mi/stmlib/dsp/units.h **** namespace stmlib {
+  36:mi/stmlib/dsp/units.h **** 
+  37:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_high[257];
+  38:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_low[257];
+  39:mi/stmlib/dsp/units.h **** 
+  40:mi/stmlib/dsp/units.h **** inline float SemitonesToRatio(float semitones) {
+ 285              		.loc 5 40 14 view .LVU67
+ 286              	.LBB136:
+  41:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+ 287              		.loc 5 41 3 view .LVU68
+  42:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 288              		.loc 5 42 3 view .LVU69
+ 289              		.loc 5 42 3 view .LVU70
+  43:mi/stmlib/dsp/units.h **** 
+  44:mi/stmlib/dsp/units.h ****   return lut_pitch_ratio_high[pitch_integral] * \
+ 290              		.loc 5 44 3 view .LVU71
+ 291              		.loc 5 44 45 is_stmt 0 view .LVU72
+ 292 0082 CB4C     		ldr	r4, .L44+16
+ 293              	.LVL17:
+ 294              		.loc 5 44 45 view .LVU73
+ 295              	.LBE136:
+ 296              	.LBE135:
+ 297              		.loc 4 42 57 view .LVU74
+ 298 0084 9FEDCB6A 		vldr.32	s12, .L44+20
+ 299              	.LBB139:
+ 300              	.LBB137:
+ 301              		.loc 5 44 45 view .LVU75
+ 302 0088 04EB8202 		add	r2, r4, r2, lsl #2
+  45:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 303              		.loc 5 45 74 view .LVU76
+ 304 008c 92ED007A 		vldr.32	s14, [r2]
+ 305 0090 C94A     		ldr	r2, .L44+24
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 11
+
+
+ 306 0092 02EB8303 		add	r3, r2, r3, lsl #2
+ 307 0096 D3ED005A 		vldr.32	s11, [r3]
+ 308              	.LVL18:
+ 309              		.loc 5 45 74 view .LVU77
+ 310 009a 27EE257A 		vmul.f32	s14, s14, s11
+ 311              	.LBE137:
+ 312              	.LBE139:
+ 313              		.loc 4 42 57 view .LVU78
+ 314 009e 27EE067A 		vmul.f32	s14, s14, s12
+ 315              	.LVL19:
+ 316              		.loc 4 42 57 view .LVU79
+ 317              	.LBE142:
+ 318              	.LBE149:
+  73:mi/plaits/dsp/engine/fm_engine.cpp ****   CONSTRAIN(target_modulator_frequency, 0.0f, 0.5f);
+ 319              		.loc 2 73 3 is_stmt 1 view .LVU80
+ 320 00a2 B5EEC07A 		vcmpe.f32	s14, #0
+ 321 00a6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 322 00aa 00F1CE81 		bmi	.L22
+ 323              		.loc 2 73 3 discriminator 2 view .LVU81
+ 324 00ae B6EE006A 		vmov.f32	s12, #5.0e-1
+ 325 00b2 B4EE467A 		vcmp.f32	s14, s12
+ 326 00b6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 327 00ba 36FE077A 		vselgt.f32	s14, s12, s14
+ 328              	.LVL20:
+ 329              	.L9:
+ 330              		.loc 2 73 52 discriminator 6 view .LVU82
+  74:mi/plaits/dsp/engine/fm_engine.cpp **** 
+  75:mi/plaits/dsp/engine/fm_engine.cpp ****   // Reduce the maximum FM index for high pitched notes, to prevent aliasing.
+  76:mi/plaits/dsp/engine/fm_engine.cpp ****   float hf_taming = 1.0f - (modulator_note - 72.0f) * 0.025f;
+ 331              		.loc 2 76 3 discriminator 6 view .LVU83
+ 332              		.loc 2 76 9 is_stmt 0 discriminator 6 view .LVU84
+ 333 00be B7EE006A 		vmov.f32	s12, #1.0e+0
+ 334              		.loc 2 76 44 discriminator 6 view .LVU85
+ 335 00c2 DFEDBE5A 		vldr.32	s11, .L44+28
+ 336              		.loc 2 76 9 discriminator 6 view .LVU86
+ 337 00c6 9FEDBE5A 		vldr.32	s10, .L44+32
+ 338              	.LVL21:
+ 339              		.loc 2 76 44 discriminator 6 view .LVU87
+ 340 00ca 76EEE56A 		vsub.f32	s13, s13, s11
+ 341              	.LVL22:
+ 342              		.loc 2 76 9 discriminator 6 view .LVU88
+ 343 00ce F0EE465A 		vmov.f32	s11, s12
+ 344 00d2 E6EEC55A 		vfms.f32	s11, s13, s10
+ 345              	.LVL23:
+  77:mi/plaits/dsp/engine/fm_engine.cpp ****   CONSTRAIN(hf_taming, 0.0f, 1.0f);
+ 346              		.loc 2 77 3 is_stmt 1 discriminator 6 view .LVU89
+ 347 00d6 F5EEC05A 		vcmpe.f32	s11, #0
+ 348 00da F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 349 00de 00F1B181 		bmi	.L23
+ 350              		.loc 2 77 3 discriminator 2 view .LVU90
+ 351 00e2 F4EEC65A 		vcmpe.f32	s11, s12
+ 352 00e6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 353 00ea 40F3A881 		ble	.L41
+ 354              	.L11:
+ 355              	.LVL24:
+ 356              		.loc 2 77 35 discriminator 6 view .LVU91
+  78:mi/plaits/dsp/engine/fm_engine.cpp ****   hf_taming *= hf_taming;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 12
+
+
+ 357              		.loc 2 78 3 discriminator 6 view .LVU92
+  79:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  80:mi/plaits/dsp/engine/fm_engine.cpp ****   ParameterInterpolator carrier_frequency(
+ 358              		.loc 2 80 3 discriminator 6 view .LVU93
+ 359              	.LBB150:
+ 360              	.LBI150:
+  39:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 361              		.loc 4 39 14 discriminator 6 view .LVU94
+ 362              	.LBB151:
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 363              		.loc 4 40 3 discriminator 6 view .LVU95
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 364              		.loc 4 40 13 is_stmt 0 discriminator 6 view .LVU96
+ 365 00ee F2EE025A 		vmov.f32	s11, #9.0e+0
+  41:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 366              		.loc 4 41 3 discriminator 6 view .LVU97
+ 367 00f2 DFEDAC6A 		vldr.32	s13, .L44+4
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 368              		.loc 4 40 13 discriminator 6 view .LVU98
+ 369 00f6 77EEE57A 		vsub.f32	s15, s15, s11
+ 370              	.LVL25:
+  41:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 371              		.loc 4 41 3 is_stmt 1 discriminator 6 view .LVU99
+ 372 00fa F4EEE67A 		vcmpe.f32	s15, s13
+ 373 00fe F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 374 0102 0AD4     		bmi	.L25
+  41:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 375              		.loc 4 41 3 view .LVU100
+ 376 0104 DFEDA96A 		vldr.32	s13, .L44+12
+ 377 0108 F4EEE67A 		vcmpe.f32	s15, s13
+ 378 010c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 379 0110 40F37181 		ble	.L42
+ 380 0114 0023     		movs	r3, #0
+ 381 0116 FF26     		movs	r6, #255
+ 382 0118 01E0     		b	.L12
+ 383              	.L25:
+ 384 011a 0023     		movs	r3, #0
+ 385 011c 1E46     		mov	r6, r3
+ 386              	.LVL26:
+ 387              	.L12:
+  41:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 388              		.loc 4 41 40 view .LVU101
+ 389              		.loc 4 42 3 view .LVU102
+ 390              	.LBB152:
+ 391              	.LBI152:
+  40:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+ 392              		.loc 5 40 14 view .LVU103
+ 393              	.LBB153:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 394              		.loc 5 41 3 view .LVU104
+  42:mi/stmlib/dsp/units.h **** 
+ 395              		.loc 5 42 3 view .LVU105
+  42:mi/stmlib/dsp/units.h **** 
+ 396              		.loc 5 42 3 view .LVU106
+  44:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 397              		.loc 5 44 3 view .LVU107
+  44:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 13
+
+
+ 398              		.loc 5 44 3 is_stmt 0 view .LVU108
+ 399              	.LBE153:
+ 400              	.LBE152:
+ 401              	.LBE151:
+ 402              	.LBE150:
+ 403              	.LBB172:
+ 404              	.LBI172:
+ 405              		.file 6 "mi/stmlib/dsp/parameter_interpolator.h"
+   1:mi/stmlib/dsp/parameter_interpolator.h **** // Copyright 2015 Emilie Gillet.
+   2:mi/stmlib/dsp/parameter_interpolator.h **** //
+   3:mi/stmlib/dsp/parameter_interpolator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/parameter_interpolator.h **** //
+   5:mi/stmlib/dsp/parameter_interpolator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/parameter_interpolator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/parameter_interpolator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/parameter_interpolator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/parameter_interpolator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/parameter_interpolator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  12:mi/stmlib/dsp/parameter_interpolator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/parameter_interpolator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  15:mi/stmlib/dsp/parameter_interpolator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/parameter_interpolator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/parameter_interpolator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/parameter_interpolator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/parameter_interpolator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/parameter_interpolator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/parameter_interpolator.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  23:mi/stmlib/dsp/parameter_interpolator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/parameter_interpolator.h **** //
+  25:mi/stmlib/dsp/parameter_interpolator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/parameter_interpolator.h **** //
+  27:mi/stmlib/dsp/parameter_interpolator.h **** // Linear interpolation of parameters in rendering loops.
+  28:mi/stmlib/dsp/parameter_interpolator.h **** 
+  29:mi/stmlib/dsp/parameter_interpolator.h **** #ifndef STMLIB_DSP_PARAMETER_INTERPOLATOR_H_
+  30:mi/stmlib/dsp/parameter_interpolator.h **** #define STMLIB_DSP_PARAMETER_INTERPOLATOR_H_
+  31:mi/stmlib/dsp/parameter_interpolator.h **** 
+  32:mi/stmlib/dsp/parameter_interpolator.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/parameter_interpolator.h **** 
+  34:mi/stmlib/dsp/parameter_interpolator.h **** namespace stmlib {
+  35:mi/stmlib/dsp/parameter_interpolator.h **** 
+  36:mi/stmlib/dsp/parameter_interpolator.h **** class ParameterInterpolator {
+  37:mi/stmlib/dsp/parameter_interpolator.h ****  public:
+  38:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator() { }
+  39:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator(float* state, float new_value, size_t size) {
+ 406              		.loc 6 39 3 is_stmt 1 view .LVU109
+ 407              	.LBE172:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 408              		.loc 6 40 5 view .LVU110
+ 409              	.LBB185:
+ 410              	.LBB173:
+ 411              	.LBI173:
+  41:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  42:mi/stmlib/dsp/parameter_interpolator.h **** 
+  43:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator(float* state, float new_value, float step) {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 14
+
+
+  44:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+  45:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+  46:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) * step;
+  47:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  48:mi/stmlib/dsp/parameter_interpolator.h **** 
+  49:mi/stmlib/dsp/parameter_interpolator.h ****   ~ParameterInterpolator() {
+  50:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+  51:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  52:mi/stmlib/dsp/parameter_interpolator.h ****   
+  53:mi/stmlib/dsp/parameter_interpolator.h ****   inline void Init(float* state, float new_value, size_t size) {
+ 412              		.loc 6 53 15 view .LVU111
+ 413              	.LBB174:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 414              		.loc 6 54 5 view .LVU112
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 415              		.loc 6 55 5 view .LVU113
+ 416              	.LBE174:
+ 417              	.LBE173:
+ 418              	.LBE185:
+  81:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_carrier_frequency_, NoteToFrequency(note), size);
+  82:mi/plaits/dsp/engine/fm_engine.cpp ****   ParameterInterpolator modulator_frequency(
+  83:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_modulator_frequency_, target_modulator_frequency, size);
+  84:mi/plaits/dsp/engine/fm_engine.cpp ****   ParameterInterpolator amount_modulation(
+  85:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_amount_,
+  86:mi/plaits/dsp/engine/fm_engine.cpp ****       2.0f * parameters.timbre * parameters.timbre * hf_taming,
+ 419              		.loc 2 86 25 is_stmt 0 view .LVU114
+ 420 011e D1ED025A 		vldr.32	s11, [r1, #8]
+  87:mi/plaits/dsp/engine/fm_engine.cpp ****       size);
+  88:mi/plaits/dsp/engine/fm_engine.cpp ****   ParameterInterpolator feedback_modulation(
+  89:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_feedback_, 2.0f * parameters.morph - 1.0f, size);
+ 421              		.loc 2 89 64 view .LVU115
+ 422 0122 F0EE004A 		vmov.f32	s9, #2.0e+0
+ 423 0126 FFEE007A 		vmov.f32	s15, #-1.0e+0
+ 424              	.LBB186:
+ 425              	.LBB166:
+ 426              	.LBB160:
+ 427              	.LBB154:
+ 428              		.loc 5 45 74 view .LVU116
+ 429 012a 02EB8303 		add	r3, r2, r3, lsl #2
+ 430              	.LVL27:
+ 431              		.loc 5 45 74 view .LVU117
+ 432              	.LBE154:
+ 433              	.LBE160:
+ 434              	.LBE166:
+ 435              	.LBE186:
+ 436              		.loc 2 89 64 view .LVU118
+ 437 012e D1ED033A 		vldr.32	s7, [r1, #12]
+ 438              	.LBB187:
+ 439              	.LBB167:
+ 440              	.LBB161:
+ 441              	.LBB155:
+  44:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 442              		.loc 5 44 45 view .LVU119
+ 443 0132 04EB8604 		add	r4, r4, r6, lsl #2
+ 444              	.LBE155:
+ 445              	.LBE161:
+ 446              	.LBE167:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 15
+
+
+ 447              	.LBE187:
+  86:mi/plaits/dsp/engine/fm_engine.cpp ****       size);
+ 448              		.loc 2 86 12 view .LVU120
+ 449 0136 35EEA55A 		vadd.f32	s10, s11, s11
+ 450              	.LBB188:
+ 451              	.LBB168:
+ 452              	.LBB162:
+ 453              	.LBB156:
+ 454              		.loc 5 45 74 view .LVU121
+ 455 013a 93ED004A 		vldr.32	s8, [r3]
+ 456              	.LBE156:
+ 457              	.LBE162:
+ 458              	.LBE168:
+ 459              	.LBE188:
+ 460              		.loc 2 89 64 view .LVU122
+ 461 013e E3EEA47A 		vfma.f32	s15, s7, s9
+ 462              	.LBB189:
+ 463              	.LBB169:
+ 464              	.LBB163:
+ 465              	.LBB157:
+ 466              		.loc 5 45 74 view .LVU123
+ 467 0142 D4ED006A 		vldr.32	s13, [r4]
+ 468              	.LBE157:
+ 469              	.LBE163:
+ 470              	.LBE169:
+ 471              	.LBE189:
+ 472              	.LBB190:
+ 473              	.LBB180:
+ 474              	.LBB175:
+ 475              		.loc 6 55 14 view .LVU124
+ 476 0146 D0ED071A 		vldr.32	s3, [r0, #28]
+ 477              	.LVL28:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 478              		.loc 6 56 5 is_stmt 1 view .LVU125
+ 479              	.LBE175:
+ 480              	.LBE180:
+ 481              	.LBE190:
+  90:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  91:mi/plaits/dsp/engine/fm_engine.cpp ****   Downsampler carrier_downsampler(&carrier_fir_);
+  92:mi/plaits/dsp/engine/fm_engine.cpp ****   Downsampler sub_downsampler(&sub_fir_);
+  93:mi/plaits/dsp/engine/fm_engine.cpp ****   
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****   while (size--) {
+ 482              		.loc 2 94 14 is_stmt 0 view .LVU126
+ 483 014a 6B1E     		subs	r3, r5, #1
+ 484              	.LBB191:
+ 485              	.LBB192:
+ 486              	.LBB193:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 487              		.loc 6 55 14 view .LVU127
+ 488 014c D0ED094A 		vldr.32	s9, [r0, #36]
+ 489              	.LBE193:
+ 490              	.LBE192:
+ 491              	.LBE191:
+ 492              	.LBB202:
+ 493              	.LBB170:
+ 494              	.LBB164:
+ 495              	.LBB158:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 16
+
+
+ 496              		.loc 5 45 74 view .LVU128
+ 497 0150 66EE846A 		vmul.f32	s13, s13, s8
+ 498              	.LBE158:
+ 499              	.LBE164:
+ 500              	.LBE170:
+ 501              	.LBE202:
+  86:mi/plaits/dsp/engine/fm_engine.cpp ****       size);
+ 502              		.loc 2 86 32 view .LVU129
+ 503 0154 25EE255A 		vmul.f32	s10, s10, s11
+ 504              	.LBB203:
+ 505              	.LBB181:
+ 506              	.LBB176:
+ 507              		.loc 6 56 29 view .LVU130
+ 508 0158 9FED964A 		vldr.32	s8, .L44+20
+ 509 015c B0EE613A 		vmov.f32	s6, s3
+ 510              	.LBE176:
+ 511              	.LBE181:
+ 512              	.LBE203:
+ 513              	.LBB204:
+ 514              	.LBB205:
+ 515              	.LBB206:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 516              		.loc 6 55 14 view .LVU131
+ 517 0160 90ED081A 		vldr.32	s2, [r0, #32]
+ 518              	.LBE206:
+ 519              	.LBE205:
+ 520              	.LBE204:
+ 521              	.LBB213:
+ 522              	.LBB198:
+ 523              	.LBB194:
+ 524              		.loc 6 56 29 view .LVU132
+ 525 0164 F0EE643A 		vmov.f32	s7, s9
+ 526              	.LBE194:
+ 527              	.LBE198:
+ 528              	.LBE213:
+ 529              	.LBB214:
+ 530              	.LBB215:
+ 531              	.LBB216:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 532              		.loc 6 55 14 view .LVU133
+ 533 0168 D0ED0A5A 		vldr.32	s11, [r0, #40]
+ 534              	.LBE216:
+ 535              	.LBE215:
+ 536              	.LBE214:
+ 537              	.LBB223:
+ 538              	.LBB210:
+ 539              	.LBB207:
+ 540              		.loc 6 56 29 view .LVU134
+ 541 016c 37EE417A 		vsub.f32	s14, s14, s2
+ 542              	.LVL29:
+ 543              		.loc 6 56 29 view .LVU135
+ 544              	.LBE207:
+ 545              	.LBE210:
+ 546              	.LBE223:
+ 547              		.loc 2 94 14 view .LVU136
+ 548 0170 0193     		str	r3, [sp, #4]
+ 549              	.LBB224:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 17
+
+
+ 550              	.LBB182:
+ 551              	.LBB177:
+ 552              		.loc 6 56 29 view .LVU137
+ 553 0172 96EE843A 		vfnms.f32	s6, s13, s8
+ 554              		.loc 6 56 41 view .LVU138
+ 555 0176 06EE905A 		vmov	s13, r5	@ int
+ 556              	.LBE177:
+ 557              	.LBE182:
+ 558              	.LBE224:
+ 559              	.LBB225:
+ 560              	.LBB199:
+ 561              	.LBB195:
+ 562              		.loc 6 56 29 view .LVU139
+ 563 017a D5EE063A 		vfnms.f32	s7, s10, s12
+ 564              	.LBE195:
+ 565              	.LBE199:
+ 566              	.LBE225:
+ 567              	.LBB226:
+ 568              	.LBB227:
+ 569              		.file 7 "mi/plaits/dsp/downsampler/4x_downsampler.h"
+   1:mi/plaits/dsp/downsampler/4x_downsampler.h **** // Copyright 2021 Emilie Gillet.
+   2:mi/plaits/dsp/downsampler/4x_downsampler.h **** //
+   3:mi/plaits/dsp/downsampler/4x_downsampler.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/downsampler/4x_downsampler.h **** //
+   5:mi/plaits/dsp/downsampler/4x_downsampler.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/downsampler/4x_downsampler.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/downsampler/4x_downsampler.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/downsampler/4x_downsampler.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/downsampler/4x_downsampler.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/downsampler/4x_downsampler.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/downsampler/4x_downsampler.h **** // 
+  12:mi/plaits/dsp/downsampler/4x_downsampler.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/downsampler/4x_downsampler.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/downsampler/4x_downsampler.h **** // 
+  15:mi/plaits/dsp/downsampler/4x_downsampler.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/downsampler/4x_downsampler.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/downsampler/4x_downsampler.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/downsampler/4x_downsampler.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/downsampler/4x_downsampler.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/downsampler/4x_downsampler.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/downsampler/4x_downsampler.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/downsampler/4x_downsampler.h **** // 
+  23:mi/plaits/dsp/downsampler/4x_downsampler.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/downsampler/4x_downsampler.h **** //
+  25:mi/plaits/dsp/downsampler/4x_downsampler.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/downsampler/4x_downsampler.h **** //
+  27:mi/plaits/dsp/downsampler/4x_downsampler.h **** // FIR Downsampler.
+  28:mi/plaits/dsp/downsampler/4x_downsampler.h **** 
+  29:mi/plaits/dsp/downsampler/4x_downsampler.h **** #ifndef PLAITS_DSP_DOWNSAMPLER_4X_DOWNSAMPLER_H_
+  30:mi/plaits/dsp/downsampler/4x_downsampler.h **** #define PLAITS_DSP_DOWNSAMPLER_4X_DOWNSAMPLER_H_
+  31:mi/plaits/dsp/downsampler/4x_downsampler.h **** 
+  32:mi/plaits/dsp/downsampler/4x_downsampler.h **** #include "stmlib/stmlib.h"
+  33:mi/plaits/dsp/downsampler/4x_downsampler.h **** 
+  34:mi/plaits/dsp/downsampler/4x_downsampler.h **** #include "plaits/resources.h"
+  35:mi/plaits/dsp/downsampler/4x_downsampler.h **** 
+  36:mi/plaits/dsp/downsampler/4x_downsampler.h **** namespace plaits {
+  37:mi/plaits/dsp/downsampler/4x_downsampler.h ****   
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 18
+
+
+  38:mi/plaits/dsp/downsampler/4x_downsampler.h **** const size_t kOversampling = 4;
+  39:mi/plaits/dsp/downsampler/4x_downsampler.h **** 
+  40:mi/plaits/dsp/downsampler/4x_downsampler.h **** class Downsampler {
+  41:mi/plaits/dsp/downsampler/4x_downsampler.h ****  public:
+  42:mi/plaits/dsp/downsampler/4x_downsampler.h ****   Downsampler(float* state) {
+  43:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ = *state;
+ 570              		.loc 7 43 11 view .LVU140
+ 571 017e 90ED0D4A 		vldr.32	s8, [r0, #52]
+ 572              	.LBE227:
+ 573              	.LBE226:
+ 574              	.LBB229:
+ 575              	.LBB183:
+ 576              	.LBB178:
+ 577              		.loc 6 56 41 view .LVU141
+ 578 0182 F8EE666A 		vcvt.f32.u32	s13, s13
+ 579              	.LBE178:
+ 580              	.LBE183:
+ 581              	.LBE229:
+ 582              	.LBB230:
+ 583              	.LBB231:
+ 584              		.loc 7 43 11 view .LVU142
+ 585 0186 90ED0C5A 		vldr.32	s10, [r0, #48]
+ 586              	.LBE231:
+ 587              	.LBE230:
+ 588              	.LBB233:
+ 589              	.LBB220:
+ 590              	.LBB217:
+ 591              		.loc 6 56 29 view .LVU143
+ 592 018a 77EEE57A 		vsub.f32	s15, s15, s11
+ 593              	.LBE217:
+ 594              	.LBE220:
+ 595              	.LBE233:
+ 596              	.LBB234:
+ 597              	.LBB211:
+ 598              	.LBB208:
+ 599              		.loc 6 56 39 view .LVU144
+ 600 018e 87EE268A 		vdiv.f32	s16, s14, s13
+ 601              	.LBE208:
+ 602              	.LBE211:
+ 603              	.LBE234:
+ 604              	.LBB235:
+ 605              	.LBB184:
+ 606              	.LBB179:
+ 607 0192 C3EE268A 		vdiv.f32	s17, s6, s13
+ 608              	.LVL30:
+ 609              		.loc 6 56 39 view .LVU145
+ 610              	.LBE179:
+ 611              	.LBE184:
+ 612              	.LBE235:
+  82:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_modulator_frequency_, target_modulator_frequency, size);
+ 613              		.loc 2 82 3 is_stmt 1 view .LVU146
+ 614              	.LBB236:
+ 615              	.LBI204:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 616              		.loc 6 39 3 view .LVU147
+ 617              	.LBE236:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 19
+
+
+ 618              		.loc 6 40 5 view .LVU148
+ 619              	.LBB237:
+ 620              	.LBB212:
+ 621              	.LBI205:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 622              		.loc 6 53 15 view .LVU149
+ 623              	.LBB209:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 624              		.loc 6 54 5 view .LVU150
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 625              		.loc 6 55 5 view .LVU151
+ 626              		.loc 6 56 5 view .LVU152
+ 627              		.loc 6 56 5 is_stmt 0 view .LVU153
+ 628              	.LBE209:
+ 629              	.LBE212:
+ 630              	.LBE237:
+  84:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_amount_,
+ 631              		.loc 2 84 3 is_stmt 1 view .LVU154
+ 632              	.LBB238:
+ 633              	.LBI191:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 634              		.loc 6 39 3 view .LVU155
+ 635              	.LBE238:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 636              		.loc 6 40 5 view .LVU156
+ 637              	.LBB239:
+ 638              	.LBB200:
+ 639              	.LBI192:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 640              		.loc 6 53 15 view .LVU157
+ 641              	.LBB196:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 642              		.loc 6 54 5 view .LVU158
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 643              		.loc 6 55 5 view .LVU159
+ 644              		.loc 6 56 5 view .LVU160
+ 645              	.LBE196:
+ 646              	.LBE200:
+ 647              	.LBE239:
+ 648              	.LBB240:
+ 649              	.LBB221:
+ 650              	.LBB218:
+ 651              		.loc 6 56 39 is_stmt 0 view .LVU161
+ 652 0196 C7EEA60A 		vdiv.f32	s1, s15, s13
+ 653              	.LBE218:
+ 654              	.LBE221:
+ 655              	.LBE240:
+ 656              	.LBB241:
+ 657              	.LBB201:
+ 658              	.LBB197:
+ 659 019a 83EEA60A 		vdiv.f32	s0, s7, s13
+ 660              	.LVL31:
+ 661              		.loc 6 56 39 view .LVU162
+ 662              	.LBE197:
+ 663              	.LBE201:
+ 664              	.LBE241:
+  88:mi/plaits/dsp/engine/fm_engine.cpp ****       &previous_feedback_, 2.0f * parameters.morph - 1.0f, size);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 20
+
+
+ 665              		.loc 2 88 3 is_stmt 1 view .LVU163
+ 666              	.LBB242:
+ 667              	.LBI214:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 668              		.loc 6 39 3 view .LVU164
+ 669              	.LBE242:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 670              		.loc 6 40 5 view .LVU165
+ 671              	.LBB243:
+ 672              	.LBB222:
+ 673              	.LBI215:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 674              		.loc 6 53 15 view .LVU166
+ 675              	.LBB219:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 676              		.loc 6 54 5 view .LVU167
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 677              		.loc 6 55 5 view .LVU168
+ 678              		.loc 6 56 5 view .LVU169
+ 679              		.loc 6 56 5 is_stmt 0 view .LVU170
+ 680              	.LBE219:
+ 681              	.LBE222:
+ 682              	.LBE243:
+  91:mi/plaits/dsp/engine/fm_engine.cpp ****   Downsampler sub_downsampler(&sub_fir_);
+ 683              		.loc 2 91 3 is_stmt 1 view .LVU171
+ 684              	.LBB244:
+ 685              	.LBI226:
+  42:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ = *state;
+ 686              		.loc 7 42 3 view .LVU172
+ 687              	.LBB228:
+ 688              		.loc 7 43 5 view .LVU173
+  44:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ = 0.0f;
+ 689              		.loc 7 44 5 view .LVU174
+  45:mi/plaits/dsp/downsampler/4x_downsampler.h ****     state_ = state;
+ 690              		.loc 7 45 5 view .LVU175
+ 691              		.loc 7 45 5 is_stmt 0 view .LVU176
+ 692              	.LBE228:
+ 693              	.LBE244:
+  92:mi/plaits/dsp/engine/fm_engine.cpp ****   
+ 694              		.loc 2 92 3 is_stmt 1 view .LVU177
+ 695              	.LBB245:
+ 696              	.LBI230:
+  42:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ = *state;
+ 697              		.loc 7 42 3 view .LVU178
+ 698              	.LBB232:
+  43:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ = 0.0f;
+ 699              		.loc 7 43 5 view .LVU179
+  44:mi/plaits/dsp/downsampler/4x_downsampler.h ****     state_ = state;
+ 700              		.loc 7 44 5 view .LVU180
+ 701              		.loc 7 45 5 view .LVU181
+ 702              		.loc 7 45 5 is_stmt 0 view .LVU182
+ 703              	.LBE232:
+ 704              	.LBE245:
+ 705              		.loc 2 94 3 is_stmt 1 view .LVU183
+ 706              		.loc 2 94 14 view .LVU184
+ 707              		.loc 2 94 14 is_stmt 0 view .LVU185
+ 708 019e 002D     		cmp	r5, #0
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 21
+
+
+ 709 01a0 00F0EC80 		beq	.L13
+ 710 01a4 8369     		ldr	r3, [r0, #24]
+ 711              	.LVL32:
+ 712              		.loc 2 94 14 view .LVU186
+ 713 01a6 8046     		mov	r8, r0
+ 714 01a8 DFF82092 		ldr	r9, .L44+44
+ 715 01ac 854A     		ldr	r2, .L44+36
+ 716 01ae 0093     		str	r3, [sp]
+ 717 01b0 D0E904A5 		ldrd	r10, r5, [r0, #16]
+ 718              	.LVL33:
+ 719              	.L19:
+ 720              	.LBB246:
+  95:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 721              		.loc 2 95 5 is_stmt 1 view .LVU187
+  96:mi/plaits/dsp/engine/fm_engine.cpp ****     const float amount = amount_modulation.Next();
+ 722              		.loc 2 96 5 view .LVU188
+ 723              	.LBB247:
+ 724              	.LBI247:
+  57:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  58:mi/stmlib/dsp/parameter_interpolator.h **** 
+  59:mi/stmlib/dsp/parameter_interpolator.h ****   inline float Next() {
+ 725              		.loc 6 59 16 view .LVU189
+ 726              	.LBB248:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 727              		.loc 6 60 5 view .LVU190
+ 728              	.LBE248:
+ 729              	.LBE247:
+ 730              	.LBB250:
+ 731              	.LBB251:
+ 732              		.loc 6 60 12 is_stmt 0 view .LVU191
+ 733 01b4 75EEA05A 		vadd.f32	s11, s11, s1
+ 734              	.LVL34:
+ 735              		.loc 6 60 12 view .LVU192
+ 736              	.LBE251:
+ 737              	.LBE250:
+ 738              	.LBB253:
+ 739              	.LBB249:
+ 740 01b8 74EE804A 		vadd.f32	s9, s9, s0
+ 741              	.LVL35:
+  61:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 742              		.loc 6 61 5 is_stmt 1 view .LVU193
+ 743              		.loc 6 61 5 is_stmt 0 view .LVU194
+ 744              	.LBE249:
+ 745              	.LBE253:
+  97:mi/plaits/dsp/engine/fm_engine.cpp ****     const float feedback = feedback_modulation.Next();
+ 746              		.loc 2 97 5 is_stmt 1 view .LVU195
+ 747              	.LBB254:
+ 748              	.LBI250:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 749              		.loc 6 59 16 view .LVU196
+ 750              	.LBB252:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 751              		.loc 6 60 5 view .LVU197
+ 752              		.loc 6 61 5 view .LVU198
+ 753              		.loc 6 61 5 is_stmt 0 view .LVU199
+ 754              	.LBE252:
+ 755              	.LBE254:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 22
+
+
+  98:mi/plaits/dsp/engine/fm_engine.cpp ****     float phase_feedback = feedback < 0.0f ? 0.5f * feedback * feedback : 0.0f;
+ 756              		.loc 2 98 5 is_stmt 1 view .LVU200
+ 757              		.loc 2 98 44 is_stmt 0 view .LVU201
+ 758 01bc F5EEC05A 		vcmpe.f32	s11, #0
+ 759 01c0 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 760 01c4 00F11081 		bmi	.L43
+ 761              		.loc 2 98 44 view .LVU202
+ 762 01c8 9FED862A 		vldr.32	s4, .L44+68
+ 763              	.L14:
+ 764              	.LVL36:
+  99:mi/plaits/dsp/engine/fm_engine.cpp ****     const uint32_t carrier_increment = static_cast<uint32_t>(
+ 765              		.loc 2 99 5 is_stmt 1 discriminator 4 view .LVU203
+ 766              	.LBB255:
+ 767              	.LBI255:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 768              		.loc 6 59 16 discriminator 4 view .LVU204
+ 769              	.LBB256:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 770              		.loc 6 60 5 discriminator 4 view .LVU205
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 771              		.loc 6 60 12 is_stmt 0 discriminator 4 view .LVU206
+ 772 01cc 71EEA81A 		vadd.f32	s3, s3, s17
+ 773              	.LVL37:
+ 774              		.loc 6 61 5 is_stmt 1 discriminator 4 view .LVU207
+ 775              		.loc 6 61 5 is_stmt 0 discriminator 4 view .LVU208
+ 776              	.LBE256:
+ 777              	.LBE255:
+ 100:mi/plaits/dsp/engine/fm_engine.cpp ****         max_uint32 * carrier_frequency.Next());
+ 778              		.loc 2 100 20 discriminator 4 view .LVU209
+ 779 01d0 DFED7D2A 		vldr.32	s5, .L44+40
+ 780              	.LBB257:
+ 781              	.LBB258:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 782              		.loc 6 60 12 discriminator 4 view .LVU210
+ 783 01d4 31EE081A 		vadd.f32	s2, s2, s16
+ 784              	.LVL38:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 785              		.loc 6 60 12 discriminator 4 view .LVU211
+ 786 01d8 009B     		ldr	r3, [sp]
+ 787              	.LBE258:
+ 788              	.LBE257:
+ 789              	.LBB260:
+ 790              	.LBB261:
+ 101:mi/plaits/dsp/engine/fm_engine.cpp ****     float _modulator_frequency = modulator_frequency.Next();
+ 102:mi/plaits/dsp/engine/fm_engine.cpp **** 
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****     for (size_t j = 0; j < kOversampling; ++j) {
+ 104:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 105:mi/plaits/dsp/engine/fm_engine.cpp ****            _modulator_frequency * (1.0f + previous_sample_ * phase_feedback));
+ 791              		.loc 2 105 43 discriminator 4 view .LVU212
+ 792 01da F0EE453A 		vmov.f32	s7, s10
+ 793 01de 9FED815A 		vldr.32	s10, .L44+68
+ 794              	.LVL39:
+ 795              		.loc 2 105 43 discriminator 4 view .LVU213
+ 796              	.LBE261:
+ 797              	.LBE260:
+ 100:mi/plaits/dsp/engine/fm_engine.cpp ****         max_uint32 * carrier_frequency.Next());
+ 798              		.loc 2 100 20 discriminator 4 view .LVU214
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 23
+
+
+ 799 01e2 61EEA27A 		vmul.f32	s15, s3, s5
+ 800              	.LBB313:
+ 801              	.LBB304:
+ 802              		.loc 2 105 43 discriminator 4 view .LVU215
+ 803 01e6 98ED0B6A 		vldr.32	s12, [r8, #44]
+ 804 01ea B0EE443A 		vmov.f32	s6, s8
+ 805 01ee 7748     		ldr	r0, .L44+44
+ 104:mi/plaits/dsp/engine/fm_engine.cpp ****            _modulator_frequency * (1.0f + previous_sample_ * phase_feedback));
+ 806              		.loc 2 104 60 discriminator 4 view .LVU216
+ 807 01f0 61EE222A 		vmul.f32	s5, s2, s5
+ 808              	.LBE304:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 809              		.loc 2 103 17 discriminator 4 view .LVU217
+ 810 01f4 0021     		movs	r1, #0
+ 811              	.LBE313:
+ 100:mi/plaits/dsp/engine/fm_engine.cpp ****     float _modulator_frequency = modulator_frequency.Next();
+ 812              		.loc 2 100 46 discriminator 4 view .LVU218
+ 813 01f6 FCEEE77A 		vcvt.u32.f32	s15, s15
+ 814              	.LBB314:
+ 815              	.LBB305:
+ 816              		.loc 2 105 43 discriminator 4 view .LVU219
+ 817 01fa B0EE454A 		vmov.f32	s8, s10
+ 818              	.LVL40:
+ 819              		.loc 2 105 43 discriminator 4 view .LVU220
+ 820              	.LBE305:
+ 821              	.LBE314:
+ 100:mi/plaits/dsp/engine/fm_engine.cpp ****     float _modulator_frequency = modulator_frequency.Next();
+ 822              		.loc 2 100 46 discriminator 4 view .LVU221
+ 823 01fe 17EE90CA 		vmov	ip, s15	@ int
+ 824              	.LVL41:
+ 101:mi/plaits/dsp/engine/fm_engine.cpp **** 
+ 825              		.loc 2 101 5 is_stmt 1 discriminator 4 view .LVU222
+ 826              	.LBB315:
+ 827              	.LBI257:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 828              		.loc 6 59 16 discriminator 4 view .LVU223
+ 829              	.LBB259:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 830              		.loc 6 60 5 discriminator 4 view .LVU224
+ 831              		.loc 6 61 5 discriminator 4 view .LVU225
+ 832              		.loc 6 61 5 is_stmt 0 discriminator 4 view .LVU226
+ 833              	.LBE259:
+ 834              	.LBE315:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 835              		.loc 2 103 5 is_stmt 1 discriminator 4 view .LVU227
+ 836              	.LBB316:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 837              		.loc 2 103 26 discriminator 4 view .LVU228
+ 838              	.LBB306:
+ 106:mi/plaits/dsp/engine/fm_engine.cpp ****       carrier_phase_ += carrier_increment;
+ 107:mi/plaits/dsp/engine/fm_engine.cpp ****       sub_phase_ += carrier_increment >> 1;
+ 839              		.loc 2 107 39 is_stmt 0 discriminator 4 view .LVU229
+ 840 0202 4FEA5C0E 		lsr	lr, ip, #1
+ 841 0206 0CEB0A07 		add	r7, ip, r10
+ 842 020a 03EB5C06 		add	r6, r3, ip, lsr #1
+ 843              	.LVL42:
+ 844              	.L18:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 24
+
+
+ 104:mi/plaits/dsp/engine/fm_engine.cpp ****            _modulator_frequency * (1.0f + previous_sample_ * phase_feedback));
+ 845              		.loc 2 104 7 is_stmt 1 view .LVU230
+ 105:mi/plaits/dsp/engine/fm_engine.cpp ****       carrier_phase_ += carrier_increment;
+ 846              		.loc 2 105 41 is_stmt 0 view .LVU231
+ 847 020e F7EE007A 		vmov.f32	s15, #1.0e+0
+ 108:mi/plaits/dsp/engine/fm_engine.cpp ****       float modulator_fb = feedback > 0.0f ? 0.25f * feedback * feedback : 0.0f;
+ 848              		.loc 2 108 44 view .LVU232
+ 849 0212 DFED746A 		vldr.32	s13, .L44+68
+ 850              		.loc 2 108 52 view .LVU233
+ 851 0216 B5EE007A 		vmov.f32	s14, #2.5e-1
+ 852              		.loc 2 108 44 view .LVU234
+ 853 021a F4EEE65A 		vcmpe.f32	s11, s13
+ 105:mi/plaits/dsp/engine/fm_engine.cpp ****       carrier_phase_ += carrier_increment;
+ 854              		.loc 2 105 41 view .LVU235
+ 855 021e E2EE067A 		vfma.f32	s15, s4, s12
+ 856              		.loc 2 108 44 view .LVU236
+ 857 0222 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 105:mi/plaits/dsp/engine/fm_engine.cpp ****       carrier_phase_ += carrier_increment;
+ 858              		.loc 2 105 33 view .LVU237
+ 859 0226 62EEA77A 		vmul.f32	s15, s5, s15
+ 104:mi/plaits/dsp/engine/fm_engine.cpp ****            _modulator_frequency * (1.0f + previous_sample_ * phase_feedback));
+ 860              		.loc 2 104 27 view .LVU238
+ 861 022a FCEEE77A 		vcvt.u32.f32	s15, s15
+ 104:mi/plaits/dsp/engine/fm_engine.cpp ****            _modulator_frequency * (1.0f + previous_sample_ * phase_feedback));
+ 862              		.loc 2 104 24 view .LVU239
+ 863 022e 17EE903A 		vmov	r3, s15	@ int
+ 864 0232 1D44     		add	r5, r5, r3
+ 106:mi/plaits/dsp/engine/fm_engine.cpp ****       sub_phase_ += carrier_increment >> 1;
+ 865              		.loc 2 106 7 is_stmt 1 view .LVU240
+ 107:mi/plaits/dsp/engine/fm_engine.cpp ****       float modulator_fb = feedback > 0.0f ? 0.25f * feedback * feedback : 0.0f;
+ 866              		.loc 2 107 7 view .LVU241
+ 867              		.loc 2 108 7 view .LVU242
+ 868              		.loc 2 108 44 is_stmt 0 view .LVU243
+ 869 0234 03DD     		ble	.L16
+ 870              		.loc 2 108 52 discriminator 1 view .LVU244
+ 871 0236 25EE877A 		vmul.f32	s14, s11, s14
+ 872              		.loc 2 108 44 discriminator 1 view .LVU245
+ 873 023a 67EE256A 		vmul.f32	s13, s14, s11
+ 874              	.L16:
+ 875              	.LVL43:
+ 109:mi/plaits/dsp/engine/fm_engine.cpp ****       float modulator = SinePM(
+ 876              		.loc 2 109 7 is_stmt 1 discriminator 4 view .LVU246
+ 877              	.LBB262:
+ 878              	.LBI262:
+ 879              		.file 8 "mi/plaits/dsp/oscillator/sine_oscillator.h"
+   1:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+   3:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+   5:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/oscillator/sine_oscillator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/oscillator/sine_oscillator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/oscillator/sine_oscillator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/oscillator/sine_oscillator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/oscillator/sine_oscillator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/oscillator/sine_oscillator.h **** // 
+  12:mi/plaits/dsp/oscillator/sine_oscillator.h **** // The above copyright notice and this permission notice shall be included in
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 25
+
+
+  13:mi/plaits/dsp/oscillator/sine_oscillator.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/oscillator/sine_oscillator.h **** // 
+  15:mi/plaits/dsp/oscillator/sine_oscillator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/oscillator/sine_oscillator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/oscillator/sine_oscillator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/oscillator/sine_oscillator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/oscillator/sine_oscillator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/oscillator/sine_oscillator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/oscillator/sine_oscillator.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/oscillator/sine_oscillator.h **** // 
+  23:mi/plaits/dsp/oscillator/sine_oscillator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+  25:mi/plaits/dsp/oscillator/sine_oscillator.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+  27:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Simple sine oscillator (wavetable) + fast sine oscillator (magic circle).
+  28:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+  29:mi/plaits/dsp/oscillator/sine_oscillator.h **** // The fast implementation might glitch a bit under heavy modulations of the
+  30:mi/plaits/dsp/oscillator/sine_oscillator.h **** // frequency.
+  31:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  32:mi/plaits/dsp/oscillator/sine_oscillator.h **** #ifndef PLAITS_DSP_OSCILLATOR_SINE_OSCILLATOR_H_
+  33:mi/plaits/dsp/oscillator/sine_oscillator.h **** #define PLAITS_DSP_OSCILLATOR_SINE_OSCILLATOR_H_
+  34:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  35:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "stmlib/dsp/dsp.h"
+  36:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "stmlib/dsp/parameter_interpolator.h"
+  37:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "stmlib/dsp/rsqrt.h"
+  38:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  39:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "plaits/resources.h"
+  40:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  41:mi/plaits/dsp/oscillator/sine_oscillator.h **** namespace plaits {
+  42:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+  43:mi/plaits/dsp/oscillator/sine_oscillator.h **** const float kSineLUTSize = 512.0f;
+  44:mi/plaits/dsp/oscillator/sine_oscillator.h **** const size_t kSineLUTQuadrature = 128;
+  45:mi/plaits/dsp/oscillator/sine_oscillator.h **** const size_t kSineLUTBits = 9;
+  46:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  47:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Safe for phase >= 0.0f, will wrap.
+  48:mi/plaits/dsp/oscillator/sine_oscillator.h **** inline float Sine(float phase) {
+  49:mi/plaits/dsp/oscillator/sine_oscillator.h ****   return stmlib::InterpolateWrap(lut_sine, phase, kSineLUTSize);
+  50:mi/plaits/dsp/oscillator/sine_oscillator.h **** }
+  51:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  52:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Potentially unsafe, if phase >= 1.25.
+  53:mi/plaits/dsp/oscillator/sine_oscillator.h **** inline float SineNoWrap(float phase) {
+  54:mi/plaits/dsp/oscillator/sine_oscillator.h ****   return stmlib::Interpolate(lut_sine, phase, kSineLUTSize);
+  55:mi/plaits/dsp/oscillator/sine_oscillator.h **** }
+  56:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  57:mi/plaits/dsp/oscillator/sine_oscillator.h **** // With positive of negative phase modulation up to an index of 32.
+  58:mi/plaits/dsp/oscillator/sine_oscillator.h **** inline float SinePM(uint32_t phase, float pm) {
+ 880              		.loc 8 58 14 discriminator 4 view .LVU247
+ 881              	.LBB263:
+  59:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float max_uint32 = 4294967296.0f;
+ 882              		.loc 8 59 3 discriminator 4 view .LVU248
+  60:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const int max_index = 32;
+ 883              		.loc 8 60 3 discriminator 4 view .LVU249
+  61:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float offset = float(max_index);
+ 884              		.loc 8 61 3 discriminator 4 view .LVU250
+  62:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float scale = max_uint32 / float(max_index * 2);
+ 885              		.loc 8 62 3 discriminator 4 view .LVU251
+  63:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 26
+
+
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   phase += static_cast<uint32_t>((pm + offset) * scale) * max_index * 2;
+ 886              		.loc 8 64 3 discriminator 4 view .LVU252
+ 887              		.loc 8 64 38 is_stmt 0 discriminator 4 view .LVU253
+ 888 023e DFED647A 		vldr.32	s15, .L44+48
+ 889              	.LBE263:
+ 890              	.LBE262:
+ 891              	.LBB268:
+ 892              	.LBB269:
+ 893 0242 F5EE00AA 		vmov.f32	s21, #2.5e-1
+ 894              	.LBE269:
+ 895              	.LBE268:
+ 896              	.LBB277:
+ 897              	.LBB264:
+ 898              		.loc 8 64 48 discriminator 4 view .LVU254
+ 899 0246 DFED639A 		vldr.32	s19, .L44+52
+ 900              	.LBE264:
+ 901              	.LBE277:
+ 902              	.LBB278:
+ 903              	.LBB279:
+  46:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+  47:mi/plaits/dsp/downsampler/4x_downsampler.h ****   ~Downsampler() {
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****     *state_ = head_;
+  49:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+  50:mi/plaits/dsp/downsampler/4x_downsampler.h ****   inline void Accumulate(int i, float sample) {
+  51:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ += sample * lut_4x_downsampler_fir[3 - (i & 3)];
+ 904              		.loc 7 51 48 discriminator 4 view .LVU255
+ 905 024a 81F0030B 		eor	fp, r1, #3
+ 906              	.LBE279:
+ 907              	.LBE278:
+ 908              	.LBB284:
+ 909              	.LBB265:
+ 910              		.loc 8 64 38 discriminator 4 view .LVU256
+ 911 024e B0EE677A 		vmov.f32	s14, s15
+  65:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   uint32_t integral = phase >> (32 - kSineLUTBits);
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 912              		.loc 8 67 9 discriminator 4 view .LVU257
+ 913 0252 9FED619A 		vldr.32	s18, .L44+56
+ 914              	.LBE265:
+ 915              	.LBE284:
+ 110:mi/plaits/dsp/engine/fm_engine.cpp ****           modulator_phase_, modulator_fb * previous_sample_);
+ 111:mi/plaits/dsp/engine/fm_engine.cpp ****       float carrier = SinePM(carrier_phase_, amount * modulator);
+ 112:mi/plaits/dsp/engine/fm_engine.cpp ****       float sub = SinePM(sub_phase_, amount * carrier * 0.25f);
+ 113:mi/plaits/dsp/engine/fm_engine.cpp ****       ONE_POLE(previous_sample_, carrier, 0.05f);
+ 916              		.loc 2 113 7 discriminator 4 view .LVU258
+ 917 0256 9FED61AA 		vldr.32	s20, .L44+60
+ 918              	.LBE306:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 919              		.loc 2 103 5 discriminator 4 view .LVU259
+ 920 025a 0131     		adds	r1, r1, #1
+ 921              	.LVL44:
+ 922              	.LBB307:
+ 923              	.LBB285:
+ 924              	.LBB280:
+ 925              		.loc 7 51 57 discriminator 4 view .LVU260
+ 926 025c 09EB8B0B 		add	fp, r9, fp, lsl #2
+ 927              	.LBE280:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 27
+
+
+ 928              	.LBE285:
+ 929              	.LBB286:
+ 930              	.LBB266:
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 931              		.loc 8 64 38 discriminator 4 view .LVU261
+ 932 0260 A6EE867A 		vfma.f32	s14, s13, s12
+ 933              	.LBE266:
+ 934              	.LBE286:
+ 935              	.LBE307:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 936              		.loc 2 103 26 discriminator 4 view .LVU262
+ 937 0264 0429     		cmp	r1, #4
+ 938              	.LBB308:
+ 939              	.LBB287:
+ 940              	.LBB267:
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 941              		.loc 8 64 48 discriminator 4 view .LVU263
+ 942 0266 27EE297A 		vmul.f32	s14, s14, s19
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 943              		.loc 8 64 12 discriminator 4 view .LVU264
+ 944 026a BCEEC77A 		vcvt.u32.f32	s14, s14
+ 945 026e 17EE103A 		vmov	r3, s14	@ int
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 946              		.loc 8 64 9 discriminator 4 view .LVU265
+ 947 0272 05EB8313 		add	r3, r5, r3, lsl #6
+ 948              	.LVL45:
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 949              		.loc 8 66 3 is_stmt 1 discriminator 4 view .LVU266
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 950              		.loc 8 66 12 is_stmt 0 discriminator 4 view .LVU267
+ 951 0276 4FEAD354 		lsr	r4, r3, #23
+ 952              	.LVL46:
+ 953              		.loc 8 67 3 is_stmt 1 discriminator 4 view .LVU268
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 954              		.loc 8 68 3 discriminator 4 view .LVU269
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 955              		.loc 8 67 47 is_stmt 0 discriminator 4 view .LVU270
+ 956 027a 4FEA4323 		lsl	r3, r3, #9
+ 957              	.LVL47:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 958              		.loc 8 67 47 discriminator 4 view .LVU271
+ 959 027e 07EE103A 		vmov	s14, r3	@ int
+ 960              	.LVL48:
+ 961              		.loc 8 68 9 discriminator 4 view .LVU272
+ 962 0282 02EB8403 		add	r3, r2, r4, lsl #2
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 963              		.loc 8 67 22 discriminator 4 view .LVU273
+ 964 0286 B8EE477A 		vcvt.f32.u32	s14, s14
+ 965              		.loc 8 68 9 discriminator 4 view .LVU274
+ 966 028a D3ED006A 		vldr.32	s13, [r3]
+ 967              	.LVL49:
+  69:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 968              		.loc 8 69 3 is_stmt 1 discriminator 4 view .LVU275
+  70:mi/plaits/dsp/oscillator/sine_oscillator.h ****   return a + (b - a) * fractional;
+ 969              		.loc 8 70 3 discriminator 4 view .LVU276
+ 970              		.loc 8 70 17 is_stmt 0 discriminator 4 view .LVU277
+ 971 028e 93ED01BA 		vldr.32	s22, [r3, #4]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 28
+
+
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 972              		.loc 8 67 9 discriminator 4 view .LVU278
+ 973 0292 27EE097A 		vmul.f32	s14, s14, s18
+ 974              	.LVL50:
+ 975              		.loc 8 70 17 discriminator 4 view .LVU279
+ 976 0296 3BEE66BA 		vsub.f32	s22, s22, s13
+ 977              		.loc 8 70 24 discriminator 4 view .LVU280
+ 978 029a E7EE0B6A 		vfma.f32	s13, s14, s22
+ 979              	.LVL51:
+ 980              		.loc 8 70 24 discriminator 4 view .LVU281
+ 981              	.LBE267:
+ 982              	.LBE287:
+ 111:mi/plaits/dsp/engine/fm_engine.cpp ****       float sub = SinePM(sub_phase_, amount * carrier * 0.25f);
+ 983              		.loc 2 111 7 is_stmt 1 discriminator 4 view .LVU282
+ 984              	.LBB288:
+ 985              	.LBI288:
+  58:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float max_uint32 = 4294967296.0f;
+ 986              		.loc 8 58 14 discriminator 4 view .LVU283
+ 987              	.LBB289:
+  59:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const int max_index = 32;
+ 988              		.loc 8 59 3 discriminator 4 view .LVU284
+  60:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float offset = float(max_index);
+ 989              		.loc 8 60 3 discriminator 4 view .LVU285
+  61:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float scale = max_uint32 / float(max_index * 2);
+ 990              		.loc 8 61 3 discriminator 4 view .LVU286
+  62:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+ 991              		.loc 8 62 3 discriminator 4 view .LVU287
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 992              		.loc 8 64 3 discriminator 4 view .LVU288
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 993              		.loc 8 64 38 is_stmt 0 discriminator 4 view .LVU289
+ 994 029e B0EE677A 		vmov.f32	s14, s15
+ 995 02a2 A4EEA67A 		vfma.f32	s14, s9, s13
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 996              		.loc 8 64 48 discriminator 4 view .LVU290
+ 997 02a6 27EE297A 		vmul.f32	s14, s14, s19
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 998              		.loc 8 64 12 discriminator 4 view .LVU291
+ 999 02aa BCEEC77A 		vcvt.u32.f32	s14, s14
+ 1000 02ae 17EE103A 		vmov	r3, s14	@ int
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 1001              		.loc 8 64 9 discriminator 4 view .LVU292
+ 1002 02b2 07EB8313 		add	r3, r7, r3, lsl #6
+ 1003              	.LVL52:
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 1004              		.loc 8 66 3 is_stmt 1 discriminator 4 view .LVU293
+ 1005              	.LBE289:
+ 1006              	.LBE288:
+ 1007              	.LBE308:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 1008              		.loc 2 103 26 is_stmt 0 discriminator 4 view .LVU294
+ 1009 02b6 6744     		add	r7, r7, ip
+ 1010              	.LBB309:
+ 1011              	.LBB291:
+ 1012              	.LBB290:
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 1013              		.loc 8 66 12 discriminator 4 view .LVU295
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 29
+
+
+ 1014 02b8 4FEAD354 		lsr	r4, r3, #23
+ 1015              	.LVL53:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1016              		.loc 8 67 3 is_stmt 1 discriminator 4 view .LVU296
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 1017              		.loc 8 68 3 discriminator 4 view .LVU297
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1018              		.loc 8 67 47 is_stmt 0 discriminator 4 view .LVU298
+ 1019 02bc 4FEA4323 		lsl	r3, r3, #9
+ 1020              	.LVL54:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1021              		.loc 8 67 47 discriminator 4 view .LVU299
+ 1022 02c0 07EE103A 		vmov	s14, r3	@ int
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 1023              		.loc 8 68 9 discriminator 4 view .LVU300
+ 1024 02c4 02EB8403 		add	r3, r2, r4, lsl #2
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1025              		.loc 8 67 22 discriminator 4 view .LVU301
+ 1026 02c8 B8EE477A 		vcvt.f32.u32	s14, s14
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 1027              		.loc 8 68 9 discriminator 4 view .LVU302
+ 1028 02cc D3ED006A 		vldr.32	s13, [r3]
+ 1029              	.LVL55:
+  69:mi/plaits/dsp/oscillator/sine_oscillator.h ****   return a + (b - a) * fractional;
+ 1030              		.loc 8 69 3 is_stmt 1 discriminator 4 view .LVU303
+ 1031              		.loc 8 70 3 discriminator 4 view .LVU304
+ 1032              		.loc 8 70 17 is_stmt 0 discriminator 4 view .LVU305
+ 1033 02d0 93ED01BA 		vldr.32	s22, [r3, #4]
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1034              		.loc 8 67 9 discriminator 4 view .LVU306
+ 1035 02d4 27EE097A 		vmul.f32	s14, s14, s18
+ 1036              	.LVL56:
+ 1037              		.loc 8 70 17 discriminator 4 view .LVU307
+ 1038 02d8 3BEE66BA 		vsub.f32	s22, s22, s13
+ 1039              		.loc 8 70 24 discriminator 4 view .LVU308
+ 1040 02dc E7EE0B6A 		vfma.f32	s13, s14, s22
+ 1041              	.LVL57:
+ 1042              		.loc 8 70 24 discriminator 4 view .LVU309
+ 1043              	.LBE290:
+ 1044              	.LBE291:
+ 112:mi/plaits/dsp/engine/fm_engine.cpp ****       ONE_POLE(previous_sample_, carrier, 0.05f);
+ 1045              		.loc 2 112 7 is_stmt 1 discriminator 4 view .LVU310
+ 1046              	.LBB292:
+ 1047              	.LBI268:
+  58:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float max_uint32 = 4294967296.0f;
+ 1048              		.loc 8 58 14 discriminator 4 view .LVU311
+ 1049              	.LBB270:
+  59:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const int max_index = 32;
+ 1050              		.loc 8 59 3 discriminator 4 view .LVU312
+  60:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float offset = float(max_index);
+ 1051              		.loc 8 60 3 discriminator 4 view .LVU313
+  61:mi/plaits/dsp/oscillator/sine_oscillator.h ****   const float scale = max_uint32 / float(max_index * 2);
+ 1052              		.loc 8 61 3 discriminator 4 view .LVU314
+  62:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+ 1053              		.loc 8 62 3 discriminator 4 view .LVU315
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 1054              		.loc 8 64 3 discriminator 4 view .LVU316
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 30
+
+
+ 1055              	.LBE270:
+ 1056              	.LBE292:
+ 112:mi/plaits/dsp/engine/fm_engine.cpp ****       ONE_POLE(previous_sample_, carrier, 0.05f);
+ 1057              		.loc 2 112 45 is_stmt 0 discriminator 4 view .LVU317
+ 1058 02e0 24EEA6BA 		vmul.f32	s22, s9, s13
+ 1059              		.loc 2 113 7 discriminator 4 view .LVU318
+ 1060 02e4 36EEC67A 		vsub.f32	s14, s13, s12
+ 1061              	.LBB293:
+ 1062              	.LBB271:
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 1063              		.loc 8 64 38 discriminator 4 view .LVU319
+ 1064 02e8 EBEE2A7A 		vfma.f32	s15, s22, s21
+ 1065              	.LBE271:
+ 1066              	.LBE293:
+ 1067              		.loc 2 113 7 discriminator 4 view .LVU320
+ 1068 02ec A7EE0A6A 		vfma.f32	s12, s14, s20
+ 1069              	.LBB294:
+ 1070              	.LBB272:
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 1071              		.loc 8 64 48 discriminator 4 view .LVU321
+ 1072 02f0 67EEA97A 		vmul.f32	s15, s15, s19
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 1073              		.loc 8 64 12 discriminator 4 view .LVU322
+ 1074 02f4 FCEEE77A 		vcvt.u32.f32	s15, s15
+ 1075 02f8 17EE903A 		vmov	r3, s15	@ int
+  64:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+ 1076              		.loc 8 64 9 discriminator 4 view .LVU323
+ 1077 02fc 06EB8313 		add	r3, r6, r3, lsl #6
+ 1078              	.LVL58:
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 1079              		.loc 8 66 3 is_stmt 1 discriminator 4 view .LVU324
+ 1080              	.LBE272:
+ 1081              	.LBE294:
+ 1082              	.LBE309:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 1083              		.loc 2 103 26 is_stmt 0 discriminator 4 view .LVU325
+ 1084 0300 7644     		add	r6, r6, lr
+ 1085              	.LBB310:
+ 1086              	.LBB295:
+ 1087              	.LBB273:
+  66:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float fractional = static_cast<float>(phase << kSineLUTBits) / float(max_uint32);
+ 1088              		.loc 8 66 12 discriminator 4 view .LVU326
+ 1089 0302 4FEAD354 		lsr	r4, r3, #23
+ 1090              	.LVL59:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1091              		.loc 8 67 3 is_stmt 1 discriminator 4 view .LVU327
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 1092              		.loc 8 68 3 discriminator 4 view .LVU328
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1093              		.loc 8 67 47 is_stmt 0 discriminator 4 view .LVU329
+ 1094 0306 4FEA4323 		lsl	r3, r3, #9
+ 1095              	.LVL60:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1096              		.loc 8 67 47 discriminator 4 view .LVU330
+ 1097 030a 07EE903A 		vmov	s15, r3	@ int
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 1098              		.loc 8 68 9 discriminator 4 view .LVU331
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 31
+
+
+ 1099 030e 02EB8403 		add	r3, r2, r4, lsl #2
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1100              		.loc 8 67 22 discriminator 4 view .LVU332
+ 1101 0312 F8EE677A 		vcvt.f32.u32	s15, s15
+  68:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float b = lut_sine[integral + 1];
+ 1102              		.loc 8 68 9 discriminator 4 view .LVU333
+ 1103 0316 93ED007A 		vldr.32	s14, [r3]
+ 1104              	.LVL61:
+  69:mi/plaits/dsp/oscillator/sine_oscillator.h ****   return a + (b - a) * fractional;
+ 1105              		.loc 8 69 3 is_stmt 1 discriminator 4 view .LVU334
+ 1106              		.loc 8 70 3 discriminator 4 view .LVU335
+ 1107              		.loc 8 70 17 is_stmt 0 discriminator 4 view .LVU336
+ 1108 031a D3ED019A 		vldr.32	s19, [r3, #4]
+ 1109              		.loc 8 70 17 discriminator 4 view .LVU337
+ 1110              	.LBE273:
+ 1111              	.LBE295:
+ 1112              		.loc 2 113 7 discriminator 4 view .LVU338
+ 1113 031e 88ED0B6A 		vstr.32	s12, [r8, #44]
+ 1114              	.LVL62:
+ 1115              	.LBB296:
+ 1116              	.LBB274:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1117              		.loc 8 67 9 discriminator 4 view .LVU339
+ 1118 0322 67EE897A 		vmul.f32	s15, s15, s18
+ 1119              	.LVL63:
+  67:mi/plaits/dsp/oscillator/sine_oscillator.h ****   float a = lut_sine[integral];
+ 1120              		.loc 8 67 9 discriminator 4 view .LVU340
+ 1121              	.LBE274:
+ 1122              	.LBE296:
+ 1123              	.LBB297:
+ 1124              	.LBB281:
+ 1125              		.loc 7 51 57 discriminator 4 view .LVU341
+ 1126 0326 9BED00AA 		vldr.32	s20, [fp]
+ 1127              	.LBE281:
+ 1128              	.LBE297:
+ 1129              	.LBB298:
+ 1130              	.LBB275:
+ 1131              		.loc 8 70 17 discriminator 4 view .LVU342
+ 1132 032a 39EEC79A 		vsub.f32	s18, s19, s14
+ 1133              	.LBE275:
+ 1134              	.LBE298:
+ 1135              	.LBB299:
+ 1136              	.LBB282:
+  52:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ += sample * lut_4x_downsampler_fir[i & 3];
+ 1137              		.loc 7 52 51 discriminator 4 view .LVU343
+ 1138 032e F0EC019A 		vldmia.32	r0!, {s19}
+  51:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ += sample * lut_4x_downsampler_fir[i & 3];
+ 1139              		.loc 7 51 11 discriminator 4 view .LVU344
+ 1140 0332 AAEE263A 		vfma.f32	s6, s20, s13
+ 1141              	.LVL64:
+ 1142              		.loc 7 52 11 discriminator 4 view .LVU345
+ 1143 0336 A9EEA64A 		vfma.f32	s8, s19, s13
+ 1144              	.LVL65:
+ 1145              		.loc 7 52 11 discriminator 4 view .LVU346
+ 1146              	.LBE282:
+ 1147              	.LBE299:
+ 1148              	.LBB300:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 32
+
+
+ 1149              	.LBB276:
+ 1150              		.loc 8 70 24 discriminator 4 view .LVU347
+ 1151 033a A7EE897A 		vfma.f32	s14, s15, s18
+ 1152              	.LVL66:
+ 1153              		.loc 8 70 24 discriminator 4 view .LVU348
+ 1154              	.LBE276:
+ 1155              	.LBE300:
+ 1156              		.loc 2 113 7 is_stmt 1 discriminator 4 view .LVU349
+ 1157              		.loc 2 113 49 discriminator 4 view .LVU350
+ 114:mi/plaits/dsp/engine/fm_engine.cpp ****       carrier_downsampler.Accumulate(j, carrier);
+ 1158              		.loc 2 114 7 discriminator 4 view .LVU351
+ 1159              	.LBB301:
+ 1160              	.LBI278:
+  50:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ += sample * lut_4x_downsampler_fir[3 - (i & 3)];
+ 1161              		.loc 7 50 15 discriminator 4 view .LVU352
+ 1162              	.LBB283:
+  51:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ += sample * lut_4x_downsampler_fir[i & 3];
+ 1163              		.loc 7 51 5 discriminator 4 view .LVU353
+ 1164              		.loc 7 52 5 discriminator 4 view .LVU354
+ 1165              		.loc 7 52 5 is_stmt 0 discriminator 4 view .LVU355
+ 1166              	.LBE283:
+ 1167              	.LBE301:
+ 115:mi/plaits/dsp/engine/fm_engine.cpp ****       sub_downsampler.Accumulate(j, sub);
+ 1168              		.loc 2 115 7 is_stmt 1 discriminator 4 view .LVU356
+ 1169              	.LBB302:
+ 1170              	.LBI302:
+  50:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ += sample * lut_4x_downsampler_fir[3 - (i & 3)];
+ 1171              		.loc 7 50 15 discriminator 4 view .LVU357
+ 1172              	.LBB303:
+  51:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ += sample * lut_4x_downsampler_fir[i & 3];
+ 1173              		.loc 7 51 5 discriminator 4 view .LVU358
+  51:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ += sample * lut_4x_downsampler_fir[i & 3];
+ 1174              		.loc 7 51 11 is_stmt 0 discriminator 4 view .LVU359
+ 1175 033e EAEE073A 		vfma.f32	s7, s20, s14
+ 1176              	.LVL67:
+ 1177              		.loc 7 52 5 is_stmt 1 discriminator 4 view .LVU360
+ 1178              		.loc 7 52 11 is_stmt 0 discriminator 4 view .LVU361
+ 1179 0342 A9EE875A 		vfma.f32	s10, s19, s14
+ 1180              	.LVL68:
+ 1181              		.loc 7 52 11 discriminator 4 view .LVU362
+ 1182              	.LBE303:
+ 1183              	.LBE302:
+ 1184              	.LBE310:
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 1185              		.loc 2 103 5 is_stmt 1 discriminator 4 view .LVU363
+ 103:mi/plaits/dsp/engine/fm_engine.cpp ****       modulator_phase_ += static_cast<uint32_t>(max_uint32 * \
+ 1186              		.loc 2 103 26 discriminator 4 view .LVU364
+ 1187 0346 7FF462AF 		bne	.L18
+ 1188              	.LBE316:
+ 116:mi/plaits/dsp/engine/fm_engine.cpp ****     }
+ 117:mi/plaits/dsp/engine/fm_engine.cpp ****     
+ 118:mi/plaits/dsp/engine/fm_engine.cpp ****     *out++ = carrier_downsampler.Read();
+ 1189              		.loc 2 118 12 is_stmt 0 view .LVU365
+ 1190 034a 0299     		ldr	r1, [sp, #8]
+ 1191              	.LVL69:
+ 1192              	.LBB317:
+ 1193              	.LBB311:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 33
+
+
+ 106:mi/plaits/dsp/engine/fm_engine.cpp ****       sub_phase_ += carrier_increment >> 1;
+ 1194              		.loc 2 106 22 view .LVU366
+ 1195 034c 0AEB8C0A 		add	r10, r10, ip, lsl #2
+ 1196              	.LBE311:
+ 1197              	.LBE317:
+ 1198              	.LBE246:
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 1199              		.loc 2 94 14 view .LVU367
+ 1200 0350 019B     		ldr	r3, [sp, #4]
+ 1201              	.LBB319:
+ 1202              		.loc 2 118 12 view .LVU368
+ 1203 0352 A1EC013A 		vstmia.32	r1!, {s6}
+ 1204 0356 0291     		str	r1, [sp, #8]
+ 1205              	.LVL70:
+ 1206              		.loc 2 118 12 view .LVU369
+ 1207              	.LBE319:
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 1208              		.loc 2 94 14 view .LVU370
+ 1209 0358 013B     		subs	r3, r3, #1
+ 1210              	.LBB320:
+ 119:mi/plaits/dsp/engine/fm_engine.cpp ****     *aux++ = sub_downsampler.Read();
+ 1211              		.loc 2 119 12 view .LVU371
+ 1212 035a 0399     		ldr	r1, [sp, #12]
+ 1213              	.LBE320:
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 1214              		.loc 2 94 14 view .LVU372
+ 1215 035c 0193     		str	r3, [sp, #4]
+ 1216              	.LVL71:
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 1217              		.loc 2 94 14 view .LVU373
+ 1218 035e 0133     		adds	r3, r3, #1
+ 1219              	.LBB321:
+ 1220              		.loc 2 119 12 view .LVU374
+ 1221 0360 E1EC013A 		vstmia.32	r1!, {s7}
+ 1222 0364 0391     		str	r1, [sp, #12]
+ 1223              	.LVL72:
+ 1224              	.LBB318:
+ 1225              	.LBB312:
+ 107:mi/plaits/dsp/engine/fm_engine.cpp ****       float modulator_fb = feedback > 0.0f ? 0.25f * feedback * feedback : 0.0f;
+ 1226              		.loc 2 107 18 view .LVU375
+ 1227 0366 0099     		ldr	r1, [sp]
+ 1228 0368 01EB8E01 		add	r1, r1, lr, lsl #2
+ 1229 036c 0091     		str	r1, [sp]
+ 1230              	.LBE312:
+ 1231              	.LBE318:
+ 118:mi/plaits/dsp/engine/fm_engine.cpp ****     *aux++ = sub_downsampler.Read();
+ 1232              		.loc 2 118 5 is_stmt 1 view .LVU376
+ 1233              	.LVL73:
+ 118:mi/plaits/dsp/engine/fm_engine.cpp ****     *aux++ = sub_downsampler.Read();
+ 1234              		.loc 2 118 5 is_stmt 0 view .LVU377
+ 1235              	.LBE321:
+  53:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+  54:mi/plaits/dsp/downsampler/4x_downsampler.h **** 
+  55:mi/plaits/dsp/downsampler/4x_downsampler.h ****   inline float Read() {
+  56:mi/plaits/dsp/downsampler/4x_downsampler.h ****     float value = head_;
+ 1236              		.loc 7 56 5 is_stmt 1 view .LVU378
+  57:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ = tail_;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 34
+
+
+ 1237              		.loc 7 57 5 view .LVU379
+  58:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ = 0.0f;
+ 1238              		.loc 7 58 5 view .LVU380
+  59:mi/plaits/dsp/downsampler/4x_downsampler.h ****     return value;
+ 1239              		.loc 7 59 5 view .LVU381
+ 1240              	.LBB322:
+ 1241              		.loc 2 119 5 view .LVU382
+ 1242              		.loc 2 119 5 is_stmt 0 view .LVU383
+ 1243              	.LBE322:
+  56:mi/plaits/dsp/downsampler/4x_downsampler.h ****     head_ = tail_;
+ 1244              		.loc 7 56 5 is_stmt 1 view .LVU384
+  57:mi/plaits/dsp/downsampler/4x_downsampler.h ****     tail_ = 0.0f;
+ 1245              		.loc 7 57 5 view .LVU385
+  58:mi/plaits/dsp/downsampler/4x_downsampler.h ****     return value;
+ 1246              		.loc 7 58 5 view .LVU386
+ 1247              		.loc 7 59 5 view .LVU387
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 1248              		.loc 2 94 3 view .LVU388
+  94:mi/plaits/dsp/engine/fm_engine.cpp ****     const float max_uint32 = 4294967296.0f;
+ 1249              		.loc 2 94 14 view .LVU389
+ 1250 036e 7FF421AF 		bne	.L19
+ 1251 0372 4046     		mov	r0, r8
+ 1252 0374 C8F81810 		str	r1, [r8, #24]
+ 1253 0378 C8E904A5 		strd	r10, r5, [r8, #16]
+ 1254              	.LVL74:
+ 1255              	.L13:
+ 1256              	.LBB323:
+ 1257              	.LBI323:
+  47:mi/plaits/dsp/downsampler/4x_downsampler.h ****     *state_ = head_;
+ 1258              		.loc 7 47 3 view .LVU390
+ 1259              	.LBB324:
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+ 1260              		.loc 7 48 5 view .LVU391
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+ 1261              		.loc 7 48 13 is_stmt 0 view .LVU392
+ 1262 037c 80ED0C5A 		vstr.32	s10, [r0, #48]
+ 1263              	.LVL75:
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+ 1264              		.loc 7 48 13 view .LVU393
+ 1265              	.LBE324:
+ 1266              	.LBE323:
+ 1267              	.LBB325:
+ 1268              	.LBI325:
+  47:mi/plaits/dsp/downsampler/4x_downsampler.h ****     *state_ = head_;
+ 1269              		.loc 7 47 3 is_stmt 1 view .LVU394
+ 1270              	.LBB326:
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+ 1271              		.loc 7 48 5 view .LVU395
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+ 1272              		.loc 7 48 13 is_stmt 0 view .LVU396
+ 1273 0380 80ED0D4A 		vstr.32	s8, [r0, #52]
+ 1274              	.LVL76:
+  48:mi/plaits/dsp/downsampler/4x_downsampler.h ****   }
+ 1275              		.loc 7 48 13 view .LVU397
+ 1276              	.LBE326:
+ 1277              	.LBE325:
+ 1278              	.LBB327:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 35
+
+
+ 1279              	.LBI327:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 1280              		.loc 6 49 3 is_stmt 1 view .LVU398
+ 1281              	.LBB328:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1282              		.loc 6 50 5 view .LVU399
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1283              		.loc 6 50 13 is_stmt 0 view .LVU400
+ 1284 0384 C0ED0A5A 		vstr.32	s11, [r0, #40]
+ 1285              	.LVL77:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1286              		.loc 6 50 13 view .LVU401
+ 1287              	.LBE328:
+ 1288              	.LBE327:
+ 1289              	.LBB329:
+ 1290              	.LBI329:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 1291              		.loc 6 49 3 is_stmt 1 view .LVU402
+ 1292              	.LBB330:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1293              		.loc 6 50 5 view .LVU403
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1294              		.loc 6 50 13 is_stmt 0 view .LVU404
+ 1295 0388 C0ED094A 		vstr.32	s9, [r0, #36]
+ 1296              	.LVL78:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1297              		.loc 6 50 13 view .LVU405
+ 1298              	.LBE330:
+ 1299              	.LBE329:
+ 1300              	.LBB331:
+ 1301              	.LBI331:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 1302              		.loc 6 49 3 is_stmt 1 view .LVU406
+ 1303              	.LBB332:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1304              		.loc 6 50 5 view .LVU407
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1305              		.loc 6 50 13 is_stmt 0 view .LVU408
+ 1306 038c 80ED081A 		vstr.32	s2, [r0, #32]
+ 1307              	.LVL79:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1308              		.loc 6 50 13 view .LVU409
+ 1309              	.LBE332:
+ 1310              	.LBE331:
+ 1311              	.LBB333:
+ 1312              	.LBI333:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 1313              		.loc 6 49 3 is_stmt 1 view .LVU410
+ 1314              	.LBB334:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1315              		.loc 6 50 5 view .LVU411
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1316              		.loc 6 50 13 is_stmt 0 view .LVU412
+ 1317 0390 C0ED071A 		vstr.32	s3, [r0, #28]
+ 1318              	.LVL80:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1319              		.loc 6 50 13 view .LVU413
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 36
+
+
+ 1320              	.LBE334:
+ 1321              	.LBE333:
+ 120:mi/plaits/dsp/engine/fm_engine.cpp ****   }
+ 121:mi/plaits/dsp/engine/fm_engine.cpp **** }
+ 1322              		.loc 2 121 1 view .LVU414
+ 1323 0394 05B0     		add	sp, sp, #20
+ 1324              		.cfi_remember_state
+ 1325              		.cfi_def_cfa_offset 68
+ 1326              		@ sp needed
+ 1327 0396 BDEC088B 		vldm	sp!, {d8-d11}
+ 1328              		.cfi_restore 86
+ 1329              		.cfi_restore 87
+ 1330              		.cfi_restore 84
+ 1331              		.cfi_restore 85
+ 1332              		.cfi_restore 82
+ 1333              		.cfi_restore 83
+ 1334              		.cfi_restore 80
+ 1335              		.cfi_restore 81
+ 1336              		.cfi_def_cfa_offset 36
+ 1337              	.LVL81:
+ 1338              		.loc 2 121 1 view .LVU415
+ 1339 039a BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1340              	.LVL82:
+ 1341              	.L45:
+ 1342              		.loc 2 121 1 view .LVU416
+ 1343 039e 00BF     		.align	2
+ 1344              	.L44:
+ 1345 03a0 00000043 		.word	1124073472
+ 1346 03a4 000000C3 		.word	-1023410176
+ 1347 03a8 00000000 		.word	_ZN6plaits26lut_fm_frequency_quantizerE
+ 1348 03ac 0000FE42 		.word	1123942400
+ 1349 03b0 00000000 		.word	_ZN6stmlib20lut_pitch_ratio_highE
+ 1350 03b4 51969639 		.word	966170193
+ 1351 03b8 00000000 		.word	_ZN6stmlib19lut_pitch_ratio_lowE
+ 1352 03bc 00009042 		.word	1116733440
+ 1353 03c0 CDCCCC3C 		.word	1020054733
+ 1354 03c4 00000000 		.word	_ZN6plaits8lut_sineE
+ 1355 03c8 0000804F 		.word	1333788672
+ 1356 03cc 00000000 		.word	_ZN6plaits22lut_4x_downsampler_firE
+ 1357 03d0 00000042 		.word	1107296256
+ 1358 03d4 0000804C 		.word	1283457024
+ 1359 03d8 0000802F 		.word	796917760
+ 1360 03dc CDCC4C3D 		.word	1028443341
+ 1361 03e0 00000043 		.word	1124073472
+ 1362 03e4 00000000 		.word	0
+ 1363              	.LVL83:
+ 1364              	.L43:
+ 1365              		.cfi_restore_state
+ 1366              	.LBB335:
+  98:mi/plaits/dsp/engine/fm_engine.cpp ****     const uint32_t carrier_increment = static_cast<uint32_t>(
+ 1367              		.loc 2 98 51 discriminator 1 view .LVU417
+ 1368 03e8 B6EE002A 		vmov.f32	s4, #5.0e-1
+ 1369 03ec 25EE822A 		vmul.f32	s4, s11, s4
+  98:mi/plaits/dsp/engine/fm_engine.cpp ****     const uint32_t carrier_increment = static_cast<uint32_t>(
+ 1370              		.loc 2 98 44 discriminator 1 view .LVU418
+ 1371 03f0 22EE252A 		vmul.f32	s4, s4, s11
+ 1372 03f4 EAE6     		b	.L14
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 37
+
+
+ 1373              	.LVL84:
+ 1374              	.L42:
+  98:mi/plaits/dsp/engine/fm_engine.cpp ****     const uint32_t carrier_increment = static_cast<uint32_t>(
+ 1375              		.loc 2 98 44 discriminator 1 view .LVU419
+ 1376              	.LBE335:
+ 1377              	.LBB336:
+ 1378              	.LBB171:
+ 1379              	.LBB165:
+ 1380              	.LBB159:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 1381              		.loc 5 41 9 view .LVU420
+ 1382 03f6 5FED066A 		vldr.32	s13, .L44+64
+ 1383              	.LVL85:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 1384              		.loc 5 41 9 view .LVU421
+ 1385 03fa 77EEA67A 		vadd.f32	s15, s15, s13
+ 1386              	.LVL86:
+  42:mi/stmlib/dsp/units.h **** 
+ 1387              		.loc 5 42 3 view .LVU422
+ 1388 03fe FDEEE76A 		vcvt.s32.f32	s13, s15
+ 1389              	.LVL87:
+  42:mi/stmlib/dsp/units.h **** 
+ 1390              		.loc 5 42 3 view .LVU423
+ 1391 0402 16EE906A 		vmov	r6, s13	@ int
+ 1392 0406 F8EEE66A 		vcvt.f32.s32	s13, s13
+ 1393 040a 77EEE67A 		vsub.f32	s15, s15, s13
+ 1394              		.loc 5 45 27 view .LVU424
+ 1395 040e F0EE676A 		vmov.f32	s13, s15
+ 1396 0412 FEEECC6A 		vcvt.s32.f32	s13, s13, #8
+ 1397 0416 16EE903A 		vmov	r3, s13	@ int
+ 1398 041a 80E6     		b	.L12
+ 1399              	.LVL88:
+ 1400              	.L40:
+ 1401              		.loc 5 45 27 view .LVU425
+ 1402              	.LBE159:
+ 1403              	.LBE165:
+ 1404              	.LBE171:
+ 1405              	.LBE336:
+ 1406              	.LBB337:
+ 1407              	.LBB143:
+ 1408              	.LBB140:
+ 1409              	.LBB138:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 1410              		.loc 5 41 9 view .LVU426
+ 1411 041c 37EE057A 		vadd.f32	s14, s14, s10
+ 1412              	.LVL89:
+  42:mi/stmlib/dsp/units.h **** 
+ 1413              		.loc 5 42 3 view .LVU427
+ 1414 0420 BDEEC76A 		vcvt.s32.f32	s12, s14
+ 1415 0424 16EE102A 		vmov	r2, s12	@ int
+ 1416              	.LVL90:
+  42:mi/stmlib/dsp/units.h **** 
+ 1417              		.loc 5 42 3 view .LVU428
+ 1418 0428 B8EEC66A 		vcvt.f32.s32	s12, s12
+ 1419 042c 37EE467A 		vsub.f32	s14, s14, s12
+ 1420              		.loc 5 45 27 view .LVU429
+ 1421 0430 B0EE476A 		vmov.f32	s12, s14
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 38
+
+
+ 1422 0434 BEEECC6A 		vcvt.s32.f32	s12, s12, #8
+ 1423 0438 16EE103A 		vmov	r3, s12	@ int
+ 1424 043c 21E6     		b	.L8
+ 1425              	.LVL91:
+ 1426              	.L41:
+ 1427              		.loc 5 45 27 view .LVU430
+ 1428              	.LBE138:
+ 1429              	.LBE140:
+ 1430              	.LBE143:
+ 1431              	.LBE337:
+  78:mi/plaits/dsp/engine/fm_engine.cpp ****   
+ 1432              		.loc 2 78 13 view .LVU431
+ 1433 043e 25EEA56A 		vmul.f32	s12, s11, s11
+ 1434 0442 54E6     		b	.L11
+ 1435              	.L23:
+  78:mi/plaits/dsp/engine/fm_engine.cpp ****   
+ 1436              		.loc 2 78 13 view .LVU432
+ 1437 0444 1FED196A 		vldr.32	s12, .L44+68
+ 1438 0448 51E6     		b	.L11
+ 1439              	.LVL92:
+ 1440              	.L22:
+  73:mi/plaits/dsp/engine/fm_engine.cpp **** 
+ 1441              		.loc 2 73 3 view .LVU433
+ 1442 044a 1FED1A7A 		vldr.32	s14, .L44+68
+ 1443              	.LVL93:
+  73:mi/plaits/dsp/engine/fm_engine.cpp **** 
+ 1444              		.loc 2 73 3 view .LVU434
+ 1445 044e 36E6     		b	.L9
+ 1446              		.cfi_endproc
+ 1447              	.LFE666:
+ 1449              		.global	_ZTVN6plaits8FMEngineE
+ 1450              		.section	.rodata._ZTVN6plaits8FMEngineE,"a"
+ 1451              		.align	2
+ 1454              	_ZTVN6plaits8FMEngineE:
+ 1455 0000 00000000 		.word	0
+ 1456 0004 00000000 		.word	0
+ 1457 0008 00000000 		.word	_ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE
+ 1458 000c 00000000 		.word	_ZN6plaits8FMEngine5ResetEv
+ 1459 0010 00000000 		.word	_ZN6plaits8FMEngine12LoadUserDataEPKh
+ 1460 0014 00000000 		.word	_ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 1461              		.text
+ 1462              	.Letext0:
+ 1463              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 1464              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 1465              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 1466              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 1467              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 1468              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v
+ 1469              		.file 15 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 1470              		.file 16 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 1471              		.file 17 "mi/stmlib/stmlib.h"
+ 1472              		.file 18 "mi/stmlib/utils/buffer_allocator.h"
+ 1473              		.file 19 "mi/plaits/dsp/dsp.h"
+ 1474              		.file 20 "mi/plaits/resources.h"
+ 1475              		.file 21 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s 			page 39
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 fm_engine.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:19     .text._ZN6plaits8FMEngine12LoadUserDataEPKh:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:26     .text._ZN6plaits8FMEngine12LoadUserDataEPKh:0000000000000000 _ZN6plaits8FMEngine12LoadUserDataEPKh
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:41     .text._ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:48     .text._ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 _ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:90     .text._ZN6plaits8FMEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000018 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:95     .text._ZN6plaits8FMEngine5ResetEv:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:102    .text._ZN6plaits8FMEngine5ResetEv:0000000000000000 _ZN6plaits8FMEngine5ResetEv
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:116    .text._ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:123    .text._ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 _ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:1345   .text._ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb:00000000000003a0 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:1368   .text._ZN6plaits8FMEngine6RenderERKNS_16EngineParametersEPfS4_jPb:00000000000003e8 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:1454   .rodata._ZTVN6plaits8FMEngineE:0000000000000000 _ZTVN6plaits8FMEngineE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccg2xNWw.s:1451   .rodata._ZTVN6plaits8FMEngineE:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+_ZN6plaits26lut_fm_frequency_quantizerE
+_ZN6stmlib20lut_pitch_ratio_highE
+_ZN6stmlib19lut_pitch_ratio_lowE
+_ZN6plaits8lut_sineE
+_ZN6plaits22lut_4x_downsampler_firE

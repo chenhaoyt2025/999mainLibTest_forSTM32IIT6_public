@@ -1,0 +1,239 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"lpc_speech_synth_phonemes.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	_ZN6plaits24LPCSpeechSynthController9phonemes_E
+  19              		.section	.rodata._ZN6plaits24LPCSpeechSynthController9phonemes_E,"a"
+  20              		.align	2
+  23              	_ZN6plaits24LPCSpeechSynthController9phonemes_E:
+  24 0000 C0       		.byte	-64
+  25 0001 50       		.byte	80
+  26 0002 40B8     		.short	-18368
+  27 0004 402D     		.short	11584
+  28 0006 34       		.byte	52
+  29 0007 1D       		.byte	29
+  30 0008 17       		.byte	23
+  31 0009 0E       		.byte	14
+  32 000a EF       		.byte	-17
+  33 000b 4F       		.byte	79
+  34 000c 25       		.byte	37
+  35 000d 04       		.byte	4
+  36 000e C0       		.byte	-64
+  37 000f 50       		.byte	80
+  38 0010 40C7     		.short	-14528
+  39 0012 0006     		.short	1536
+  40 0014 26       		.byte	38
+  41 0015 1D       		.byte	29
+  42 0016 0B       		.byte	11
+  43 0017 0E       		.byte	14
+  44 0018 D7       		.byte	-41
+  45 0019 4F       		.byte	79
+  46 001a 39       		.byte	57
+  47 001b 04       		.byte	4
+  48 001c C0       		.byte	-64
+  49 001d 50       		.byte	80
+  50 001e C038     		.short	14528
+  51 0020 0024     		.short	9216
+  52 0022 19       		.byte	25
+  53 0023 CA       		.byte	-54
+  54 0024 BA       		.byte	-70
+  55 0025 24       		.byte	36
+  56 0026 13       		.byte	19
+  57 0027 4F       		.byte	79
+  58 0028 39       		.byte	57
+  59 0029 16       		.byte	22
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s 			page 2
+
+
+  60 002a C0       		.byte	-64
+  61 002b 50       		.byte	80
+  62 002c 40C7     		.short	-14528
+  63 002e 80CB     		.short	-13440
+  64 0030 26       		.byte	38
+  65 0031 39       		.byte	57
+  66 0032 39       		.byte	57
+  67 0033 0E       		.byte	14
+  68 0034 CB       		.byte	-53
+  69 0035 07       		.byte	7
+  70 0036 25       		.byte	37
+  71 0037 4D       		.byte	77
+  72 0038 C0       		.byte	-64
+  73 0039 50       		.byte	80
+  74 003a 0099     		.short	-26368
+  75 003c 4010     		.short	4160
+  76 003e 0B       		.byte	11
+  77 003f 0F       		.byte	15
+  78 0040 FF       		.byte	-1
+  79 0041 24       		.byte	36
+  80 0042 D7       		.byte	-41
+  81 0043 1F       		.byte	31
+  82 0044 4D       		.byte	77
+  83 0045 16       		.byte	22
+  84 0046 0F       		.byte	15
+  85 0047 00       		.byte	0
+  86 0048 4014     		.short	5184
+  87 004a 0024     		.short	9216
+  88 004c E3       		.byte	-29
+  89 004d F4       		.byte	-12
+  90 004e 00       		.byte	0
+  91 004f 00       		.byte	0
+  92 0050 00       		.byte	0
+  93 0051 00       		.byte	0
+  94 0052 00       		.byte	0
+  95 0053 00       		.byte	0
+  96 0054 0A       		.byte	10
+  97 0055 00       		.byte	0
+  98 0056 406D     		.short	27968
+  99 0058 C045     		.short	17856
+ 100 005a 19       		.byte	25
+ 101 005b 2B       		.byte	43
+ 102 005c E8       		.byte	-24
+ 103 005d EC       		.byte	-20
+ 104 005e CB       		.byte	-53
+ 105 005f 37       		.byte	55
+ 106 0060 FC       		.byte	-4
+ 107 0061 CD       		.byte	-51
+ 108 0062 80       		.byte	-128
+ 109 0063 A0       		.byte	-96
+ 110 0064 C038     		.short	14528
+ 111 0066 80F1     		.short	-3712
+ 112 0068 D5       		.byte	-43
+ 113 0069 E6       		.byte	-26
+ 114 006a E8       		.byte	-24
+ 115 006b EC       		.byte	-20
+ 116 006c CB       		.byte	-53
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s 			page 3
+
+
+ 117 006d 37       		.byte	55
+ 118 006e FC       		.byte	-4
+ 119 006f CD       		.byte	-51
+ 120 0070 80       		.byte	-128
+ 121 0071 A0       		.byte	-96
+ 122 0072 4027     		.short	10048
+ 123 0074 402D     		.short	11584
+ 124 0076 F0       		.byte	-16
+ 125 0077 0F       		.byte	15
+ 126 0078 00       		.byte	0
+ 127 0079 00       		.byte	0
+ 128 007a 00       		.byte	0
+ 129 007b 00       		.byte	0
+ 130 007c 00       		.byte	0
+ 131 007d 00       		.byte	0
+ 132 007e E0       		.byte	-32
+ 133 007f 64       		.byte	100
+ 134 0080 C047     		.short	18368
+ 135 0082 80CB     		.short	-13440
+ 136 0084 9F       		.byte	-97
+ 137 0085 E6       		.byte	-26
+ 138 0086 F4       		.byte	-12
+ 139 0087 CB       		.byte	-53
+ 140 0088 D7       		.byte	-41
+ 141 0089 07       		.byte	7
+ 142 008a 39       		.byte	57
+ 143 008b 20       		.byte	32
+ 144 008c C0       		.byte	-64
+ 145 008d 50       		.byte	80
+ 146 008e C0D8     		.short	-10048
+ 147 0090 0024     		.short	9216
+ 148 0092 BA       		.byte	-70
+ 149 0093 0F       		.byte	15
+ 150 0094 22       		.byte	34
+ 151 0095 EC       		.byte	-20
+ 152 0096 EF       		.byte	-17
+ 153 0097 1F       		.byte	31
+ 154 0098 E8       		.byte	-24
+ 155 0099 16       		.byte	22
+ 156 009a 60       		.byte	96
+ 157 009b A0       		.byte	-96
+ 158 009c 40B8     		.short	-18368
+ 159 009e C045     		.short	17856
+ 160 00a0 E3       		.byte	-29
+ 161 00a1 F4       		.byte	-12
+ 162 00a2 DD       		.byte	-35
+ 163 00a3 03       		.byte	3
+ 164 00a4 FB       		.byte	-5
+ 165 00a5 07       		.byte	7
+ 166 00a6 25       		.byte	37
+ 167 00a7 16       		.byte	22
+ 168 00a8 40       		.byte	64
+ 169 00a9 50       		.byte	80
+ 170 00aa 80AB     		.short	-21632
+ 171 00ac 80E7     		.short	-6272
+ 172 00ae AD       		.byte	-83
+ 173 00af 1D       		.byte	29
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s 			page 4
+
+
+ 174 00b0 39       		.byte	57
+ 175 00b1 03       		.byte	3
+ 176 00b2 FB       		.byte	-5
+ 177 00b3 07       		.byte	7
+ 178 00b4 10       		.byte	16
+ 179 00b5 20       		.byte	32
+ 180 00b6 C0       		.byte	-64
+ 181 00b7 50       		.byte	80
+ 182 00b8 0000     		.short	0
+ 183 00ba C0FB     		.short	-1088
+ 184 00bc 0B       		.byte	11
+ 185 00bd E6       		.byte	-26
+ 186 00be E8       		.byte	-24
+ 187 00bf F7       		.byte	-9
+ 188 00c0 FB       		.byte	-5
+ 189 00c1 37       		.byte	55
+ 190 00c2 25       		.byte	37
+ 191 00c3 16       		.byte	22
+ 192 00c4 40       		.byte	64
+ 193 00c5 50       		.byte	80
+ 194 00c6 8054     		.short	21632
+ 195 00c8 80BB     		.short	-17536
+ 196 00ca 9F       		.byte	-97
+ 197 00cb 55       		.byte	85
+ 198 00cc 39       		.byte	57
+ 199 00cd EC       		.byte	-20
+ 200 00ce EF       		.byte	-17
+ 201 00cf 1F       		.byte	31
+ 202 00d0 FC       		.byte	-4
+ 203 00d1 3B       		.byte	59
+ 204              		.text
+ 205              	.Letext0:
+ 206              		.file 1 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 207              		.file 2 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 208              		.file 3 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 209              		.file 4 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 210              		.file 5 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 211              		.file 6 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7
+ 212              		.file 7 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 213              		.file 8 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 214              		.file 9 "mi/stmlib/stmlib.h"
+ 215              		.file 10 "mi/stmlib/utils/buffer_allocator.h"
+ 216              		.file 11 "mi/plaits/dsp/dsp.h"
+ 217              		.file 12 "mi/plaits/dsp/speech/lpc_speech_synth.h"
+ 218              		.file 13 "mi/plaits/dsp/speech/lpc_speech_synth_controller.h"
+ 219              		.file 14 "<built-in>"
+ 220              		.file 15 "mi/plaits/dsp/speech/lpc_speech_synth_phonemes.cpp"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lpc_speech_synth_phonemes.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s:23     .rodata._ZN6plaits24LPCSpeechSynthController9phonemes_E:0000000000000000 _ZN6plaits24LPCSpeechSynthController9phonemes_E
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSlxeWs.s:20     .rodata._ZN6plaits24LPCSpeechSynthController9phonemes_E:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

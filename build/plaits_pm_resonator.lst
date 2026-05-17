@@ -1,0 +1,1995 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"plaits_pm_resonator.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text._ZN6plaits9Resonator4InitEfi,"ax",%progbits
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.global	_ZN6plaits9Resonator4InitEfi
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	_ZN6plaits9Resonator4InitEfi:
+  27              	.LVL0:
+  28              	.LFB1517:
+  29              		.file 1 "mi/plaits/dsp/physical_modelling/resonator.cpp"
+   1:mi/plaits/dsp/physical_modelling/resonator.cpp **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/physical_modelling/resonator.cpp **** //
+   3:mi/plaits/dsp/physical_modelling/resonator.cpp **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/physical_modelling/resonator.cpp **** //
+   5:mi/plaits/dsp/physical_modelling/resonator.cpp **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/physical_modelling/resonator.cpp **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/physical_modelling/resonator.cpp **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/physical_modelling/resonator.cpp **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/physical_modelling/resonator.cpp **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/physical_modelling/resonator.cpp **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/physical_modelling/resonator.cpp **** // 
+  12:mi/plaits/dsp/physical_modelling/resonator.cpp **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/physical_modelling/resonator.cpp **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/physical_modelling/resonator.cpp **** // 
+  15:mi/plaits/dsp/physical_modelling/resonator.cpp **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/physical_modelling/resonator.cpp **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/physical_modelling/resonator.cpp **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/physical_modelling/resonator.cpp **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/physical_modelling/resonator.cpp **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/physical_modelling/resonator.cpp **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/physical_modelling/resonator.cpp **** // THE SOFTWARE.
+  22:mi/plaits/dsp/physical_modelling/resonator.cpp **** // 
+  23:mi/plaits/dsp/physical_modelling/resonator.cpp **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/physical_modelling/resonator.cpp **** //
+  25:mi/plaits/dsp/physical_modelling/resonator.cpp **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/physical_modelling/resonator.cpp **** //
+  27:mi/plaits/dsp/physical_modelling/resonator.cpp **** // Resonator, taken from Rings' code but with fixed position.
+  28:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  29:mi/plaits/dsp/physical_modelling/resonator.cpp **** #include "plaits/dsp/physical_modelling/resonator.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 2
+
+
+  30:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  31:mi/plaits/dsp/physical_modelling/resonator.cpp **** #include <algorithm>
+  32:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  33:mi/plaits/dsp/physical_modelling/resonator.cpp **** #include "stmlib/dsp/cosine_oscillator.h"
+  34:mi/plaits/dsp/physical_modelling/resonator.cpp **** #include "stmlib/dsp/dsp.h"
+  35:mi/plaits/dsp/physical_modelling/resonator.cpp **** #include "stmlib/dsp/units.h"
+  36:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  37:mi/plaits/dsp/physical_modelling/resonator.cpp **** #include "plaits/resources.h"
+  38:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  39:mi/plaits/dsp/physical_modelling/resonator.cpp **** namespace plaits {
+  40:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  41:mi/plaits/dsp/physical_modelling/resonator.cpp **** using namespace std;
+  42:mi/plaits/dsp/physical_modelling/resonator.cpp **** using namespace stmlib;
+  43:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  44:mi/plaits/dsp/physical_modelling/resonator.cpp **** void Resonator::Init(float position, int resolution) {
+  30              		.loc 1 44 54 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  45:mi/plaits/dsp/physical_modelling/resonator.cpp ****   resolution_ = min(resolution, kMaxNumModes);
+  35              		.loc 1 45 3 view .LVU1
+  36              	.LBB53:
+  37              	.LBB54:
+  38              	.LBB55:
+  39              		.file 2 "mi/stmlib/dsp/cosine_oscillator.h"
+   1:mi/stmlib/dsp/cosine_oscillator.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/cosine_oscillator.h **** //
+   3:mi/stmlib/dsp/cosine_oscillator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/cosine_oscillator.h **** //
+   5:mi/stmlib/dsp/cosine_oscillator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/cosine_oscillator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/cosine_oscillator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/cosine_oscillator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/cosine_oscillator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/cosine_oscillator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/cosine_oscillator.h **** // 
+  12:mi/stmlib/dsp/cosine_oscillator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/cosine_oscillator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/cosine_oscillator.h **** // 
+  15:mi/stmlib/dsp/cosine_oscillator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/cosine_oscillator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/cosine_oscillator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/cosine_oscillator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/cosine_oscillator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/cosine_oscillator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/cosine_oscillator.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/cosine_oscillator.h **** // 
+  23:mi/stmlib/dsp/cosine_oscillator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/cosine_oscillator.h **** //
+  25:mi/stmlib/dsp/cosine_oscillator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/cosine_oscillator.h **** //
+  27:mi/stmlib/dsp/cosine_oscillator.h **** // Cosine oscillator. Generates a cosine between 0.0 and 1.0 with minimal
+  28:mi/stmlib/dsp/cosine_oscillator.h **** // CPU use.
+  29:mi/stmlib/dsp/cosine_oscillator.h **** 
+  30:mi/stmlib/dsp/cosine_oscillator.h **** #ifndef STMLIB_DSP_COSINE_OSCILLATOR_H_
+  31:mi/stmlib/dsp/cosine_oscillator.h **** #define STMLIB_DSP_COSINE_OSCILLATOR_H_
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 3
+
+
+  32:mi/stmlib/dsp/cosine_oscillator.h **** 
+  33:mi/stmlib/dsp/cosine_oscillator.h **** #include "stmlib/stmlib.h"
+  34:mi/stmlib/dsp/cosine_oscillator.h **** 
+  35:mi/stmlib/dsp/cosine_oscillator.h **** #include <cmath>
+  36:mi/stmlib/dsp/cosine_oscillator.h **** 
+  37:mi/stmlib/dsp/cosine_oscillator.h **** namespace stmlib {
+  38:mi/stmlib/dsp/cosine_oscillator.h **** 
+  39:mi/stmlib/dsp/cosine_oscillator.h **** enum CosineOscillatorMode {
+  40:mi/stmlib/dsp/cosine_oscillator.h ****   COSINE_OSCILLATOR_APPROXIMATE,
+  41:mi/stmlib/dsp/cosine_oscillator.h ****   COSINE_OSCILLATOR_EXACT
+  42:mi/stmlib/dsp/cosine_oscillator.h **** };
+  43:mi/stmlib/dsp/cosine_oscillator.h **** 
+  44:mi/stmlib/dsp/cosine_oscillator.h **** class CosineOscillator {
+  45:mi/stmlib/dsp/cosine_oscillator.h ****  public:
+  46:mi/stmlib/dsp/cosine_oscillator.h ****   CosineOscillator() { }
+  47:mi/stmlib/dsp/cosine_oscillator.h ****   ~CosineOscillator() { }
+  48:mi/stmlib/dsp/cosine_oscillator.h **** 
+  49:mi/stmlib/dsp/cosine_oscillator.h ****   template<CosineOscillatorMode mode>
+  50:mi/stmlib/dsp/cosine_oscillator.h ****   inline void Init(float frequency) {
+  51:mi/stmlib/dsp/cosine_oscillator.h ****     if (mode == COSINE_OSCILLATOR_APPROXIMATE) {
+  52:mi/stmlib/dsp/cosine_oscillator.h ****       InitApproximate(frequency);
+  53:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+  54:mi/stmlib/dsp/cosine_oscillator.h ****       iir_coefficient_ = 2.0f * cosf(2.0f * float(M_PI) * frequency);
+  55:mi/stmlib/dsp/cosine_oscillator.h ****       initial_amplitude_ = iir_coefficient_ * 0.25f;
+  56:mi/stmlib/dsp/cosine_oscillator.h ****     }
+  57:mi/stmlib/dsp/cosine_oscillator.h ****     Start();
+  58:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  59:mi/stmlib/dsp/cosine_oscillator.h ****   
+  60:mi/stmlib/dsp/cosine_oscillator.h ****   inline void InitApproximate(float frequency) {
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     float sign = 16.0f;
+  62:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+  40              		.loc 2 62 15 is_stmt 0 view .LVU2
+  41 0000 F5EE007A 		vmov.f32	s15, #2.5e-1
+  42              	.LBE55:
+  43              	.LBE54:
+  44              	.LBE53:
+  45              		.loc 1 45 15 view .LVU3
+  46 0004 1829     		cmp	r1, #24
+  47 0006 0B46     		mov	r3, r1
+  48 0008 A8BF     		it	ge
+  49 000a 1823     		movge	r3, #24
+  50              	.LBB68:
+  51              	.LBB60:
+  52              	.LBB56:
+  53              		.loc 2 62 15 view .LVU4
+  54 000c 30EE670A 		vsub.f32	s0, s0, s15
+  55              	.LVL1:
+  56              		.loc 2 62 15 view .LVU5
+  57              	.LBE56:
+  58              	.LBE60:
+  59              	.LBE68:
+  60              		.loc 1 45 15 view .LVU6
+  61 0010 0360     		str	r3, [r0]
+  46:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  47:mi/plaits/dsp/physical_modelling/resonator.cpp ****   CosineOscillator amplitudes;
+  62              		.loc 1 47 3 is_stmt 1 view .LVU7
+  63              	.LVL2:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 4
+
+
+  64              	.LBB69:
+  65              	.LBI69:
+  46:mi/stmlib/dsp/cosine_oscillator.h ****   ~CosineOscillator() { }
+  66              		.loc 2 46 3 view .LVU8
+  46:mi/stmlib/dsp/cosine_oscillator.h ****   ~CosineOscillator() { }
+  67              		.loc 2 46 3 is_stmt 0 view .LVU9
+  68              	.LBE69:
+  48:mi/plaits/dsp/physical_modelling/resonator.cpp ****   amplitudes.Init<COSINE_OSCILLATOR_APPROXIMATE>(position);
+  69              		.loc 1 48 3 is_stmt 1 view .LVU10
+  70              	.LBB70:
+  71              	.LBI53:
+  50:mi/stmlib/dsp/cosine_oscillator.h ****     if (mode == COSINE_OSCILLATOR_APPROXIMATE) {
+  72              		.loc 2 50 15 view .LVU11
+  73              	.LBB61:
+  74              	.LBI54:
+  60:mi/stmlib/dsp/cosine_oscillator.h ****     float sign = 16.0f;
+  75              		.loc 2 60 15 view .LVU12
+  76              	.LBB57:
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+  77              		.loc 2 61 5 view .LVU13
+  78              		.loc 2 62 5 view .LVU14
+  63:mi/stmlib/dsp/cosine_oscillator.h ****     if (frequency < 0.0f) {
+  79              		.loc 2 63 5 view .LVU15
+  80 0012 B5EEC00A 		vcmpe.f32	s0, #0
+  81 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  82 001a 45D4     		bmi	.L17
+  64:mi/stmlib/dsp/cosine_oscillator.h ****       frequency = -frequency;
+  65:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+  66:mi/stmlib/dsp/cosine_oscillator.h ****       if (frequency > 0.5f) {
+  83              		.loc 2 66 7 view .LVU16
+  84 001c F6EE007A 		vmov.f32	s15, #5.0e-1
+  85 0020 B4EEE70A 		vcmpe.f32	s0, s15
+  86 0024 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  87 0028 39DC     		bgt	.L18
+  67:mi/stmlib/dsp/cosine_oscillator.h ****         frequency -= 0.5f;
+  68:mi/stmlib/dsp/cosine_oscillator.h ****       } else {
+  69:mi/stmlib/dsp/cosine_oscillator.h ****         sign = -16.0f;
+  88              		.loc 2 69 14 is_stmt 0 view .LVU17
+  89 002a FBEE007A 		vmov.f32	s15, #-1.6e+1
+  90              	.L4:
+  91              	.LVL3:
+  70:mi/stmlib/dsp/cosine_oscillator.h ****       }
+  71:mi/stmlib/dsp/cosine_oscillator.h ****     }
+  72:mi/stmlib/dsp/cosine_oscillator.h ****     iir_coefficient_ = sign * frequency * (1.0f - 2.0f * frequency);
+  92              		.loc 2 72 5 is_stmt 1 view .LVU18
+  93              		.loc 2 72 49 is_stmt 0 view .LVU19
+  94 002e F0EE006A 		vmov.f32	s13, #2.0e+0
+  95              	.LBE57:
+  96              	.LBE61:
+  97              	.LBE70:
+  98              	.LBB71:
+  49:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  50:mi/plaits/dsp/physical_modelling/resonator.cpp ****   for (int i = 0; i < resolution; ++i) {
+  99              		.loc 1 50 21 view .LVU20
+ 100 0032 0029     		cmp	r1, #0
+ 101              	.LBE71:
+ 102              	.LBB78:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 5
+
+
+ 103              	.LBB62:
+ 104              	.LBB58:
+ 105              		.loc 2 72 49 view .LVU21
+ 106 0034 B7EE005A 		vmov.f32	s10, #1.0e+0
+ 107              		.loc 2 72 29 view .LVU22
+ 108 0038 60EE277A 		vmul.f32	s15, s0, s15
+ 109              	.LVL4:
+  73:mi/stmlib/dsp/cosine_oscillator.h ****     initial_amplitude_ = iir_coefficient_ * 0.25f;
+ 110              		.loc 2 73 43 view .LVU23
+ 111 003c B5EE007A 		vmov.f32	s14, #2.5e-1
+  72:mi/stmlib/dsp/cosine_oscillator.h ****     initial_amplitude_ = iir_coefficient_ * 0.25f;
+ 112              		.loc 2 72 49 view .LVU24
+ 113 0040 A0EE665A 		vfms.f32	s10, s0, s13
+  72:mi/stmlib/dsp/cosine_oscillator.h ****     initial_amplitude_ = iir_coefficient_ * 0.25f;
+ 114              		.loc 2 72 41 view .LVU25
+ 115 0044 27EE855A 		vmul.f32	s10, s15, s10
+ 116              		.loc 2 73 5 is_stmt 1 view .LVU26
+ 117              		.loc 2 73 43 is_stmt 0 view .LVU27
+ 118 0048 25EE077A 		vmul.f32	s14, s10, s14
+ 119              	.LVL5:
+ 120              		.loc 2 73 43 view .LVU28
+ 121              	.LBE58:
+ 122              	.LBE62:
+ 123              	.LBB63:
+ 124              	.LBI63:
+  74:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  75:mi/stmlib/dsp/cosine_oscillator.h ****   
+  76:mi/stmlib/dsp/cosine_oscillator.h ****   inline void Start() {
+ 125              		.loc 2 76 15 is_stmt 1 view .LVU29
+ 126              	.LBB64:
+  77:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = initial_amplitude_;
+ 127              		.loc 2 77 5 view .LVU30
+  78:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = 0.5f;
+ 128              		.loc 2 78 5 view .LVU31
+ 129              		.loc 2 78 5 is_stmt 0 view .LVU32
+ 130              	.LBE64:
+ 131              	.LBE63:
+ 132              	.LBE78:
+ 133              		.loc 1 50 3 is_stmt 1 view .LVU33
+ 134              	.LBB79:
+ 135              		.loc 1 50 21 view .LVU34
+ 136 004c 18DD     		ble	.L6
+ 137 004e 031D     		adds	r3, r0, #4
+ 138              	.LBE79:
+ 139              	.LBB80:
+ 140              	.LBB66:
+ 141              	.LBB65:
+ 142              		.loc 2 78 9 is_stmt 0 view .LVU35
+ 143 0050 F6EE006A 		vmov.f32	s13, #5.0e-1
+ 144 0054 03EB8102 		add	r2, r3, r1, lsl #2
+ 145              	.LVL6:
+ 146              	.L7:
+ 147              		.loc 2 78 9 view .LVU36
+ 148              	.LBE65:
+ 149              	.LBE66:
+ 150              	.LBE80:
+ 151              	.LBB81:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 6
+
+
+  51:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_amplitude_[i] = amplitudes.Next() * 0.25f;
+ 152              		.loc 1 51 5 is_stmt 1 view .LVU37
+ 153              	.LBB72:
+ 154              	.LBI72:
+  79:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  80:mi/stmlib/dsp/cosine_oscillator.h ****   
+  81:mi/stmlib/dsp/cosine_oscillator.h ****   inline float value() const {
+  82:mi/stmlib/dsp/cosine_oscillator.h ****     return y1_ + 0.5f;
+  83:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  84:mi/stmlib/dsp/cosine_oscillator.h **** 
+  85:mi/stmlib/dsp/cosine_oscillator.h ****   inline float Next() {
+ 155              		.loc 2 85 16 view .LVU38
+ 156              	.LBB73:
+  86:mi/stmlib/dsp/cosine_oscillator.h ****     float temp = y0_;
+ 157              		.loc 2 86 5 view .LVU39
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = iir_coefficient_ * y0_ - y1_;
+ 158              		.loc 2 87 5 view .LVU40
+  88:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = temp;
+  89:mi/stmlib/dsp/cosine_oscillator.h ****     return temp + 0.5f;
+ 159              		.loc 2 89 19 is_stmt 0 view .LVU41
+ 160 0058 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 161 005c F1EE475A 		vneg.f32	s11, s14
+ 162              	.LBE73:
+ 163              	.LBE72:
+ 164              		.loc 1 51 44 view .LVU42
+ 165 0060 B5EE006A 		vmov.f32	s12, #2.5e-1
+ 166              	.LBB76:
+ 167              	.LBB74:
+ 168              		.loc 2 89 19 view .LVU43
+ 169 0064 76EEA77A 		vadd.f32	s15, s13, s15
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = iir_coefficient_ * y0_ - y1_;
+ 170              		.loc 2 87 34 view .LVU44
+ 171 0068 E6EE855A 		vfma.f32	s11, s13, s10
+ 172 006c B0EE667A 		vmov.f32	s14, s13
+ 173              	.LVL7:
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = iir_coefficient_ * y0_ - y1_;
+ 174              		.loc 2 87 34 view .LVU45
+ 175              	.LBE74:
+ 176              	.LBE76:
+ 177              		.loc 1 51 44 view .LVU46
+ 178 0070 67EE867A 		vmul.f32	s15, s15, s12
+ 179              		.loc 1 51 24 view .LVU47
+ 180 0074 E3EC017A 		vstmia.32	r3!, {s15}
+  50:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_amplitude_[i] = amplitudes.Next() * 0.25f;
+ 181              		.loc 1 50 21 view .LVU48
+ 182 0078 9342     		cmp	r3, r2
+ 183              	.LBB77:
+ 184              	.LBB75:
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = iir_coefficient_ * y0_ - y1_;
+ 185              		.loc 2 87 34 view .LVU49
+ 186 007a F0EE656A 		vmov.f32	s13, s11
+ 187              	.LVL8:
+  88:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = temp;
+ 188              		.loc 2 88 5 is_stmt 1 view .LVU50
+ 189              		.loc 2 89 5 view .LVU51
+ 190              		.loc 2 89 5 is_stmt 0 view .LVU52
+ 191              	.LBE75:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 7
+
+
+ 192              	.LBE77:
+  50:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_amplitude_[i] = amplitudes.Next() * 0.25f;
+ 193              		.loc 1 50 3 is_stmt 1 view .LVU53
+  50:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_amplitude_[i] = amplitudes.Next() * 0.25f;
+ 194              		.loc 1 50 21 view .LVU54
+ 195 007e EBD1     		bne	.L7
+ 196              	.LVL9:
+ 197              	.L6:
+  50:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_amplitude_[i] = amplitudes.Next() * 0.25f;
+ 198              		.loc 1 50 21 is_stmt 0 view .LVU55
+ 199 0080 00F1C002 		add	r2, r0, #192
+ 200              	.LVL10:
+ 201              	.L8:
+  50:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_amplitude_[i] = amplitudes.Next() * 0.25f;
+ 202              		.loc 1 50 21 view .LVU56
+ 203              	.LBE81:
+ 204              	.LBB82:
+ 205              	.LBB83:
+ 206              	.LBB84:
+ 207              		.file 3 "mi/plaits/dsp/physical_modelling/resonator.h"
+   1:mi/plaits/dsp/physical_modelling/resonator.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/physical_modelling/resonator.h **** //
+   3:mi/plaits/dsp/physical_modelling/resonator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/physical_modelling/resonator.h **** //
+   5:mi/plaits/dsp/physical_modelling/resonator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/physical_modelling/resonator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/physical_modelling/resonator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/physical_modelling/resonator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/physical_modelling/resonator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/physical_modelling/resonator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/physical_modelling/resonator.h **** // 
+  12:mi/plaits/dsp/physical_modelling/resonator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/physical_modelling/resonator.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/physical_modelling/resonator.h **** // 
+  15:mi/plaits/dsp/physical_modelling/resonator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/physical_modelling/resonator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/physical_modelling/resonator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/physical_modelling/resonator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/physical_modelling/resonator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/physical_modelling/resonator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/physical_modelling/resonator.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/physical_modelling/resonator.h **** // 
+  23:mi/plaits/dsp/physical_modelling/resonator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/physical_modelling/resonator.h **** //
+  25:mi/plaits/dsp/physical_modelling/resonator.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/physical_modelling/resonator.h **** //
+  27:mi/plaits/dsp/physical_modelling/resonator.h **** // Resonator, taken from Rings' code but with fixed position.
+  28:mi/plaits/dsp/physical_modelling/resonator.h **** 
+  29:mi/plaits/dsp/physical_modelling/resonator.h **** #ifndef PLAITS_DSP_PHYSICAL_MODELLING_RESONATOR_H_
+  30:mi/plaits/dsp/physical_modelling/resonator.h **** #define PLAITS_DSP_PHYSICAL_MODELLING_RESONATOR_H_
+  31:mi/plaits/dsp/physical_modelling/resonator.h **** 
+  32:mi/plaits/dsp/physical_modelling/resonator.h **** #include "stmlib/dsp/filter.h"
+  33:mi/plaits/dsp/physical_modelling/resonator.h **** 
+  34:mi/plaits/dsp/physical_modelling/resonator.h **** namespace plaits {
+  35:mi/plaits/dsp/physical_modelling/resonator.h **** 
+  36:mi/plaits/dsp/physical_modelling/resonator.h **** const int kMaxNumModes = 24;
+  37:mi/plaits/dsp/physical_modelling/resonator.h **** const int kModeBatchSize = 4;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 8
+
+
+  38:mi/plaits/dsp/physical_modelling/resonator.h **** 
+  39:mi/plaits/dsp/physical_modelling/resonator.h **** // We render 4 modes simultaneously since there are enough registers to hold
+  40:mi/plaits/dsp/physical_modelling/resonator.h **** // all state variables.
+  41:mi/plaits/dsp/physical_modelling/resonator.h **** template<int batch_size>
+  42:mi/plaits/dsp/physical_modelling/resonator.h **** class ResonatorSvf {
+  43:mi/plaits/dsp/physical_modelling/resonator.h ****  public:
+  44:mi/plaits/dsp/physical_modelling/resonator.h ****   ResonatorSvf() { }
+  45:mi/plaits/dsp/physical_modelling/resonator.h ****   ~ResonatorSvf() { }
+  46:mi/plaits/dsp/physical_modelling/resonator.h ****   
+  47:mi/plaits/dsp/physical_modelling/resonator.h ****   void Init() {
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****     for (int i = 0; i < batch_size; ++i) {
+ 208              		.loc 3 48 23 is_stmt 1 view .LVU57
+ 209              	.LBE84:
+ 210              	.LBE83:
+  52:mi/plaits/dsp/physical_modelling/resonator.cpp ****   }
+  53:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  54:mi/plaits/dsp/physical_modelling/resonator.cpp ****   for (int i = 0; i < kMaxNumModes / kModeBatchSize; ++i) {
+ 211              		.loc 1 54 21 is_stmt 0 view .LVU58
+ 212 0084 2030     		adds	r0, r0, #32
+ 213              	.LBB87:
+ 214              	.LBB85:
+  49:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 215              		.loc 3 49 33 view .LVU59
+ 216 0086 0023     		movs	r3, #0
+ 217              	.LBE85:
+ 218              	.LBE87:
+ 219              		.loc 1 54 21 view .LVU60
+ 220 0088 8242     		cmp	r2, r0
+ 221              	.LBB88:
+ 222              	.LBB86:
+ 223              		.loc 3 49 33 view .LVU61
+ 224 008a 4365     		str	r3, [r0, #84]	@ float
+ 225              		.loc 3 49 19 view .LVU62
+ 226 008c 4364     		str	r3, [r0, #68]	@ float
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 227              		.loc 3 48 5 is_stmt 1 view .LVU63
+ 228              	.LVL11:
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 229              		.loc 3 48 23 view .LVU64
+ 230              		.loc 3 49 33 is_stmt 0 view .LVU65
+ 231 008e 8365     		str	r3, [r0, #88]	@ float
+ 232              		.loc 3 49 19 view .LVU66
+ 233 0090 8364     		str	r3, [r0, #72]	@ float
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 234              		.loc 3 48 5 is_stmt 1 view .LVU67
+ 235              	.LVL12:
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 236              		.loc 3 48 23 view .LVU68
+ 237              		.loc 3 49 33 is_stmt 0 view .LVU69
+ 238 0092 C365     		str	r3, [r0, #92]	@ float
+ 239              		.loc 3 49 19 view .LVU70
+ 240 0094 C364     		str	r3, [r0, #76]	@ float
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 241              		.loc 3 48 5 is_stmt 1 view .LVU71
+ 242              	.LVL13:
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 243              		.loc 3 48 23 view .LVU72
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 9
+
+
+ 244              		.loc 3 49 33 is_stmt 0 view .LVU73
+ 245 0096 0366     		str	r3, [r0, #96]	@ float
+ 246              		.loc 3 49 19 view .LVU74
+ 247 0098 0365     		str	r3, [r0, #80]	@ float
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 248              		.loc 3 48 5 is_stmt 1 view .LVU75
+ 249              	.LVL14:
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 250              		.loc 3 48 23 view .LVU76
+  48:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_2_[i] = 0.0f;
+ 251              		.loc 3 48 23 is_stmt 0 view .LVU77
+ 252              	.LBE86:
+ 253              	.LBE88:
+ 254              		.loc 1 54 3 is_stmt 1 view .LVU78
+ 255              		.loc 1 54 21 view .LVU79
+ 256 009a F3D1     		bne	.L8
+ 257              	.LBE82:
+  55:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_filters_[i].Init();
+  56:mi/plaits/dsp/physical_modelling/resonator.cpp ****   }
+  57:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+ 258              		.loc 1 57 1 is_stmt 0 view .LVU80
+ 259 009c 7047     		bx	lr
+ 260              	.LVL15:
+ 261              	.L18:
+ 262              	.LBB89:
+ 263              	.LBB67:
+ 264              	.LBB59:
+  67:mi/stmlib/dsp/cosine_oscillator.h ****       } else {
+ 265              		.loc 2 67 9 is_stmt 1 view .LVU81
+  67:mi/stmlib/dsp/cosine_oscillator.h ****       } else {
+ 266              		.loc 2 67 19 is_stmt 0 view .LVU82
+ 267 009e 30EE670A 		vsub.f32	s0, s0, s15
+ 268              	.LVL16:
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+ 269              		.loc 2 61 11 view .LVU83
+ 270 00a2 F3EE007A 		vmov.f32	s15, #1.6e+1
+ 271 00a6 C2E7     		b	.L4
+ 272              	.L17:
+  64:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+ 273              		.loc 2 64 7 is_stmt 1 view .LVU84
+  64:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+ 274              		.loc 2 64 17 is_stmt 0 view .LVU85
+ 275 00a8 B1EE400A 		vneg.f32	s0, s0
+ 276              	.LVL17:
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+ 277              		.loc 2 61 11 view .LVU86
+ 278 00ac F3EE007A 		vmov.f32	s15, #1.6e+1
+ 279 00b0 BDE7     		b	.L4
+ 280              	.LBE59:
+ 281              	.LBE67:
+ 282              	.LBE89:
+ 283              		.cfi_endproc
+ 284              	.LFE1517:
+ 286 00b2 00BF     		.section	.text._ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_P
+ 287              		.align	1
+ 288              		.p2align 2,,3
+ 289              		.weak	_ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 10
+
+
+ 290              		.syntax unified
+ 291              		.thumb
+ 292              		.thumb_func
+ 294              	_ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj:
+ 295              	.LVL18:
+ 296              	.LFB1532:
+  50:mi/plaits/dsp/physical_modelling/resonator.h ****     }
+  51:mi/plaits/dsp/physical_modelling/resonator.h ****   }
+  52:mi/plaits/dsp/physical_modelling/resonator.h ****   
+  53:mi/plaits/dsp/physical_modelling/resonator.h ****   template<stmlib::FilterMode mode, bool add>
+  54:mi/plaits/dsp/physical_modelling/resonator.h ****   void Process(
+ 297              		.loc 3 54 8 is_stmt 1 view -0
+ 298              		.cfi_startproc
+ 299              		@ args = 12, pretend = 0, frame = 96
+ 300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 301              	.LBB90:
+  55:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* f,
+  56:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* q,
+  57:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* gain,
+  58:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* in,
+  59:mi/plaits/dsp/physical_modelling/resonator.h ****       float* out,
+  60:mi/plaits/dsp/physical_modelling/resonator.h ****       size_t size) {
+  61:mi/plaits/dsp/physical_modelling/resonator.h ****     float g[batch_size];
+  62:mi/plaits/dsp/physical_modelling/resonator.h ****     float r[batch_size];
+  63:mi/plaits/dsp/physical_modelling/resonator.h ****     float r_plus_g[batch_size];
+  64:mi/plaits/dsp/physical_modelling/resonator.h ****     float h[batch_size];
+  65:mi/plaits/dsp/physical_modelling/resonator.h ****     float state_1[batch_size];
+  66:mi/plaits/dsp/physical_modelling/resonator.h ****     float state_2[batch_size];
+  67:mi/plaits/dsp/physical_modelling/resonator.h ****     float gains[batch_size];
+  68:mi/plaits/dsp/physical_modelling/resonator.h ****     for (int i = 0; i < batch_size; ++i) {
+ 302              		.loc 3 68 23 view .LVU88
+ 303              	.LBE90:
+  54:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* f,
+ 304              		.loc 3 54 8 is_stmt 0 view .LVU89
+ 305 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 306              		.cfi_def_cfa_offset 28
+ 307              		.cfi_offset 4, -28
+ 308              		.cfi_offset 5, -24
+ 309              		.cfi_offset 6, -20
+ 310              		.cfi_offset 7, -16
+ 311              		.cfi_offset 8, -12
+ 312              		.cfi_offset 9, -8
+ 313              		.cfi_offset 14, -4
+ 314 0004 99B0     		sub	sp, sp, #100
+ 315              		.cfi_def_cfa_offset 128
+  54:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* f,
+ 316              		.loc 3 54 8 view .LVU90
+ 317 0006 0746     		mov	r7, r0
+ 318 0008 01F11008 		add	r8, r1, #16
+ 319 000c DDF888C0 		ldr	ip, [sp, #136]
+ 320 0010 0DF1100E 		add	lr, sp, #16
+ 321 0014 08AC     		add	r4, sp, #32
+ 322 0016 6846     		mov	r0, sp
+ 323              	.LVL19:
+  54:mi/plaits/dsp/physical_modelling/resonator.h ****       const float* f,
+ 324              		.loc 3 54 8 view .LVU91
+ 325 0018 DDE92065 		ldrd	r6, r5, [sp, #128]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 11
+
+
+ 326              	.LVL20:
+ 327              	.L20:
+ 328              	.LBB98:
+  69:mi/plaits/dsp/physical_modelling/resonator.h ****       g[i] = stmlib::OnePole::tan<stmlib::FREQUENCY_FAST>(f[i]);
+ 329              		.loc 3 69 58 view .LVU92
+ 330 001c F1EC016A 		vldmia.32	r1!, {s13}
+ 331              	.LVL21:
+ 332              	.LBB91:
+ 333              	.LBI91:
+ 334              		.file 4 "mi/stmlib/dsp/filter.h"
+   1:mi/stmlib/dsp/filter.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/filter.h **** //
+   3:mi/stmlib/dsp/filter.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/filter.h **** //
+   5:mi/stmlib/dsp/filter.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/filter.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/filter.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/filter.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/filter.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/filter.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/filter.h **** // 
+  12:mi/stmlib/dsp/filter.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/filter.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/filter.h **** // 
+  15:mi/stmlib/dsp/filter.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/filter.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/filter.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/filter.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/filter.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/filter.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/filter.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/filter.h **** // 
+  23:mi/stmlib/dsp/filter.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/filter.h **** //
+  25:mi/stmlib/dsp/filter.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/filter.h **** //
+  27:mi/stmlib/dsp/filter.h **** // Zero-delay-feedback filters (one pole and SVF).
+  28:mi/stmlib/dsp/filter.h **** // Naive SVF.
+  29:mi/stmlib/dsp/filter.h **** 
+  30:mi/stmlib/dsp/filter.h **** #ifndef STMLIB_DSP_FILTER_H_
+  31:mi/stmlib/dsp/filter.h **** #define STMLIB_DSP_FILTER_H_
+  32:mi/stmlib/dsp/filter.h **** 
+  33:mi/stmlib/dsp/filter.h **** #include "stmlib/stmlib.h"
+  34:mi/stmlib/dsp/filter.h **** 
+  35:mi/stmlib/dsp/filter.h **** #include <cmath>
+  36:mi/stmlib/dsp/filter.h **** #include <algorithm>
+  37:mi/stmlib/dsp/filter.h **** 
+  38:mi/stmlib/dsp/filter.h **** namespace stmlib {
+  39:mi/stmlib/dsp/filter.h **** 
+  40:mi/stmlib/dsp/filter.h **** enum FilterMode {
+  41:mi/stmlib/dsp/filter.h ****   FILTER_MODE_LOW_PASS,
+  42:mi/stmlib/dsp/filter.h ****   FILTER_MODE_BAND_PASS,
+  43:mi/stmlib/dsp/filter.h ****   FILTER_MODE_BAND_PASS_NORMALIZED,
+  44:mi/stmlib/dsp/filter.h ****   FILTER_MODE_HIGH_PASS
+  45:mi/stmlib/dsp/filter.h **** };
+  46:mi/stmlib/dsp/filter.h **** 
+  47:mi/stmlib/dsp/filter.h **** enum FrequencyApproximation {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 12
+
+
+  48:mi/stmlib/dsp/filter.h ****   FREQUENCY_EXACT,
+  49:mi/stmlib/dsp/filter.h ****   FREQUENCY_ACCURATE,
+  50:mi/stmlib/dsp/filter.h ****   FREQUENCY_FAST,
+  51:mi/stmlib/dsp/filter.h ****   FREQUENCY_DIRTY
+  52:mi/stmlib/dsp/filter.h **** };
+  53:mi/stmlib/dsp/filter.h **** 
+  54:mi/stmlib/dsp/filter.h **** #define M_PI_F float(M_PI)
+  55:mi/stmlib/dsp/filter.h **** #define M_PI_POW_2 M_PI * M_PI
+  56:mi/stmlib/dsp/filter.h **** #define M_PI_POW_3 M_PI_POW_2 * M_PI
+  57:mi/stmlib/dsp/filter.h **** #define M_PI_POW_5 M_PI_POW_3 * M_PI_POW_2
+  58:mi/stmlib/dsp/filter.h **** #define M_PI_POW_7 M_PI_POW_5 * M_PI_POW_2
+  59:mi/stmlib/dsp/filter.h **** #define M_PI_POW_9 M_PI_POW_7 * M_PI_POW_2
+  60:mi/stmlib/dsp/filter.h **** #define M_PI_POW_11 M_PI_POW_9 * M_PI_POW_2
+  61:mi/stmlib/dsp/filter.h **** 
+  62:mi/stmlib/dsp/filter.h **** class DCBlocker {
+  63:mi/stmlib/dsp/filter.h ****  public:
+  64:mi/stmlib/dsp/filter.h ****   DCBlocker() { }
+  65:mi/stmlib/dsp/filter.h ****   ~DCBlocker() { }
+  66:mi/stmlib/dsp/filter.h ****   
+  67:mi/stmlib/dsp/filter.h ****   void Init(float pole) {
+  68:mi/stmlib/dsp/filter.h ****     x_ = 0.0f;
+  69:mi/stmlib/dsp/filter.h ****     y_ = 0.0f;
+  70:mi/stmlib/dsp/filter.h ****     pole_ = pole;
+  71:mi/stmlib/dsp/filter.h ****   }
+  72:mi/stmlib/dsp/filter.h ****   
+  73:mi/stmlib/dsp/filter.h ****   inline void Process(float* in_out, size_t size) {
+  74:mi/stmlib/dsp/filter.h ****     float x = x_;
+  75:mi/stmlib/dsp/filter.h ****     float y = y_;
+  76:mi/stmlib/dsp/filter.h ****     const float pole = pole_;
+  77:mi/stmlib/dsp/filter.h ****     while (size--) {
+  78:mi/stmlib/dsp/filter.h ****       float old_x = x;
+  79:mi/stmlib/dsp/filter.h ****       x = *in_out;
+  80:mi/stmlib/dsp/filter.h ****       *in_out++ = y = y * pole + x - old_x;
+  81:mi/stmlib/dsp/filter.h ****     }
+  82:mi/stmlib/dsp/filter.h ****     x_ = x;
+  83:mi/stmlib/dsp/filter.h ****     y_ = y;
+  84:mi/stmlib/dsp/filter.h ****   }
+  85:mi/stmlib/dsp/filter.h ****   
+  86:mi/stmlib/dsp/filter.h ****  private:
+  87:mi/stmlib/dsp/filter.h ****   float pole_;
+  88:mi/stmlib/dsp/filter.h ****   float x_;
+  89:mi/stmlib/dsp/filter.h ****   float y_;
+  90:mi/stmlib/dsp/filter.h **** };
+  91:mi/stmlib/dsp/filter.h **** 
+  92:mi/stmlib/dsp/filter.h **** class OnePole {
+  93:mi/stmlib/dsp/filter.h ****  public:
+  94:mi/stmlib/dsp/filter.h ****   OnePole() { }
+  95:mi/stmlib/dsp/filter.h ****   ~OnePole() { }
+  96:mi/stmlib/dsp/filter.h ****   
+  97:mi/stmlib/dsp/filter.h ****   void Init() {
+  98:mi/stmlib/dsp/filter.h ****     set_f<FREQUENCY_DIRTY>(0.01f);
+  99:mi/stmlib/dsp/filter.h ****     Reset();
+ 100:mi/stmlib/dsp/filter.h ****   }
+ 101:mi/stmlib/dsp/filter.h ****   
+ 102:mi/stmlib/dsp/filter.h ****   void Reset() {
+ 103:mi/stmlib/dsp/filter.h ****     state_ = 0.0f;
+ 104:mi/stmlib/dsp/filter.h ****   }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 13
+
+
+ 105:mi/stmlib/dsp/filter.h ****   
+ 106:mi/stmlib/dsp/filter.h ****   template<FrequencyApproximation approximation>
+ 107:mi/stmlib/dsp/filter.h ****   static inline float tan(float f) {
+ 335              		.loc 4 107 23 is_stmt 1 view .LVU93
+ 336              		.loc 4 107 23 is_stmt 0 view .LVU94
+ 337              	.LBE91:
+  70:mi/plaits/dsp/physical_modelling/resonator.h ****       r[i] = 1.0f / q[i];
+ 338              		.loc 3 70 19 view .LVU95
+ 339 0020 B7EE006A 		vmov.f32	s12, #1.0e+0
+ 340              		.loc 3 70 24 view .LVU96
+ 341 0024 F2EC017A 		vldmia.32	r2!, {s15}
+ 342              	.LBB95:
+ 343              	.LBB92:
+ 108:mi/stmlib/dsp/filter.h ****     if (approximation == FREQUENCY_EXACT) {
+ 109:mi/stmlib/dsp/filter.h ****       // Clip coefficient to about 100.
+ 110:mi/stmlib/dsp/filter.h ****       f = f < 0.497f ? f : 0.497f;
+ 111:mi/stmlib/dsp/filter.h ****       return tanf(M_PI_F * f);
+ 112:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_DIRTY) {
+ 113:mi/stmlib/dsp/filter.h ****       // Optimized for frequencies below 8kHz.
+ 114:mi/stmlib/dsp/filter.h ****       const float a = 3.736e-01f * M_PI_POW_3;
+ 115:mi/stmlib/dsp/filter.h ****       return f * (M_PI_F + a * f * f);
+ 116:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_FAST) {
+ 117:mi/stmlib/dsp/filter.h ****       // The usual tangent approximation uses 3.1755e-01 and 2.033e-01, but
+ 118:mi/stmlib/dsp/filter.h ****       // the coefficients used here are optimized to minimize error for the
+ 119:mi/stmlib/dsp/filter.h ****       // 16Hz to 16kHz range, with a sample rate of 48kHz.
+ 120:mi/stmlib/dsp/filter.h ****       const float a = 3.260e-01f * M_PI_POW_3;
+ 121:mi/stmlib/dsp/filter.h ****       const float b = 1.823e-01f * M_PI_POW_5;
+ 122:mi/stmlib/dsp/filter.h ****       float f2 = f * f;
+ 344              		.loc 4 122 13 view .LVU97
+ 345 0028 26EEA65A 		vmul.f32	s10, s13, s13
+ 346              	.LVL22:
+ 123:mi/stmlib/dsp/filter.h ****       return f * (M_PI_F + f2 * (a + b * f2));
+ 347              		.loc 4 123 36 view .LVU98
+ 348 002c DFED444A 		vldr.32	s9, .L31
+ 349 0030 DFED445A 		vldr.32	s11, .L31+4
+ 350              	.LBE92:
+ 351              	.LBE95:
+ 352              		.loc 3 70 19 view .LVU99
+ 353 0034 86EE277A 		vdiv.f32	s14, s12, s15
+ 354              	.LBB96:
+ 355              	.LBB93:
+ 356              		.loc 4 123 26 view .LVU100
+ 357 0038 DFED437A 		vldr.32	s15, .L31+8
+ 358              	.LBE93:
+ 359              	.LBE96:
+  68:mi/plaits/dsp/physical_modelling/resonator.h ****       g[i] = stmlib::OnePole::tan<stmlib::FREQUENCY_FAST>(f[i]);
+ 360              		.loc 3 68 23 view .LVU101
+ 361 003c 4145     		cmp	r1, r8
+ 362              	.LBB97:
+ 363              	.LBB94:
+ 364              		.loc 4 123 36 view .LVU102
+ 365 003e E5EE245A 		vfma.f32	s11, s10, s9
+ 366              		.loc 4 123 26 view .LVU103
+ 367 0042 E5EE857A 		vfma.f32	s15, s11, s10
+ 368              		.loc 4 123 45 view .LVU104
+ 369 0046 67EEA67A 		vmul.f32	s15, s15, s13
+ 370              	.LVL23:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 14
+
+
+ 371              		.loc 4 123 45 view .LVU105
+ 372              	.LBE94:
+ 373              	.LBE97:
+  71:mi/plaits/dsp/physical_modelling/resonator.h ****       h[i] = 1.0f / (1.0f + r[i] * g[i] + g[i] * g[i]);
+ 374              		.loc 3 71 27 view .LVU106
+ 375 004a F0EE466A 		vmov.f32	s13, s12
+  69:mi/plaits/dsp/physical_modelling/resonator.h ****       r[i] = 1.0f / q[i];
+ 376              		.loc 3 69 12 view .LVU107
+ 377 004e E0EC017A 		vstmia.32	r0!, {s15}
+ 378              		.loc 3 71 27 view .LVU108
+ 379 0052 E7EE276A 		vfma.f32	s13, s14, s15
+  72:mi/plaits/dsp/physical_modelling/resonator.h ****       r_plus_g[i] = r[i] + g[i];
+ 380              		.loc 3 72 26 view .LVU109
+ 381 0056 37EE277A 		vadd.f32	s14, s14, s15
+ 382              		.loc 3 72 19 view .LVU110
+ 383 005a AEEC017A 		vstmia.32	lr!, {s14}
+  68:mi/plaits/dsp/physical_modelling/resonator.h ****       g[i] = stmlib::OnePole::tan<stmlib::FREQUENCY_FAST>(f[i]);
+ 384              		.loc 3 68 5 is_stmt 1 view .LVU111
+  68:mi/plaits/dsp/physical_modelling/resonator.h ****       g[i] = stmlib::OnePole::tan<stmlib::FREQUENCY_FAST>(f[i]);
+ 385              		.loc 3 68 23 view .LVU112
+  71:mi/plaits/dsp/physical_modelling/resonator.h ****       r_plus_g[i] = r[i] + g[i];
+ 386              		.loc 3 71 41 is_stmt 0 view .LVU113
+ 387 005e B0EE667A 		vmov.f32	s14, s13
+ 388 0062 A7EEA77A 		vfma.f32	s14, s15, s15
+  71:mi/plaits/dsp/physical_modelling/resonator.h ****       r_plus_g[i] = r[i] + g[i];
+ 389              		.loc 3 71 19 view .LVU114
+ 390 0066 C6EE077A 		vdiv.f32	s15, s12, s14
+  71:mi/plaits/dsp/physical_modelling/resonator.h ****       r_plus_g[i] = r[i] + g[i];
+ 391              		.loc 3 71 12 view .LVU115
+ 392 006a E4EC017A 		vstmia.32	r4!, {s15}
+  68:mi/plaits/dsp/physical_modelling/resonator.h ****       g[i] = stmlib::OnePole::tan<stmlib::FREQUENCY_FAST>(f[i]);
+ 393              		.loc 3 68 23 view .LVU116
+ 394 006e D5D1     		bne	.L20
+  73:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1[i] = state_1_[i];
+  74:mi/plaits/dsp/physical_modelling/resonator.h ****       state_2[i] = state_2_[i];
+  75:mi/plaits/dsp/physical_modelling/resonator.h ****       gains[i] = gain[i];
+ 395              		.loc 3 75 16 view .LVU117
+ 396 0070 1868     		ldr	r0, [r3]	@ unaligned
+ 397 0072 14AC     		add	r4, sp, #80
+ 398 0074 5968     		ldr	r1, [r3, #4]	@ unaligned
+ 399 0076 07F11008 		add	r8, r7, #16
+ 400              	.LVL24:
+ 401              		.loc 3 75 16 view .LVU118
+ 402 007a 9A68     		ldr	r2, [r3, #8]	@ unaligned
+ 403              	.LBE98:
+  76:mi/plaits/dsp/physical_modelling/resonator.h ****     }
+  77:mi/plaits/dsp/physical_modelling/resonator.h ****     
+  78:mi/plaits/dsp/physical_modelling/resonator.h ****     while (size--) {
+ 404              		.loc 3 78 5 view .LVU119
+ 405 007c 0CF1FF39 		add	r9, ip, #-1
+ 406              	.LBB99:
+  75:mi/plaits/dsp/physical_modelling/resonator.h ****     }
+ 407              		.loc 3 75 16 view .LVU120
+ 408 0080 DB68     		ldr	r3, [r3, #12]	@ unaligned
+ 409              	.LVL25:
+  75:mi/plaits/dsp/physical_modelling/resonator.h ****     }
+ 410              		.loc 3 75 16 view .LVU121
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 15
+
+
+ 411 0082 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+  74:mi/plaits/dsp/physical_modelling/resonator.h ****       gains[i] = gain[i];
+ 412              		.loc 3 74 18 view .LVU122
+ 413 0084 10AC     		add	r4, sp, #64
+ 414 0086 3869     		ldr	r0, [r7, #16]	@ unaligned
+ 415 0088 7969     		ldr	r1, [r7, #20]	@ unaligned
+ 416 008a BA69     		ldr	r2, [r7, #24]	@ unaligned
+ 417 008c FB69     		ldr	r3, [r7, #28]	@ unaligned
+ 418 008e 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+  73:mi/plaits/dsp/physical_modelling/resonator.h ****       state_2[i] = state_2_[i];
+ 419              		.loc 3 73 18 view .LVU123
+ 420 0090 3868     		ldr	r0, [r7]	@ unaligned
+ 421 0092 0CAC     		add	r4, sp, #48
+ 422 0094 7968     		ldr	r1, [r7, #4]	@ unaligned
+ 423 0096 BA68     		ldr	r2, [r7, #8]	@ unaligned
+ 424 0098 FB68     		ldr	r3, [r7, #12]	@ unaligned
+ 425 009a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 426              	.LVL26:
+  73:mi/plaits/dsp/physical_modelling/resonator.h ****       state_2[i] = state_2_[i];
+ 427              		.loc 3 73 18 view .LVU124
+ 428              	.LBE99:
+ 429              		.loc 3 78 5 is_stmt 1 view .LVU125
+ 430              		.loc 3 78 5 is_stmt 0 view .LVU126
+ 431 009c BCF1000F 		cmp	ip, #0
+ 432 00a0 3CD0     		beq	.L21
+ 433 00a2 08A8     		add	r0, sp, #32
+ 434              	.L23:
+ 435              	.LVL27:
+ 436              	.LBB100:
+  79:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_in = *in++;
+ 437              		.loc 3 79 13 view .LVU127
+ 438 00a4 B6EC014A 		vldmia.32	r6!, {s8}
+ 439              	.LVL28:
+ 440              	.LBB101:
+  80:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_out = 0.0f;
+  81:mi/plaits/dsp/physical_modelling/resonator.h ****       for (int i = 0; i < batch_size; ++i) {
+ 441              		.loc 3 81 25 is_stmt 1 view .LVU128
+ 442 00a8 0CA9     		add	r1, sp, #48
+ 443              	.LBE101:
+  80:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_out = 0.0f;
+ 444              		.loc 3 80 13 is_stmt 0 view .LVU129
+ 445 00aa DFED285A 		vldr.32	s11, .L31+12
+ 446 00ae 10AA     		add	r2, sp, #64
+ 447 00b0 14AC     		add	r4, sp, #80
+  79:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_in = *in++;
+ 448              		.loc 3 79 13 view .LVU130
+ 449 00b2 EE46     		mov	lr, sp
+ 450 00b4 0DF1200C 		add	ip, sp, #32
+ 451 00b8 04AB     		add	r3, sp, #16
+ 452              	.LVL29:
+ 453              	.L22:
+ 454              	.LBB105:
+ 455              	.LBB102:
+  82:mi/plaits/dsp/physical_modelling/resonator.h ****         const float hp = (s_in - r_plus_g[i] * state_1[i] - state_2[i]) * h[i];
+ 456              		.loc 3 82 32 discriminator 2 view .LVU131
+ 457 00ba F0EE446A 		vmov.f32	s13, s8
+ 458              		.loc 3 82 55 discriminator 2 view .LVU132
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 16
+
+
+ 459 00be D1ED007A 		vldr.32	s15, [r1]
+ 460              		.loc 3 82 42 discriminator 2 view .LVU133
+ 461 00c2 B3EC016A 		vldmia.32	r3!, {s12}
+ 462              		.loc 3 82 68 discriminator 2 view .LVU134
+ 463 00c6 92ED007A 		vldr.32	s14, [r2]
+ 464              		.loc 3 82 32 discriminator 2 view .LVU135
+ 465 00ca E6EE676A 		vfms.f32	s13, s12, s15
+ 466              		.loc 3 82 76 discriminator 2 view .LVU136
+ 467 00ce BCEC015A 		vldmia.32	ip!, {s10}
+  83:mi/plaits/dsp/physical_modelling/resonator.h ****         const float bp = g[i] * hp + state_1[i];
+ 468              		.loc 3 83 27 discriminator 2 view .LVU137
+ 469 00d2 BEEC016A 		vldmia.32	lr!, {s12}
+ 470              	.LBE102:
+  81:mi/plaits/dsp/physical_modelling/resonator.h ****         const float hp = (s_in - r_plus_g[i] * state_1[i] - state_2[i]) * h[i];
+ 471              		.loc 3 81 25 discriminator 2 view .LVU138
+ 472 00d6 9842     		cmp	r0, r3
+ 473              	.LBB103:
+  84:mi/plaits/dsp/physical_modelling/resonator.h ****         state_1[i] = g[i] * hp + bp;
+  85:mi/plaits/dsp/physical_modelling/resonator.h ****         const float lp = g[i] * bp + state_2[i];
+  86:mi/plaits/dsp/physical_modelling/resonator.h ****         state_2[i] = g[i] * bp + lp;
+  87:mi/plaits/dsp/physical_modelling/resonator.h ****         s_out += gains[i] * ((mode == stmlib::FILTER_MODE_LOW_PASS) ? lp : bp);
+ 474              		.loc 3 87 23 discriminator 2 view .LVU139
+ 475 00d8 F4EC014A 		vldmia.32	r4!, {s9}
+  82:mi/plaits/dsp/physical_modelling/resonator.h ****         const float bp = g[i] * hp + state_1[i];
+ 476              		.loc 3 82 59 discriminator 2 view .LVU140
+ 477 00dc 76EEC76A 		vsub.f32	s13, s13, s14
+  82:mi/plaits/dsp/physical_modelling/resonator.h ****         const float bp = g[i] * hp + state_1[i];
+ 478              		.loc 3 82 21 discriminator 2 view .LVU141
+ 479 00e0 66EE856A 		vmul.f32	s13, s13, s10
+ 480              	.LVL30:
+  83:mi/plaits/dsp/physical_modelling/resonator.h ****         state_1[i] = g[i] * hp + bp;
+ 481              		.loc 3 83 21 discriminator 2 view .LVU142
+ 482 00e4 E6EE267A 		vfma.f32	s15, s12, s13
+ 483              	.LVL31:
+  85:mi/plaits/dsp/physical_modelling/resonator.h ****         state_2[i] = g[i] * bp + lp;
+ 484              		.loc 3 85 21 discriminator 2 view .LVU143
+ 485 00e8 A6EE277A 		vfma.f32	s14, s12, s15
+ 486              	.LVL32:
+  84:mi/plaits/dsp/physical_modelling/resonator.h ****         const float lp = g[i] * bp + state_2[i];
+ 487              		.loc 3 84 32 discriminator 2 view .LVU144
+ 488 00ec B0EE675A 		vmov.f32	s10, s15
+ 489              		.loc 3 87 15 discriminator 2 view .LVU145
+ 490 00f0 E4EEA75A 		vfma.f32	s11, s9, s15
+ 491              	.LVL33:
+ 492              		.loc 3 87 15 discriminator 2 view .LVU146
+ 493              	.LBE103:
+  81:mi/plaits/dsp/physical_modelling/resonator.h ****         const float hp = (s_in - r_plus_g[i] * state_1[i] - state_2[i]) * h[i];
+ 494              		.loc 3 81 7 is_stmt 1 discriminator 2 view .LVU147
+  81:mi/plaits/dsp/physical_modelling/resonator.h ****         const float hp = (s_in - r_plus_g[i] * state_1[i] - state_2[i]) * h[i];
+ 495              		.loc 3 81 25 discriminator 2 view .LVU148
+ 496              	.LBB104:
+  84:mi/plaits/dsp/physical_modelling/resonator.h ****         const float lp = g[i] * bp + state_2[i];
+ 497              		.loc 3 84 32 is_stmt 0 discriminator 2 view .LVU149
+ 498 00f4 A6EE265A 		vfma.f32	s10, s12, s13
+  86:mi/plaits/dsp/physical_modelling/resonator.h ****         s_out += gains[i] * ((mode == stmlib::FILTER_MODE_LOW_PASS) ? lp : bp);
+ 499              		.loc 3 86 32 discriminator 2 view .LVU150
+ 500 00f8 A6EE277A 		vfma.f32	s14, s12, s15
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 17
+
+
+ 501              	.LVL34:
+  84:mi/plaits/dsp/physical_modelling/resonator.h ****         const float lp = g[i] * bp + state_2[i];
+ 502              		.loc 3 84 20 discriminator 2 view .LVU151
+ 503 00fc A1EC015A 		vstmia.32	r1!, {s10}
+  86:mi/plaits/dsp/physical_modelling/resonator.h ****         s_out += gains[i] * ((mode == stmlib::FILTER_MODE_LOW_PASS) ? lp : bp);
+ 504              		.loc 3 86 20 discriminator 2 view .LVU152
+ 505 0100 A2EC017A 		vstmia.32	r2!, {s14}
+ 506              	.LVL35:
+  86:mi/plaits/dsp/physical_modelling/resonator.h ****         s_out += gains[i] * ((mode == stmlib::FILTER_MODE_LOW_PASS) ? lp : bp);
+ 507              		.loc 3 86 20 discriminator 2 view .LVU153
+ 508              	.LBE104:
+  81:mi/plaits/dsp/physical_modelling/resonator.h ****         const float hp = (s_in - r_plus_g[i] * state_1[i] - state_2[i]) * h[i];
+ 509              		.loc 3 81 25 discriminator 2 view .LVU154
+ 510 0104 D9D1     		bne	.L22
+ 511              	.LVL36:
+  81:mi/plaits/dsp/physical_modelling/resonator.h ****         const float hp = (s_in - r_plus_g[i] * state_1[i] - state_2[i]) * h[i];
+ 512              		.loc 3 81 25 discriminator 2 view .LVU155
+ 513              	.LBE105:
+  88:mi/plaits/dsp/physical_modelling/resonator.h ****       }
+  89:mi/plaits/dsp/physical_modelling/resonator.h ****       if (add) {
+  90:mi/plaits/dsp/physical_modelling/resonator.h ****         *out++ += s_out;
+ 514              		.loc 3 90 16 view .LVU156
+ 515 0106 F5EC017A 		vldmia.32	r5!, {s15}
+ 516              	.LVL37:
+ 517              		.loc 3 90 16 view .LVU157
+ 518              	.LBE100:
+  78:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_in = *in++;
+ 519              		.loc 3 78 5 view .LVU158
+ 520 010a 09F1FF39 		add	r9, r9, #-1
+ 521              	.LVL38:
+ 522              	.LBB106:
+ 523              		.loc 3 90 16 view .LVU159
+ 524 010e 77EEA55A 		vadd.f32	s11, s15, s11
+ 525              	.LVL39:
+ 526              		.loc 3 90 16 view .LVU160
+ 527              	.LBE106:
+  78:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_in = *in++;
+ 528              		.loc 3 78 5 view .LVU161
+ 529 0112 B9F1FF3F 		cmp	r9, #-1
+ 530              	.LBB107:
+ 531              		.loc 3 90 16 view .LVU162
+ 532 0116 45ED015A 		vstr.32	s11, [r5, #-4]
+ 533              	.LVL40:
+ 534              		.loc 3 90 16 view .LVU163
+ 535              	.LBE107:
+  78:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_in = *in++;
+ 536              		.loc 3 78 5 is_stmt 1 view .LVU164
+  78:mi/plaits/dsp/physical_modelling/resonator.h ****       float s_in = *in++;
+ 537              		.loc 3 78 5 is_stmt 0 view .LVU165
+ 538 011a C3D1     		bne	.L23
+ 539              	.LVL41:
+ 540              	.L21:
+ 541              	.LBB108:
+  91:mi/plaits/dsp/physical_modelling/resonator.h ****       } else {
+  92:mi/plaits/dsp/physical_modelling/resonator.h ****         *out++ = s_out;
+  93:mi/plaits/dsp/physical_modelling/resonator.h ****       }
+  94:mi/plaits/dsp/physical_modelling/resonator.h ****     }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 18
+
+
+  95:mi/plaits/dsp/physical_modelling/resonator.h ****     for (int i = 0; i < batch_size; ++i) {
+  96:mi/plaits/dsp/physical_modelling/resonator.h ****       state_1_[i] = state_1[i];
+ 542              		.loc 3 96 19 view .LVU166
+ 543 011c 0CAD     		add	r5, sp, #48
+ 544              	.LVL42:
+  97:mi/plaits/dsp/physical_modelling/resonator.h ****       state_2_[i] = state_2[i];
+ 545              		.loc 3 97 19 view .LVU167
+ 546 011e 10AC     		add	r4, sp, #64
+  96:mi/plaits/dsp/physical_modelling/resonator.h ****       state_2_[i] = state_2[i];
+ 547              		.loc 3 96 19 view .LVU168
+ 548 0120 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 549 0122 3860     		str	r0, [r7]	@ unaligned
+ 550 0124 7960     		str	r1, [r7, #4]	@ unaligned
+ 551 0126 BA60     		str	r2, [r7, #8]	@ unaligned
+ 552 0128 FB60     		str	r3, [r7, #12]	@ unaligned
+ 553              		.loc 3 97 19 view .LVU169
+ 554 012a 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
+ 555 012c 3861     		str	r0, [r7, #16]	@ unaligned
+ 556 012e C8F80410 		str	r1, [r8, #4]	@ unaligned
+ 557 0132 C8F80820 		str	r2, [r8, #8]	@ unaligned
+ 558 0136 C8F80C30 		str	r3, [r8, #12]	@ unaligned
+ 559              	.LBE108:
+  98:mi/plaits/dsp/physical_modelling/resonator.h ****     }
+  99:mi/plaits/dsp/physical_modelling/resonator.h ****   }
+ 560              		.loc 3 99 3 view .LVU170
+ 561 013a 19B0     		add	sp, sp, #100
+ 562              		.cfi_def_cfa_offset 28
+ 563              		@ sp needed
+ 564 013c BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 565              	.LVL43:
+ 566              	.L32:
+ 567              		.loc 3 99 3 view .LVU171
+ 568              		.align	2
+ 569              	.L31:
+ 570 0140 49265F42 		.word	1113531977
+ 571 0144 8FBA2141 		.word	1092729487
+ 572 0148 DB0F4940 		.word	1078530011
+ 573 014c 00000000 		.word	0
+ 574              		.cfi_endproc
+ 575              	.LFE1532:
+ 577              		.section	.text._ZN6plaits9Resonator7ProcessEffffPKfPfj,"ax",%progbits
+ 578              		.align	1
+ 579              		.p2align 2,,3
+ 580              		.global	_ZN6plaits9Resonator7ProcessEffffPKfPfj
+ 581              		.syntax unified
+ 582              		.thumb
+ 583              		.thumb_func
+ 585              	_ZN6plaits9Resonator7ProcessEffffPKfPfj:
+ 586              	.LVL44:
+ 587              	.LFB1520:
+  58:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  59:mi/plaits/dsp/physical_modelling/resonator.cpp **** inline float NthHarmonicCompensation(int n, float stiffness) {
+  60:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stretch_factor = 1.0f;
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****   for (int i = 0; i < n - 1; ++i) {
+  62:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+  63:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+  64:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.93f;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 19
+
+
+  65:mi/plaits/dsp/physical_modelling/resonator.cpp ****     } else {
+  66:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.98f;
+  67:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+  68:mi/plaits/dsp/physical_modelling/resonator.cpp ****   }
+  69:mi/plaits/dsp/physical_modelling/resonator.cpp ****   return 1.0f / stretch_factor;
+  70:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+  71:mi/plaits/dsp/physical_modelling/resonator.cpp **** 
+  72:mi/plaits/dsp/physical_modelling/resonator.cpp **** void Resonator::Process(
+  73:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float f0,
+  74:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float structure,
+  75:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float brightness,
+  76:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float damping,
+  77:mi/plaits/dsp/physical_modelling/resonator.cpp ****     const float* in,
+  78:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float* out,
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****     size_t size) {
+ 588              		.loc 1 79 18 is_stmt 1 view -0
+ 589              		.cfi_startproc
+ 590              		@ args = 0, pretend = 0, frame = 48
+ 591              		@ frame_needed = 0, uses_anonymous_args = 0
+  80:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 592              		.loc 1 80 3 view .LVU173
+ 593              	.LBB118:
+ 594              	.LBB119:
+ 595              		.file 5 "mi/stmlib/dsp/dsp.h"
+   1:mi/stmlib/dsp/dsp.h **** // Copyright 2012 Emilie Gillet.
+   2:mi/stmlib/dsp/dsp.h **** //
+   3:mi/stmlib/dsp/dsp.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/dsp.h **** //
+   5:mi/stmlib/dsp/dsp.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/dsp.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/dsp.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/dsp.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/dsp.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/dsp.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/dsp.h **** // 
+  12:mi/stmlib/dsp/dsp.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/dsp.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/dsp.h **** // 
+  15:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/dsp.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/dsp.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/dsp.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/dsp.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/dsp.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/dsp.h **** // 
+  23:mi/stmlib/dsp/dsp.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/dsp.h **** //
+  25:mi/stmlib/dsp/dsp.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/dsp.h **** //
+  27:mi/stmlib/dsp/dsp.h **** // DSP utility routines.
+  28:mi/stmlib/dsp/dsp.h **** 
+  29:mi/stmlib/dsp/dsp.h **** #ifndef STMLIB_UTILS_DSP_DSP_H_
+  30:mi/stmlib/dsp/dsp.h **** #define STMLIB_UTILS_DSP_DSP_H_
+  31:mi/stmlib/dsp/dsp.h **** 
+  32:mi/stmlib/dsp/dsp.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/dsp.h **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 20
+
+
+  34:mi/stmlib/dsp/dsp.h **** #include <cmath>
+  35:mi/stmlib/dsp/dsp.h **** #include <math.h>
+  36:mi/stmlib/dsp/dsp.h **** 
+  37:mi/stmlib/dsp/dsp.h **** namespace stmlib {
+  38:mi/stmlib/dsp/dsp.h **** 
+  39:mi/stmlib/dsp/dsp.h **** #define MAKE_INTEGRAL_FRACTIONAL(x) \
+  40:mi/stmlib/dsp/dsp.h ****   int32_t x ## _integral = static_cast<int32_t>(x); \
+  41:mi/stmlib/dsp/dsp.h ****   float x ## _fractional = x - static_cast<float>(x ## _integral);
+  42:mi/stmlib/dsp/dsp.h **** 
+  43:mi/stmlib/dsp/dsp.h **** inline float Interpolate(const float* table, float index, float size) {
+  44:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 596              		.loc 5 44 9 is_stmt 0 view .LVU174
+ 597 0000 DFED6B7A 		vldr.32	s15, .L50
+ 598              	.LBE119:
+ 599              	.LBE118:
+ 600              	.LBB130:
+ 601              	.LBB131:
+ 602              	.LBB132:
+  62:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 603              		.loc 1 62 20 view .LVU175
+ 604 0004 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 605              	.LBE132:
+ 606              	.LBE131:
+ 607              	.LBE130:
+  81:mi/plaits/dsp/physical_modelling/resonator.cpp ****   f0 *= NthHarmonicCompensation(3, stiffness);
+  82:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  83:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float harmonic = f0;
+  84:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stretch_factor = 1.0f;
+  85:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_sqrt = SemitonesToRatio(damping * 79.7f);
+  86:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q = 500.0f * q_sqrt * q_sqrt;
+  87:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - structure * 0.3f;
+ 608              		.loc 1 87 22 view .LVU176
+ 609 0008 DFED6A4A 		vldr.32	s9, .L50+4
+ 610              	.LBB144:
+ 611              	.LBB120:
+ 612              		.loc 5 44 9 view .LVU177
+ 613 000c 60EEA77A 		vmul.f32	s15, s1, s15
+ 614              	.LBE120:
+ 615              	.LBE144:
+  88:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - damping * 0.3f;
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 616              		.loc 1 89 9 view .LVU178
+ 617 0010 9FED694A 		vldr.32	s8, .L50+8
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 618              		.loc 1 79 18 view .LVU179
+ 619 0014 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 620              		.cfi_def_cfa_offset 28
+ 621              		.cfi_offset 4, -28
+ 622              		.cfi_offset 5, -24
+ 623              		.cfi_offset 6, -20
+ 624              		.cfi_offset 7, -16
+ 625              		.cfi_offset 8, -12
+ 626              		.cfi_offset 9, -8
+ 627              		.cfi_offset 14, -4
+ 628              	.LBB145:
+ 629              	.LBB121:
+  45:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 21
+
+
+ 630              		.loc 5 45 3 view .LVU180
+ 631 0018 FDEEE76A 		vcvt.s32.f32	s13, s15
+ 632              	.LBE121:
+ 633              	.LBE145:
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 634              		.loc 1 79 18 view .LVU181
+ 635 001c 9046     		mov	r8, r2
+ 636              	.LVL45:
+ 637              	.LBB146:
+ 638              	.LBI118:
+  43:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 639              		.loc 5 43 14 is_stmt 1 view .LVU182
+ 640              	.LBB122:
+  44:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 641              		.loc 5 44 3 view .LVU183
+ 642              		.loc 5 45 3 view .LVU184
+ 643              	.LBE122:
+ 644              	.LBE146:
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 645              		.loc 1 79 18 is_stmt 0 view .LVU185
+ 646 001e 9946     		mov	r9, r3
+ 647              	.LBB147:
+ 648              	.LBB123:
+  46:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 649              		.loc 5 46 9 view .LVU186
+ 650 0020 664B     		ldr	r3, .L50+12
+ 651              	.LVL46:
+ 652              		.loc 5 46 9 view .LVU187
+ 653              	.LBE123:
+ 654              	.LBE147:
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 655              		.loc 1 79 18 view .LVU188
+ 656 0022 0F46     		mov	r7, r1
+  90:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  91:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float mode_q[kModeBatchSize];
+  92:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float mode_f[kModeBatchSize];
+  93:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float mode_a[kModeBatchSize];
+  94:mi/plaits/dsp/physical_modelling/resonator.cpp ****   int batch_counter = 0;
+  95:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  96:mi/plaits/dsp/physical_modelling/resonator.cpp ****   ResonatorSvf<kModeBatchSize>* batch_processor = &mode_filters_[0];
+ 657              		.loc 1 96 33 view .LVU189
+ 658 0024 0646     		mov	r6, r0
+ 659              	.LBB148:
+ 660              	.LBB124:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 661              		.loc 5 45 3 view .LVU190
+ 662 0026 16EE902A 		vmov	r2, s13	@ int
+ 663              	.LVL47:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 664              		.loc 5 45 3 is_stmt 1 view .LVU191
+ 665              		.loc 5 46 3 view .LVU192
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 666              		.loc 5 45 3 is_stmt 0 view .LVU193
+ 667 002a F8EEE66A 		vcvt.f32.s32	s13, s13
+ 668              	.LBE124:
+ 669              	.LBE148:
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 22
+
+
+ 670              		.loc 1 79 18 view .LVU194
+ 671 002e 0546     		mov	r5, r0
+ 672              	.LBB149:
+ 673              	.LBB125:
+ 674              		.loc 5 46 9 view .LVU195
+ 675 0030 03EB8201 		add	r1, r3, r2, lsl #2
+ 676              	.LVL48:
+ 677              		.loc 5 46 9 view .LVU196
+ 678              	.LBE125:
+ 679              	.LBE149:
+ 680              	.LBB150:
+ 681              	.LBB151:
+ 682              		.file 6 "mi/stmlib/dsp/units.h"
+   1:mi/stmlib/dsp/units.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/units.h **** //
+   3:mi/stmlib/dsp/units.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/units.h **** //
+   5:mi/stmlib/dsp/units.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/units.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/units.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/units.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/units.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/units.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/units.h **** // 
+  12:mi/stmlib/dsp/units.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/units.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/units.h **** // 
+  15:mi/stmlib/dsp/units.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/units.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/units.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/units.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/units.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/units.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/units.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/units.h **** // 
+  23:mi/stmlib/dsp/units.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/units.h **** //
+  25:mi/stmlib/dsp/units.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/units.h **** //
+  27:mi/stmlib/dsp/units.h **** // Conversion from semitones to frequency ratio.
+  28:mi/stmlib/dsp/units.h **** 
+  29:mi/stmlib/dsp/units.h **** #ifndef STMLIB_DSP_UNITS_H_
+  30:mi/stmlib/dsp/units.h **** #define STMLIB_DSP_UNITS_H_
+  31:mi/stmlib/dsp/units.h **** 
+  32:mi/stmlib/dsp/units.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/units.h **** #include "stmlib/dsp/dsp.h"
+  34:mi/stmlib/dsp/units.h **** 
+  35:mi/stmlib/dsp/units.h **** namespace stmlib {
+  36:mi/stmlib/dsp/units.h **** 
+  37:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_high[257];
+  38:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_low[257];
+  39:mi/stmlib/dsp/units.h **** 
+  40:mi/stmlib/dsp/units.h **** inline float SemitonesToRatio(float semitones) {
+  41:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+  42:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+  43:mi/stmlib/dsp/units.h **** 
+  44:mi/stmlib/dsp/units.h ****   return lut_pitch_ratio_high[pitch_integral] * \
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 23
+
+
+  45:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 683              		.loc 6 45 74 view .LVU197
+ 684 0034 624B     		ldr	r3, .L50+16
+ 685              	.LBE151:
+ 686              	.LBE150:
+ 687              	.LBB164:
+ 688              	.LBB126:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 689              		.loc 5 45 3 view .LVU198
+ 690 0036 77EEE67A 		vsub.f32	s15, s15, s13
+ 691              	.LVL49:
+  47:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+  48:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 692              		.loc 5 48 17 view .LVU199
+ 693 003a D1ED016A 		vldr.32	s13, [r1, #4]
+ 694              	.LBE126:
+ 695              	.LBE164:
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 696              		.loc 1 79 18 view .LVU200
+ 697 003e 2DED068B 		vpush.64	{d8, d9, d10}
+ 698              		.cfi_def_cfa_offset 52
+ 699              		.cfi_offset 80, -52
+ 700              		.cfi_offset 81, -48
+ 701              		.cfi_offset 82, -44
+ 702              		.cfi_offset 83, -40
+ 703              		.cfi_offset 84, -36
+ 704              		.cfi_offset 85, -32
+ 705              	.LBB165:
+ 706              	.LBB127:
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 707              		.loc 5 46 9 view .LVU201
+ 708 0042 91ED008A 		vldr.32	s16, [r1]
+ 709              	.LVL50:
+  47:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 710              		.loc 5 47 3 is_stmt 1 view .LVU202
+ 711              		.loc 5 48 3 view .LVU203
+ 712              	.LBE127:
+ 713              	.LBE165:
+ 714              	.LBB166:
+ 715              	.LBB138:
+  69:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+ 716              		.loc 1 69 17 is_stmt 0 view .LVU204
+ 717 0046 F7EE008A 		vmov.f32	s17, #1.0e+0
+ 718              	.LBE138:
+ 719              	.LBE166:
+  86:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - structure * 0.3f;
+ 720              		.loc 1 86 20 view .LVU205
+ 721 004a 9FED5E9A 		vldr.32	s18, .L50+20
+  79:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure, 64.0f);
+ 722              		.loc 1 79 18 view .LVU206
+ 723 004e 91B0     		sub	sp, sp, #68
+ 724              		.cfi_def_cfa_offset 120
+ 725              	.LBB167:
+ 726              	.LBB128:
+ 727              		.loc 5 48 17 view .LVU207
+ 728 0050 76EEC86A 		vsub.f32	s13, s13, s16
+ 729              	.LBE128:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 24
+
+
+ 730              	.LBE167:
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 731              		.loc 1 89 9 view .LVU208
+ 732 0054 DFED5CAA 		vldr.32	s21, .L50+24
+  87:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - damping * 0.3f;
+ 733              		.loc 1 87 22 view .LVU209
+ 734 0058 B0EE685A 		vmov.f32	s10, s17
+  88:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 735              		.loc 1 88 22 view .LVU210
+ 736 005c F0EE685A 		vmov.f32	s11, s17
+ 737              	.LBB168:
+ 738              	.LBB129:
+ 739              		.loc 5 48 24 view .LVU211
+ 740 0060 A7EEA68A 		vfma.f32	s16, s15, s13
+ 741              	.LVL51:
+ 742              		.loc 5 48 24 view .LVU212
+ 743              	.LBE129:
+ 744              	.LBE168:
+  81:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 745              		.loc 1 81 3 is_stmt 1 view .LVU213
+ 746              	.LBB169:
+ 747              	.LBI130:
+  59:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stretch_factor = 1.0f;
+ 748              		.loc 1 59 14 view .LVU214
+ 749              	.LBB139:
+  60:mi/plaits/dsp/physical_modelling/resonator.cpp ****   for (int i = 0; i < n - 1; ++i) {
+ 750              		.loc 1 60 3 view .LVU215
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 751              		.loc 1 61 3 view .LVU216
+ 752              	.LBB133:
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 753              		.loc 1 61 21 view .LVU217
+  62:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 754              		.loc 1 62 5 view .LVU218
+ 755              	.LBE133:
+ 756              	.LBE139:
+ 757              	.LBE169:
+ 758              	.LBB170:
+ 759              	.LBB152:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 760              		.loc 6 41 9 is_stmt 0 view .LVU219
+ 761 0064 DFED596A 		vldr.32	s13, .L50+28
+ 762              	.LBE152:
+ 763              	.LBE170:
+  87:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - damping * 0.3f;
+ 764              		.loc 1 87 22 view .LVU220
+ 765 0068 A0EEE45A 		vfms.f32	s10, s1, s9
+  88:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 766              		.loc 1 88 22 view .LVU221
+ 767 006c E1EEE45A 		vfms.f32	s11, s3, s9
+ 768              	.LBB171:
+ 769              	.LBB140:
+ 770              	.LBB134:
+  63:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.93f;
+ 771              		.loc 1 63 5 view .LVU222
+ 772 0070 B5EEC08A 		vcmpe.f32	s16, #0
+  62:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 25
+
+
+ 773              		.loc 1 62 20 view .LVU223
+ 774 0074 38EE076A 		vadd.f32	s12, s16, s14
+ 775              	.LVL52:
+  63:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.93f;
+ 776              		.loc 1 63 5 is_stmt 1 view .LVU224
+ 777              	.LBE134:
+ 778              	.LBE140:
+ 779              	.LBE171:
+ 780              	.LBB172:
+ 781              	.LBB153:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 782              		.loc 6 41 9 is_stmt 0 view .LVU225
+ 783 0078 9FED557A 		vldr.32	s14, .L50+32
+ 784              	.LBE153:
+ 785              	.LBE172:
+ 786              	.LBB173:
+ 787              	.LBB141:
+ 788              	.LBB135:
+  63:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.93f;
+ 789              		.loc 1 63 5 view .LVU226
+ 790 007c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  66:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 791              		.loc 1 66 7 is_stmt 1 view .LVU227
+ 792              	.LBE135:
+ 793              	.LBE141:
+ 794              	.LBE173:
+ 795              	.LBB174:
+ 796              	.LBB154:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 797              		.loc 6 41 9 is_stmt 0 view .LVU228
+ 798 0080 A1EEA67A 		vfma.f32	s14, s3, s13
+ 799              	.LBE154:
+ 800              	.LBE174:
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 801              		.loc 1 89 37 view .LVU229
+ 802 0084 F0EE006A 		vmov.f32	s13, #2.0e+0
+ 803              	.LBB175:
+ 804              	.LBB142:
+ 805              	.LBB136:
+  66:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 806              		.loc 1 66 17 view .LVU230
+ 807 0088 54BF     		ite	pl
+ 808 008a DFED527A 		vldrpl.32	s15, .L50+36
+  64:mi/plaits/dsp/physical_modelling/resonator.cpp ****     } else {
+ 809              		.loc 1 64 7 is_stmt 1 view .LVU231
+  64:mi/plaits/dsp/physical_modelling/resonator.cpp ****     } else {
+ 810              		.loc 1 64 17 is_stmt 0 view .LVU232
+ 811 008e DFED527A 		vldrmi.32	s15, .L50+40
+ 812 0092 68EE277A 		vmul.f32	s15, s16, s15
+ 813              	.LVL53:
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 814              		.loc 1 61 3 is_stmt 1 view .LVU233
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 815              		.loc 1 61 21 view .LVU234
+  62:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 816              		.loc 1 62 5 view .LVU235
+  63:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.93f;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 26
+
+
+ 817              		.loc 1 63 5 view .LVU236
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 818              		.loc 1 61 3 view .LVU237
+  61:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 819              		.loc 1 61 21 view .LVU238
+ 820              	.LBE136:
+  69:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+ 821              		.loc 1 69 3 view .LVU239
+  69:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+ 822              		.loc 1 69 3 is_stmt 0 view .LVU240
+ 823              	.LBE142:
+ 824              	.LBE175:
+ 825              	.LBB176:
+ 826              	.LBB155:
+  42:mi/stmlib/dsp/units.h **** 
+ 827              		.loc 6 42 3 view .LVU241
+ 828 0096 FDEEC74A 		vcvt.s32.f32	s9, s14
+ 829              	.LBE155:
+ 830              	.LBE176:
+ 831              	.LBB177:
+ 832              	.LBB143:
+ 833              	.LBB137:
+  62:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 834              		.loc 1 62 20 view .LVU242
+ 835 009a 36EE276A 		vadd.f32	s12, s12, s15
+ 836              	.LBE137:
+  69:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+ 837              		.loc 1 69 17 view .LVU243
+ 838 009e C8EE867A 		vdiv.f32	s15, s17, s12
+ 839              	.LBE143:
+ 840              	.LBE177:
+  87:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - damping * 0.3f;
+ 841              		.loc 1 87 14 view .LVU244
+ 842 00a2 25EE016A 		vmul.f32	s12, s10, s2
+ 843              	.LBB178:
+ 844              	.LBB156:
+  42:mi/stmlib/dsp/units.h **** 
+ 845              		.loc 6 42 3 view .LVU245
+ 846 00a6 B8EEE45A 		vcvt.f32.s32	s10, s9
+ 847              	.LBE156:
+ 848              	.LBE178:
+  88:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 849              		.loc 1 88 14 view .LVU246
+ 850 00aa 25EE866A 		vmul.f32	s12, s11, s12
+ 851              	.LBB179:
+ 852              	.LBB157:
+  42:mi/stmlib/dsp/units.h **** 
+ 853              		.loc 6 42 3 view .LVU247
+ 854 00ae 37EE457A 		vsub.f32	s14, s14, s10
+ 855              	.LBE157:
+ 856              	.LBE179:
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 857              		.loc 1 89 37 view .LVU248
+ 858 00b2 76EEC66A 		vsub.f32	s13, s13, s12
+ 859              	.LBB180:
+ 860              	.LBB158:
+ 861              		.loc 6 45 27 view .LVU249
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 27
+
+
+ 862 00b6 BEEECC7A 		vcvt.s32.f32	s14, s14, #8
+ 863              	.LBE158:
+ 864              	.LBE180:
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 865              		.loc 1 89 29 view .LVU250
+ 866 00ba 66EE866A 		vmul.f32	s13, s13, s12
+ 867              	.LBB181:
+ 868              	.LBB159:
+ 869              		.loc 6 45 74 view .LVU251
+ 870 00be 17EE102A 		vmov	r2, s14	@ int
+ 871              	.LBE159:
+ 872              	.LBE181:
+  81:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 873              		.loc 1 81 6 view .LVU252
+ 874 00c2 27EE80AA 		vmul.f32	s20, s15, s0
+ 875              	.LVL54:
+  83:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stretch_factor = 1.0f;
+ 876              		.loc 1 83 3 is_stmt 1 view .LVU253
+  84:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_sqrt = SemitonesToRatio(damping * 79.7f);
+ 877              		.loc 1 84 3 view .LVU254
+  85:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q = 500.0f * q_sqrt * q_sqrt;
+ 878              		.loc 1 85 3 view .LVU255
+ 879              	.LBB182:
+ 880              	.LBI150:
+  40:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+ 881              		.loc 6 40 14 view .LVU256
+ 882              	.LBB160:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 883              		.loc 6 41 3 view .LVU257
+  42:mi/stmlib/dsp/units.h **** 
+ 884              		.loc 6 42 3 view .LVU258
+  42:mi/stmlib/dsp/units.h **** 
+ 885              		.loc 6 42 3 view .LVU259
+  44:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 886              		.loc 6 44 3 view .LVU260
+ 887              		.loc 6 45 74 is_stmt 0 view .LVU261
+ 888 00c6 03EB8203 		add	r3, r3, r2, lsl #2
+  44:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 889              		.loc 6 44 45 view .LVU262
+ 890 00ca 14EE902A 		vmov	r2, s9	@ int
+ 891              	.LBE160:
+ 892              	.LBE182:
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 893              		.loc 1 89 9 view .LVU263
+ 894 00ce E6EE84AA 		vfma.f32	s21, s13, s8
+ 895              	.LBB183:
+ 896              	.LBB161:
+ 897              		.loc 6 45 74 view .LVU264
+ 898 00d2 D3ED007A 		vldr.32	s15, [r3]
+  44:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 899              		.loc 6 44 45 view .LVU265
+ 900 00d6 414B     		ldr	r3, .L50+44
+ 901 00d8 03EB8203 		add	r3, r3, r2, lsl #2
+ 902              	.LBE161:
+ 903              	.LBE183:
+ 904              	.LBB184:
+  97:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 28
+
+
+  98:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+  99:mi/plaits/dsp/physical_modelling/resonator.cpp ****   for (int i = 0; i < resolution_; ++i) {
+ 905              		.loc 1 99 21 view .LVU266
+ 906 00dc 56F8642B 		ldr	r2, [r6], #100
+ 907              	.LBE184:
+ 908              	.LBB188:
+ 909              	.LBB162:
+ 910              		.loc 6 45 74 view .LVU267
+ 911 00e0 93ED007A 		vldr.32	s14, [r3]
+ 912              	.LBE162:
+ 913              	.LBE188:
+ 914              	.LBB189:
+ 915              		.loc 1 99 21 view .LVU268
+ 916 00e4 002A     		cmp	r2, #0
+ 917              	.LBE189:
+ 918              	.LBB190:
+ 919              	.LBB163:
+ 920              		.loc 6 45 74 view .LVU269
+ 921 00e6 67EE877A 		vmul.f32	s15, s15, s14
+ 922              	.LVL55:
+ 923              		.loc 6 45 74 view .LVU270
+ 924              	.LBE163:
+ 925              	.LBE190:
+  86:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - structure * 0.3f;
+ 926              		.loc 1 86 3 is_stmt 1 view .LVU271
+  86:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - structure * 0.3f;
+ 927              		.loc 1 86 20 is_stmt 0 view .LVU272
+ 928 00ea 27EE899A 		vmul.f32	s18, s15, s18
+  86:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - structure * 0.3f;
+ 929              		.loc 1 86 9 view .LVU273
+ 930 00ee 29EE279A 		vmul.f32	s18, s18, s15
+ 931              	.LVL56:
+  87:mi/plaits/dsp/physical_modelling/resonator.cpp ****   brightness *= 1.0f - damping * 0.3f;
+ 932              		.loc 1 87 3 is_stmt 1 view .LVU274
+  88:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 933              		.loc 1 88 3 view .LVU275
+  89:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 934              		.loc 1 89 3 view .LVU276
+  91:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float mode_f[kModeBatchSize];
+ 935              		.loc 1 91 3 view .LVU277
+  92:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float mode_a[kModeBatchSize];
+ 936              		.loc 1 92 3 view .LVU278
+  93:mi/plaits/dsp/physical_modelling/resonator.cpp ****   int batch_counter = 0;
+ 937              		.loc 1 93 3 view .LVU279
+  94:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 938              		.loc 1 94 3 view .LVU280
+  96:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 939              		.loc 1 96 3 view .LVU281
+ 940              		.loc 1 99 3 view .LVU282
+ 941              	.LBB191:
+ 942              		.loc 1 99 21 view .LVU283
+ 943 00f2 58DD     		ble	.L33
+ 944              	.LBE191:
+  83:mi/plaits/dsp/physical_modelling/resonator.cpp ****   float stretch_factor = 1.0f;
+ 945              		.loc 1 83 9 is_stmt 0 view .LVU284
+ 946 00f4 F0EE4A9A 		vmov.f32	s19, s20
+ 947              	.LBB192:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 29
+
+
+ 948              		.loc 1 99 21 view .LVU285
+ 949 00f8 0124     		movs	r4, #1
+ 950              	.LBE192:
+  94:mi/plaits/dsp/physical_modelling/resonator.cpp ****   
+ 951              		.loc 1 94 7 view .LVU286
+ 952 00fa 4FF0000C 		mov	ip, #0
+ 953 00fe 32E0     		b	.L36
+ 954              	.LVL57:
+ 955              	.L49:
+ 956              	.LBB193:
+ 957              	.LBB185:
+ 100:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float mode_frequency = harmonic * stretch_factor;
+ 101:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (mode_frequency >= 0.499f) {
+ 102:mi/plaits/dsp/physical_modelling/resonator.cpp ****       mode_frequency = 0.499f;
+ 103:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 104:mi/plaits/dsp/physical_modelling/resonator.cpp ****     const float mode_attenuation = 1.0f - mode_frequency * 2.0f;
+ 958              		.loc 1 104 17 view .LVU287
+ 959 0100 E7EEE56A 		vfms.f32	s13, s15, s11
+ 960              	.LVL58:
+ 961              		.loc 1 104 17 view .LVU288
+ 962 0104 B0EE666A 		vmov.f32	s12, s13
+ 963              	.LVL59:
+ 964              	.L37:
+ 965              		.loc 1 104 5 is_stmt 1 view .LVU289
+ 105:mi/plaits/dsp/physical_modelling/resonator.cpp ****     
+ 106:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_f[batch_counter] = mode_frequency;
+ 966              		.loc 1 106 5 view .LVU290
+ 107:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_q[batch_counter] = 1.0f + mode_frequency * q;
+ 967              		.loc 1 107 34 is_stmt 0 view .LVU291
+ 968 0108 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 969              	.LVL60:
+ 108:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_a[batch_counter] = mode_amplitude_[i] * mode_attenuation;
+ 970              		.loc 1 108 46 view .LVU292
+ 971 010c 05EB8403 		add	r3, r5, r4, lsl #2
+ 106:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_q[batch_counter] = 1.0f + mode_frequency * q;
+ 972              		.loc 1 106 27 view .LVU293
+ 973 0110 10A9     		add	r1, sp, #64
+ 974              		.loc 1 108 48 view .LVU294
+ 975 0112 D3ED006A 		vldr.32	s13, [r3]
+ 107:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_q[batch_counter] = 1.0f + mode_frequency * q;
+ 976              		.loc 1 107 34 view .LVU295
+ 977 0116 A7EE897A 		vfma.f32	s14, s15, s18
+ 978              	.LVL61:
+ 106:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_q[batch_counter] = 1.0f + mode_frequency * q;
+ 979              		.loc 1 106 27 view .LVU296
+ 980 011a 01EB8C0E 		add	lr, r1, ip, lsl #2
+ 109:mi/plaits/dsp/physical_modelling/resonator.cpp ****     ++batch_counter;
+ 981              		.loc 1 109 5 view .LVU297
+ 982 011e 0CF1010C 		add	ip, ip, #1
+ 983              	.LVL62:
+ 106:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_q[batch_counter] = 1.0f + mode_frequency * q;
+ 984              		.loc 1 106 27 view .LVU298
+ 985 0122 4EED087A 		vstr.32	s15, [lr, #-32]
+ 107:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_a[batch_counter] = mode_amplitude_[i] * mode_attenuation;
+ 986              		.loc 1 107 5 is_stmt 1 view .LVU299
+ 108:mi/plaits/dsp/physical_modelling/resonator.cpp ****     ++batch_counter;
+ 987              		.loc 1 108 48 is_stmt 0 view .LVU300
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 30
+
+
+ 988 0126 66EE867A 		vmul.f32	s15, s13, s12
+ 989              	.LVL63:
+ 110:mi/plaits/dsp/physical_modelling/resonator.cpp ****     
+ 111:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (batch_counter == kModeBatchSize) {
+ 990              		.loc 1 111 5 view .LVU301
+ 991 012a BCF1040F 		cmp	ip, #4
+ 108:mi/plaits/dsp/physical_modelling/resonator.cpp ****     ++batch_counter;
+ 992              		.loc 1 108 27 view .LVU302
+ 993 012e 4EED047A 		vstr.32	s15, [lr, #-16]
+ 107:mi/plaits/dsp/physical_modelling/resonator.cpp ****     mode_a[batch_counter] = mode_amplitude_[i] * mode_attenuation;
+ 994              		.loc 1 107 27 view .LVU303
+ 995 0132 0EED0C7A 		vstr.32	s14, [lr, #-48]
+ 108:mi/plaits/dsp/physical_modelling/resonator.cpp ****     ++batch_counter;
+ 996              		.loc 1 108 5 is_stmt 1 view .LVU304
+ 109:mi/plaits/dsp/physical_modelling/resonator.cpp ****     
+ 997              		.loc 1 109 5 view .LVU305
+ 998              	.LVL64:
+ 999              		.loc 1 111 5 view .LVU306
+ 1000 0136 28D0     		beq	.L48
+ 1001              	.LVL65:
+ 1002              	.L38:
+ 112:mi/plaits/dsp/physical_modelling/resonator.cpp ****       batch_counter = 0;
+ 113:mi/plaits/dsp/physical_modelling/resonator.cpp ****       batch_processor->Process<FILTER_MODE_BAND_PASS, true>(
+ 114:mi/plaits/dsp/physical_modelling/resonator.cpp ****           mode_f,
+ 115:mi/plaits/dsp/physical_modelling/resonator.cpp ****           mode_q,
+ 116:mi/plaits/dsp/physical_modelling/resonator.cpp ****           mode_a,
+ 117:mi/plaits/dsp/physical_modelling/resonator.cpp ****           in,
+ 118:mi/plaits/dsp/physical_modelling/resonator.cpp ****           out,
+ 119:mi/plaits/dsp/physical_modelling/resonator.cpp ****           size);
+ 120:mi/plaits/dsp/physical_modelling/resonator.cpp ****       ++batch_processor;
+ 121:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 122:mi/plaits/dsp/physical_modelling/resonator.cpp ****     
+ 123:mi/plaits/dsp/physical_modelling/resonator.cpp ****     stretch_factor += stiffness;
+ 1003              		.loc 1 123 5 view .LVU307
+ 124:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 125:mi/plaits/dsp/physical_modelling/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+ 126:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.93f;
+ 1004              		.loc 1 126 7 view .LVU308
+ 127:mi/plaits/dsp/physical_modelling/resonator.cpp ****     } else {
+ 128:mi/plaits/dsp/physical_modelling/resonator.cpp ****       // This helps adding a few extra partials in the highest frequencies.
+ 129:mi/plaits/dsp/physical_modelling/resonator.cpp ****       stiffness *= 0.98f;
+ 1005              		.loc 1 129 7 view .LVU309
+ 124:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 1006              		.loc 1 124 5 is_stmt 0 view .LVU310
+ 1007 0138 B5EEC08A 		vcmpe.f32	s16, #0
+ 1008              		.loc 1 129 17 view .LVU311
+ 1009 013c DFED257A 		vldr.32	s15, .L50+36
+ 126:mi/plaits/dsp/physical_modelling/resonator.cpp ****     } else {
+ 1010              		.loc 1 126 17 view .LVU312
+ 1011 0140 9FED257A 		vldr.32	s14, .L50+40
+ 123:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (stiffness < 0.0f) {
+ 1012              		.loc 1 123 20 view .LVU313
+ 1013 0144 78EE888A 		vadd.f32	s17, s17, s16
+ 1014              	.LVL66:
+ 124:mi/plaits/dsp/physical_modelling/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+ 1015              		.loc 1 124 5 is_stmt 1 view .LVU314
+ 1016              	.LBE185:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 31
+
+
+  99:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float mode_frequency = harmonic * stretch_factor;
+ 1017              		.loc 1 99 21 is_stmt 0 view .LVU315
+ 1018 0148 631C     		adds	r3, r4, #1
+ 1019              	.LBB186:
+ 130:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 131:mi/plaits/dsp/physical_modelling/resonator.cpp ****     harmonic += f0;
+ 1020              		.loc 1 131 14 view .LVU316
+ 1021 014a 79EE8A9A 		vadd.f32	s19, s19, s20
+ 1022              	.LVL67:
+ 124:mi/plaits/dsp/physical_modelling/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+ 1023              		.loc 1 124 5 view .LVU317
+ 1024 014e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 132:mi/plaits/dsp/physical_modelling/resonator.cpp ****     q *= q_loss;
+ 1025              		.loc 1 132 7 view .LVU318
+ 1026 0152 29EE2A9A 		vmul.f32	s18, s18, s21
+ 1027              	.LVL68:
+ 126:mi/plaits/dsp/physical_modelling/resonator.cpp ****     } else {
+ 1028              		.loc 1 126 17 view .LVU319
+ 1029 0156 4CBF     		ite	mi
+ 1030 0158 28EE078A 		vmulmi.f32	s16, s16, s14
+ 1031              	.LVL69:
+ 129:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 1032              		.loc 1 129 17 view .LVU320
+ 1033 015c 28EE278A 		vmulpl.f32	s16, s16, s15
+ 1034              	.LVL70:
+ 131:mi/plaits/dsp/physical_modelling/resonator.cpp ****     q *= q_loss;
+ 1035              		.loc 1 131 5 is_stmt 1 view .LVU321
+ 1036              		.loc 1 132 5 view .LVU322
+ 1037              		.loc 1 132 5 is_stmt 0 view .LVU323
+ 1038              	.LBE186:
+  99:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float mode_frequency = harmonic * stretch_factor;
+ 1039              		.loc 1 99 3 is_stmt 1 view .LVU324
+  99:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float mode_frequency = harmonic * stretch_factor;
+ 1040              		.loc 1 99 21 view .LVU325
+ 1041 0160 A242     		cmp	r2, r4
+ 1042 0162 1C46     		mov	r4, r3
+ 1043              	.LVL71:
+  99:mi/plaits/dsp/physical_modelling/resonator.cpp ****     float mode_frequency = harmonic * stretch_factor;
+ 1044              		.loc 1 99 21 is_stmt 0 view .LVU326
+ 1045 0164 1FDD     		ble	.L33
+ 1046              	.LVL72:
+ 1047              	.L36:
+ 1048              	.LBB187:
+ 100:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (mode_frequency >= 0.499f) {
+ 1049              		.loc 1 100 5 is_stmt 1 view .LVU327
+ 100:mi/plaits/dsp/physical_modelling/resonator.cpp ****     if (mode_frequency >= 0.499f) {
+ 1050              		.loc 1 100 11 is_stmt 0 view .LVU328
+ 1051 0166 68EEA97A 		vmul.f32	s15, s17, s19
+ 1052              	.LVL73:
+ 101:mi/plaits/dsp/physical_modelling/resonator.cpp ****       mode_frequency = 0.499f;
+ 1053              		.loc 1 101 5 is_stmt 1 view .LVU329
+ 1054 016a 9FED1D7A 		vldr.32	s14, .L50+48
+ 104:mi/plaits/dsp/physical_modelling/resonator.cpp ****     
+ 1055              		.loc 1 104 17 is_stmt 0 view .LVU330
+ 1056 016e F0EE005A 		vmov.f32	s11, #2.0e+0
+ 1057 0172 9FED1C6A 		vldr.32	s12, .L50+52
+ 1058 0176 F7EE006A 		vmov.f32	s13, #1.0e+0
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 32
+
+
+ 1059              	.LVL74:
+ 101:mi/plaits/dsp/physical_modelling/resonator.cpp ****       mode_frequency = 0.499f;
+ 1060              		.loc 1 101 5 view .LVU331
+ 1061 017a F4EEC77A 		vcmpe.f32	s15, s14
+ 1062 017e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1063 0182 BDDB     		blt	.L49
+ 102:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 1064              		.loc 1 102 22 view .LVU332
+ 1065 0184 F0EE477A 		vmov.f32	s15, s14
+ 1066              	.LVL75:
+ 102:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 1067              		.loc 1 102 22 view .LVU333
+ 1068 0188 BEE7     		b	.L37
+ 1069              	.LVL76:
+ 1070              	.L48:
+ 112:mi/plaits/dsp/physical_modelling/resonator.cpp ****       batch_processor->Process<FILTER_MODE_BAND_PASS, true>(
+ 1071              		.loc 1 112 7 is_stmt 1 view .LVU334
+ 113:mi/plaits/dsp/physical_modelling/resonator.cpp ****           mode_f,
+ 1072              		.loc 1 113 7 view .LVU335
+ 113:mi/plaits/dsp/physical_modelling/resonator.cpp ****           mode_f,
+ 1073              		.loc 1 113 60 is_stmt 0 view .LVU336
+ 1074 018a 3046     		mov	r0, r6
+ 1075 018c 04AA     		add	r2, sp, #16
+ 1076 018e 0CAB     		add	r3, sp, #48
+ 1077 0190 08A9     		add	r1, sp, #32
+ 1078 0192 0097     		str	r7, [sp]
+ 1079              	.LVL77:
+ 120:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 1080              		.loc 1 120 7 view .LVU337
+ 1081 0194 2036     		adds	r6, r6, #32
+ 1082              	.LVL78:
+ 113:mi/plaits/dsp/physical_modelling/resonator.cpp ****           mode_f,
+ 1083              		.loc 1 113 60 view .LVU338
+ 1084 0196 CDE90189 		strd	r8, r9, [sp, #4]
+ 1085 019a FFF7FEFF 		bl	_ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj
+ 1086              	.LVL79:
+ 120:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 1087              		.loc 1 120 7 is_stmt 1 view .LVU339
+ 120:mi/plaits/dsp/physical_modelling/resonator.cpp ****     }
+ 1088              		.loc 1 120 7 is_stmt 0 view .LVU340
+ 1089 019e 2A68     		ldr	r2, [r5]
+ 112:mi/plaits/dsp/physical_modelling/resonator.cpp ****       batch_processor->Process<FILTER_MODE_BAND_PASS, true>(
+ 1090              		.loc 1 112 21 view .LVU341
+ 1091 01a0 4FF0000C 		mov	ip, #0
+ 1092 01a4 C8E7     		b	.L38
+ 1093              	.LVL80:
+ 1094              	.L33:
+ 112:mi/plaits/dsp/physical_modelling/resonator.cpp ****       batch_processor->Process<FILTER_MODE_BAND_PASS, true>(
+ 1095              		.loc 1 112 21 view .LVU342
+ 1096              	.LBE187:
+ 1097              	.LBE193:
+ 133:mi/plaits/dsp/physical_modelling/resonator.cpp ****   }
+ 134:mi/plaits/dsp/physical_modelling/resonator.cpp **** }
+ 1098              		.loc 1 134 1 view .LVU343
+ 1099 01a6 11B0     		add	sp, sp, #68
+ 1100              		.cfi_def_cfa_offset 52
+ 1101              		@ sp needed
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 33
+
+
+ 1102 01a8 BDEC068B 		vldm	sp!, {d8-d10}
+ 1103              		.cfi_restore 84
+ 1104              		.cfi_restore 85
+ 1105              		.cfi_restore 82
+ 1106              		.cfi_restore 83
+ 1107              		.cfi_restore 80
+ 1108              		.cfi_restore 81
+ 1109              		.cfi_def_cfa_offset 28
+ 1110              	.LVL81:
+ 1111              		.loc 1 134 1 view .LVU344
+ 1112 01ac BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 1113              	.LVL82:
+ 1114              	.L51:
+ 1115              		.loc 1 134 1 view .LVU345
+ 1116              		.align	2
+ 1117              	.L50:
+ 1118 01b0 00008042 		.word	1115684864
+ 1119 01b4 9A99993E 		.word	1050253722
+ 1120 01b8 9A99593F 		.word	1062836634
+ 1121 01bc 00000000 		.word	_ZN6plaits13lut_stiffnessE
+ 1122 01c0 00000000 		.word	_ZN6stmlib19lut_pitch_ratio_lowE
+ 1123 01c4 0000FA43 		.word	1140457472
+ 1124 01c8 9A99193E 		.word	1041865114
+ 1125 01cc 66669F42 		.word	1117742694
+ 1126 01d0 00000043 		.word	1124073472
+ 1127 01d4 48E17A3F 		.word	1065017672
+ 1128 01d8 7B146E3F 		.word	1064178811
+ 1129 01dc 00000000 		.word	_ZN6stmlib20lut_pitch_ratio_highE
+ 1130 01e0 EE7CFF3E 		.word	1056931054
+ 1131 01e4 0012033B 		.word	990056960
+ 1132              		.cfi_endproc
+ 1133              	.LFE1520:
+ 1135              		.text
+ 1136              	.Letext0:
+ 1137              		.file 7 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 1138              		.file 8 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 1139              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 1140              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 1141              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 1142              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/type_traits"
+ 1143              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/debug/debug.h"
+ 1144              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cstdlib"
+ 1145              		.file 15 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v
+ 1146              		.file 16 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/algorithmfwd.h"
+ 1147              		.file 17 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_pair.h"
+ 1148              		.file 18 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/exception_ptr.h"
+ 1149              		.file 19 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/predefined_ops.h
+ 1150              		.file 20 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 1151              		.file 21 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdlib.h"
+ 1152              		.file 22 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 1153              		.file 23 "mi/stmlib/stmlib.h"
+ 1154              		.file 24 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h"
+ 1155              		.file 25 "mi/plaits/resources.h"
+ 1156              		.file 26 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s 			page 34
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 plaits_pm_resonator.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:19     .text._ZN6plaits9Resonator4InitEfi:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:26     .text._ZN6plaits9Resonator4InitEfi:0000000000000000 _ZN6plaits9Resonator4InitEfi
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:287    .text._ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:294    .text._ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj:0000000000000000 _ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:570    .text._ZN6plaits12ResonatorSvfILi4EE7ProcessILN6stmlib10FilterModeE1ELb1EEEvPKfS6_S6_S6_Pfj:0000000000000140 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:578    .text._ZN6plaits9Resonator7ProcessEffffPKfPfj:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:585    .text._ZN6plaits9Resonator7ProcessEffffPKfPfj:0000000000000000 _ZN6plaits9Resonator7ProcessEffffPKfPfj
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccuPcda6.s:1118   .text._ZN6plaits9Resonator7ProcessEffffPKfPfj:00000000000001b0 $d
+
+UNDEFINED SYMBOLS
+_ZN6plaits13lut_stiffnessE
+_ZN6stmlib19lut_pitch_ratio_lowE
+_ZN6stmlib20lut_pitch_ratio_highE

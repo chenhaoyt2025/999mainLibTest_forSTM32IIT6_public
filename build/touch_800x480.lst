@@ -1,0 +1,1831 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"touch_800x480.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.GT9XX_Reset,"ax",%progbits
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.global	GT9XX_Reset
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	GT9XX_Reset:
+  27              	.LFB340:
+  28              		.file 1 "BSP/LTDC/touch_800x480.c"
+   1:BSP/LTDC/touch_800x480.c **** /***
+   2:BSP/LTDC/touch_800x480.c **** 	**************************************************************************************************
+   3:BSP/LTDC/touch_800x480.c **** 	*	@file  	touch_800x480.c
+   4:BSP/LTDC/touch_800x480.c **** 	*	@version V1.0
+   5:BSP/LTDC/touch_800x480.c **** 	*  @date    2021-7-20
+   6:BSP/LTDC/touch_800x480.c **** 	*	@author  反客科技
+   7:BSP/LTDC/touch_800x480.c **** 	*	@brief   GT911触摸驱动
+   8:BSP/LTDC/touch_800x480.c ****    ************************************************************************************************
+   9:BSP/LTDC/touch_800x480.c ****    *  @description
+  10:BSP/LTDC/touch_800x480.c **** 	*
+  11:BSP/LTDC/touch_800x480.c **** 	*	实验平台：反客STM32H743IIT6核心板 （型号：FK743M2-IIT6） + 反客800*480分辨率的RGB屏幕
+  12:BSP/LTDC/touch_800x480.c **** 	*		
+  13:BSP/LTDC/touch_800x480.c **** 	*	淘宝地址：https://shop212360197.taobao.com
+  14:BSP/LTDC/touch_800x480.c **** 	*	QQ交流群：536665479
+  15:BSP/LTDC/touch_800x480.c **** 	*
+  16:BSP/LTDC/touch_800x480.c **** >>>>>	文件说明：
+  17:BSP/LTDC/touch_800x480.c **** 	*
+  18:BSP/LTDC/touch_800x480.c **** 	*  1.触摸屏相关的操作函数
+  19:BSP/LTDC/touch_800x480.c **** 	* 	2.使用模拟IIC
+  20:BSP/LTDC/touch_800x480.c **** 	*	3.通信速度默认为100KHz
+  21:BSP/LTDC/touch_800x480.c **** 	*	
+  22:BSP/LTDC/touch_800x480.c **** 	**************************************************************************************************
+  23:BSP/LTDC/touch_800x480.c **** ***/
+  24:BSP/LTDC/touch_800x480.c **** 
+  25:BSP/LTDC/touch_800x480.c **** #include "touch_800x480.h"
+  26:BSP/LTDC/touch_800x480.c **** 
+  27:BSP/LTDC/touch_800x480.c **** volatile TouchStructure touchInfo; 			//	触摸信息结构体，在函数 Touch_Scan() 里被调用，存储触摸数据
+  28:BSP/LTDC/touch_800x480.c **** volatile static uint8_t Modify_Flag = 0;	// 触摸坐标修改标志位
+  29:BSP/LTDC/touch_800x480.c **** 	
+  30:BSP/LTDC/touch_800x480.c **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 2
+
+
+  31:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+  32:BSP/LTDC/touch_800x480.c **** *	函 数 名:	GT9XX_Reset
+  33:BSP/LTDC/touch_800x480.c **** *	入口参数:	无
+  34:BSP/LTDC/touch_800x480.c **** *	返 回 值:	无
+  35:BSP/LTDC/touch_800x480.c **** *	函数功能:	复位GT911
+  36:BSP/LTDC/touch_800x480.c **** *	说    明:	复位GT911，并将芯片的IIC地址配置为0xBA/0xBB
+  37:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+  38:BSP/LTDC/touch_800x480.c **** 
+  39:BSP/LTDC/touch_800x480.c **** void GT9XX_Reset(void)
+  40:BSP/LTDC/touch_800x480.c **** {
+  29              		.loc 1 40 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  41:BSP/LTDC/touch_800x480.c **** 	Touch_INT_Out();	//	将INT引脚配置为输出
+  33              		.loc 1 41 2 view .LVU1
+  40:BSP/LTDC/touch_800x480.c **** 	Touch_INT_Out();	//	将INT引脚配置为输出
+  34              		.loc 1 40 1 is_stmt 0 view .LVU2
+  35 0000 10B5     		push	{r4, lr}
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  42:BSP/LTDC/touch_800x480.c **** 	
+  43:BSP/LTDC/touch_800x480.c **** 	// 初始化引脚状态
+  44:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_WritePin(Touch_INT_PORT,Touch_INT_PIN,GPIO_PIN_RESET);  // INT输出低电平
+  45:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_WritePin(Touch_RST_PORT,Touch_RST_PIN,GPIO_PIN_SET);    // RST输出高	电平
+  39              		.loc 1 45 2 view .LVU3
+  40 0002 144C     		ldr	r4, .L4
+  41:BSP/LTDC/touch_800x480.c **** 	
+  41              		.loc 1 41 2 view .LVU4
+  42 0004 FFF7FEFF 		bl	Touch_INT_Out
+  43              	.LVL0:
+  44:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_WritePin(Touch_RST_PORT,Touch_RST_PIN,GPIO_PIN_SET);    // RST输出高	电平
+  44              		.loc 1 44 2 is_stmt 1 view .LVU5
+  45 0008 0022     		movs	r2, #0
+  46 000a 0821     		movs	r1, #8
+  47 000c 1248     		ldr	r0, .L4+4
+  48 000e FFF7FEFF 		bl	HAL_GPIO_WritePin
+  49              	.LVL1:
+  50              		.loc 1 45 2 view .LVU6
+  51 0012 0122     		movs	r2, #1
+  52 0014 1021     		movs	r1, #16
+  53 0016 2046     		mov	r0, r4
+  54 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  55              	.LVL2:
+  46:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Delay(10000);
+  56              		.loc 1 46 2 view .LVU7
+  57 001c 42F21070 		movw	r0, #10000
+  58 0020 FFF7FEFF 		bl	Touch_IIC_Delay
+  59              	.LVL3:
+  47:BSP/LTDC/touch_800x480.c **** 	
+  48:BSP/LTDC/touch_800x480.c **** 	// 开始执行复位
+  49:BSP/LTDC/touch_800x480.c **** 	//	INT引脚保持低电平不变，将器件地址设置为0XBA/0XBB
+  50:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_WritePin(Touch_RST_PORT,Touch_RST_PIN,GPIO_PIN_RESET); // 拉低复位引脚，此时芯片执行复位
+  60              		.loc 1 50 2 view .LVU8
+  61 0024 0022     		movs	r2, #0
+  62 0026 1021     		movs	r1, #16
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 3
+
+
+  63 0028 2046     		mov	r0, r4
+  64 002a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  65              	.LVL4:
+  51:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Delay(150000);			// 延时
+  66              		.loc 1 51 2 view .LVU9
+  67 002e 0B48     		ldr	r0, .L4+8
+  68 0030 FFF7FEFF 		bl	Touch_IIC_Delay
+  69              	.LVL5:
+  52:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_WritePin(Touch_RST_PORT,Touch_RST_PIN,GPIO_PIN_SET);			// 拉高复位引脚，复位结束
+  70              		.loc 1 52 2 view .LVU10
+  71 0034 0122     		movs	r2, #1
+  72 0036 1021     		movs	r1, #16
+  73 0038 2046     		mov	r0, r4
+  74 003a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  75              	.LVL6:
+  53:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Delay(350000);			// 延时
+  76              		.loc 1 53 2 view .LVU11
+  77 003e 0848     		ldr	r0, .L4+12
+  78 0040 FFF7FEFF 		bl	Touch_IIC_Delay
+  79              	.LVL7:
+  54:BSP/LTDC/touch_800x480.c **** 	Touch_INT_In();						// INT引脚转为浮空输入
+  80              		.loc 1 54 2 view .LVU12
+  81 0044 FFF7FEFF 		bl	Touch_INT_In
+  82              	.LVL8:
+  55:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Delay(20000);				// 延时
+  83              		.loc 1 55 2 view .LVU13
+  84 0048 44F62060 		movw	r0, #20000
+  56:BSP/LTDC/touch_800x480.c **** 									
+  57:BSP/LTDC/touch_800x480.c **** }
+  85              		.loc 1 57 1 is_stmt 0 view .LVU14
+  86 004c BDE81040 		pop	{r4, lr}
+  87              		.cfi_restore 14
+  88              		.cfi_restore 4
+  89              		.cfi_def_cfa_offset 0
+  55:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Delay(20000);				// 延时
+  90              		.loc 1 55 2 view .LVU15
+  91 0050 FFF7FEBF 		b	Touch_IIC_Delay
+  92              	.LVL9:
+  93              	.L5:
+  94              		.align	2
+  95              	.L4:
+  96 0054 001C0258 		.word	1476533248
+  97 0058 00180258 		.word	1476532224
+  98 005c F0490200 		.word	150000
+  99 0060 30570500 		.word	350000
+ 100              		.cfi_endproc
+ 101              	.LFE340:
+ 103              		.section	.text.GT9XX_WriteHandle,"ax",%progbits
+ 104              		.align	1
+ 105              		.p2align 2,,3
+ 106              		.global	GT9XX_WriteHandle
+ 107              		.syntax unified
+ 108              		.thumb
+ 109              		.thumb_func
+ 111              	GT9XX_WriteHandle:
+ 112              	.LVL10:
+ 113              	.LFB341:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 4
+
+
+  58:BSP/LTDC/touch_800x480.c **** 
+  59:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+  60:BSP/LTDC/touch_800x480.c **** *	函 数 名:	GT9XX_WriteHandle
+  61:BSP/LTDC/touch_800x480.c **** *	入口参数:	addr - 要操作的寄存器
+  62:BSP/LTDC/touch_800x480.c **** *	返 回 值:	SUCCESS - 操作成功
+  63:BSP/LTDC/touch_800x480.c **** *					ERROR	  - 操作失败
+  64:BSP/LTDC/touch_800x480.c **** *	函数功能:	GT9XX 写操作
+  65:BSP/LTDC/touch_800x480.c **** *	说    明:	对指定的寄存器执行写操作
+  66:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+  67:BSP/LTDC/touch_800x480.c **** 
+  68:BSP/LTDC/touch_800x480.c **** uint8_t GT9XX_WriteHandle (uint16_t addr)
+  69:BSP/LTDC/touch_800x480.c **** {
+ 114              		.loc 1 69 1 is_stmt 1 view -0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+  70:BSP/LTDC/touch_800x480.c **** 	uint8_t status;		// 状态标志位
+ 118              		.loc 1 70 2 view .LVU17
+  71:BSP/LTDC/touch_800x480.c **** 
+  72:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Start();	// 启动IIC通信
+ 119              		.loc 1 72 2 view .LVU18
+  69:BSP/LTDC/touch_800x480.c **** 	uint8_t status;		// 状态标志位
+ 120              		.loc 1 69 1 is_stmt 0 view .LVU19
+ 121 0000 10B5     		push	{r4, lr}
+ 122              		.cfi_def_cfa_offset 8
+ 123              		.cfi_offset 4, -8
+ 124              		.cfi_offset 14, -4
+  69:BSP/LTDC/touch_800x480.c **** 	uint8_t status;		// 状态标志位
+ 125              		.loc 1 69 1 view .LVU20
+ 126 0002 0446     		mov	r4, r0
+ 127              		.loc 1 72 2 view .LVU21
+ 128 0004 FFF7FEFF 		bl	Touch_IIC_Start
+ 129              	.LVL11:
+  73:BSP/LTDC/touch_800x480.c **** 	if( Touch_IIC_WriteByte(GT9XX_IIC_WADDR) == ACK_OK ) //写数据指令
+ 130              		.loc 1 73 2 is_stmt 1 view .LVU22
+ 131              		.loc 1 73 6 is_stmt 0 view .LVU23
+ 132 0008 BA20     		movs	r0, #186
+ 133 000a FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 134              	.LVL12:
+ 135              		.loc 1 73 4 view .LVU24
+ 136 000e 0128     		cmp	r0, #1
+ 137 0010 01D0     		beq	.L11
+ 138              	.L8:
+  74:BSP/LTDC/touch_800x480.c **** 	{
+  75:BSP/LTDC/touch_800x480.c **** 		if( Touch_IIC_WriteByte((uint8_t)(addr >> 8)) == ACK_OK ) //写入16位地址
+  76:BSP/LTDC/touch_800x480.c **** 		{
+  77:BSP/LTDC/touch_800x480.c **** 			if( Touch_IIC_WriteByte((uint8_t)(addr)) != ACK_OK )
+  78:BSP/LTDC/touch_800x480.c **** 			{
+  79:BSP/LTDC/touch_800x480.c **** 				status = ERROR;	// 操作失败
+  80:BSP/LTDC/touch_800x480.c **** 			}			
+  81:BSP/LTDC/touch_800x480.c **** 		}
+  82:BSP/LTDC/touch_800x480.c **** 	}
+  83:BSP/LTDC/touch_800x480.c **** 	status = SUCCESS;	// 操作成功
+ 139              		.loc 1 83 2 is_stmt 1 view .LVU25
+ 140              	.LVL13:
+  84:BSP/LTDC/touch_800x480.c **** 	return status;	
+ 141              		.loc 1 84 2 view .LVU26
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 5
+
+
+  85:BSP/LTDC/touch_800x480.c **** }
+ 142              		.loc 1 85 1 is_stmt 0 view .LVU27
+ 143 0012 0020     		movs	r0, #0
+ 144 0014 10BD     		pop	{r4, pc}
+ 145              	.LVL14:
+ 146              	.L11:
+ 147              	.LBB4:
+ 148              	.LBI4:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 149              		.loc 1 68 9 is_stmt 1 view .LVU28
+ 150              	.LBB5:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 151              		.loc 1 75 3 view .LVU29
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 152              		.loc 1 75 7 is_stmt 0 view .LVU30
+ 153 0016 200A     		lsrs	r0, r4, #8
+ 154 0018 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 155              	.LVL15:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 156              		.loc 1 75 5 view .LVU31
+ 157 001c 0128     		cmp	r0, #1
+ 158 001e F8D1     		bne	.L8
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 159              		.loc 1 77 4 is_stmt 1 view .LVU32
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 160              		.loc 1 77 8 is_stmt 0 view .LVU33
+ 161 0020 E0B2     		uxtb	r0, r4
+ 162 0022 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 163              	.LVL16:
+ 164 0026 F4E7     		b	.L8
+ 165              	.LBE5:
+ 166              	.LBE4:
+ 167              		.cfi_endproc
+ 168              	.LFE341:
+ 170              		.section	.text.GT9XX_WriteData,"ax",%progbits
+ 171              		.align	1
+ 172              		.p2align 2,,3
+ 173              		.global	GT9XX_WriteData
+ 174              		.syntax unified
+ 175              		.thumb
+ 176              		.thumb_func
+ 178              	GT9XX_WriteData:
+ 179              	.LVL17:
+ 180              	.LFB342:
+  86:BSP/LTDC/touch_800x480.c **** 
+  87:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+  88:BSP/LTDC/touch_800x480.c **** *	函 数 名:	GT9XX_WriteData
+  89:BSP/LTDC/touch_800x480.c **** *	入口参数:	addr - 要写入的寄存器
+  90:BSP/LTDC/touch_800x480.c **** *					value - 要写入的数据
+  91:BSP/LTDC/touch_800x480.c **** *	返 回 值:	SUCCESS - 操作成功
+  92:BSP/LTDC/touch_800x480.c **** *					ERROR	  - 操作失败
+  93:BSP/LTDC/touch_800x480.c **** *	函数功能:	GT9XX 写一字节数据
+  94:BSP/LTDC/touch_800x480.c **** *	说    明:	对指定的寄存器写入一字节数据
+  95:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+  96:BSP/LTDC/touch_800x480.c **** 
+  97:BSP/LTDC/touch_800x480.c **** uint8_t GT9XX_WriteData (uint16_t addr,uint8_t value)
+  98:BSP/LTDC/touch_800x480.c **** {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 6
+
+
+ 181              		.loc 1 98 1 is_stmt 1 view -0
+ 182              		.cfi_startproc
+ 183              		@ args = 0, pretend = 0, frame = 0
+ 184              		@ frame_needed = 0, uses_anonymous_args = 0
+  99:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 185              		.loc 1 99 2 view .LVU35
+ 100:BSP/LTDC/touch_800x480.c **** 	
+ 101:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Start(); //启动IIC通讯
+ 186              		.loc 1 101 2 view .LVU36
+  98:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 187              		.loc 1 98 1 is_stmt 0 view .LVU37
+ 188 0000 38B5     		push	{r3, r4, r5, lr}
+ 189              		.cfi_def_cfa_offset 16
+ 190              		.cfi_offset 3, -16
+ 191              		.cfi_offset 4, -12
+ 192              		.cfi_offset 5, -8
+ 193              		.cfi_offset 14, -4
+  98:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 194              		.loc 1 98 1 view .LVU38
+ 195 0002 0546     		mov	r5, r0
+ 196 0004 0C46     		mov	r4, r1
+ 197              		.loc 1 101 2 view .LVU39
+ 198 0006 FFF7FEFF 		bl	Touch_IIC_Start
+ 199              	.LVL18:
+ 102:BSP/LTDC/touch_800x480.c **** 
+ 103:BSP/LTDC/touch_800x480.c **** 	if( GT9XX_WriteHandle(addr) == SUCCESS)	//写入要操作的寄存器
+ 200              		.loc 1 103 2 is_stmt 1 view .LVU40
+ 201              	.LBB10:
+ 202              	.LBI10:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 203              		.loc 1 68 9 view .LVU41
+ 204              	.LBB11:
+  70:BSP/LTDC/touch_800x480.c **** 
+ 205              		.loc 1 70 2 view .LVU42
+  72:BSP/LTDC/touch_800x480.c **** 	if( Touch_IIC_WriteByte(GT9XX_IIC_WADDR) == ACK_OK ) //写数据指令
+ 206              		.loc 1 72 2 view .LVU43
+ 207 000a FFF7FEFF 		bl	Touch_IIC_Start
+ 208              	.LVL19:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 209              		.loc 1 73 2 view .LVU44
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 210              		.loc 1 73 6 is_stmt 0 view .LVU45
+ 211 000e BA20     		movs	r0, #186
+ 212 0010 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 213              	.LVL20:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 214              		.loc 1 73 4 view .LVU46
+ 215 0014 0128     		cmp	r0, #1
+ 216 0016 06D0     		beq	.L17
+ 217              	.L14:
+  83:BSP/LTDC/touch_800x480.c **** 	return status;	
+ 218              		.loc 1 83 2 is_stmt 1 view .LVU47
+ 219              	.LVL21:
+  84:BSP/LTDC/touch_800x480.c **** }
+ 220              		.loc 1 84 2 view .LVU48
+  84:BSP/LTDC/touch_800x480.c **** }
+ 221              		.loc 1 84 2 is_stmt 0 view .LVU49
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 7
+
+
+ 222              	.LBE11:
+ 223              	.LBE10:
+ 104:BSP/LTDC/touch_800x480.c **** 	{
+ 105:BSP/LTDC/touch_800x480.c **** 		if (Touch_IIC_WriteByte(value) != ACK_OK) //写数据
+ 224              		.loc 1 105 3 is_stmt 1 view .LVU50
+ 225              		.loc 1 105 7 is_stmt 0 view .LVU51
+ 226 0018 2046     		mov	r0, r4
+ 227 001a FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 228              	.LVL22:
+ 106:BSP/LTDC/touch_800x480.c **** 		{
+ 107:BSP/LTDC/touch_800x480.c **** 			status = ERROR;						
+ 108:BSP/LTDC/touch_800x480.c **** 		}
+ 109:BSP/LTDC/touch_800x480.c **** 	}	
+ 110:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Stop(); // 停止通讯
+ 229              		.loc 1 110 2 is_stmt 1 view .LVU52
+ 230 001e FFF7FEFF 		bl	Touch_IIC_Stop
+ 231              	.LVL23:
+ 111:BSP/LTDC/touch_800x480.c **** 	
+ 112:BSP/LTDC/touch_800x480.c **** 	status = SUCCESS;	// 写入成功
+ 232              		.loc 1 112 2 view .LVU53
+ 113:BSP/LTDC/touch_800x480.c **** 	return status;
+ 233              		.loc 1 113 2 view .LVU54
+ 114:BSP/LTDC/touch_800x480.c **** }
+ 234              		.loc 1 114 1 is_stmt 0 view .LVU55
+ 235 0022 0020     		movs	r0, #0
+ 236 0024 38BD     		pop	{r3, r4, r5, pc}
+ 237              	.LVL24:
+ 238              	.L17:
+ 239              	.LBB15:
+ 240              	.LBB14:
+ 241              	.LBB12:
+ 242              	.LBI12:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 243              		.loc 1 68 9 is_stmt 1 view .LVU56
+ 244              	.LBB13:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 245              		.loc 1 75 3 view .LVU57
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 246              		.loc 1 75 7 is_stmt 0 view .LVU58
+ 247 0026 280A     		lsrs	r0, r5, #8
+ 248 0028 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 249              	.LVL25:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 250              		.loc 1 75 5 view .LVU59
+ 251 002c 0128     		cmp	r0, #1
+ 252 002e F3D1     		bne	.L14
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 253              		.loc 1 77 4 is_stmt 1 view .LVU60
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 254              		.loc 1 77 8 is_stmt 0 view .LVU61
+ 255 0030 E8B2     		uxtb	r0, r5
+ 256 0032 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 257              	.LVL26:
+ 258 0036 EFE7     		b	.L14
+ 259              	.LBE13:
+ 260              	.LBE12:
+ 261              	.LBE14:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 8
+
+
+ 262              	.LBE15:
+ 263              		.cfi_endproc
+ 264              	.LFE342:
+ 266              		.section	.text.GT9XX_WriteReg,"ax",%progbits
+ 267              		.align	1
+ 268              		.p2align 2,,3
+ 269              		.global	GT9XX_WriteReg
+ 270              		.syntax unified
+ 271              		.thumb
+ 272              		.thumb_func
+ 274              	GT9XX_WriteReg:
+ 275              	.LVL27:
+ 276              	.LFB343:
+ 115:BSP/LTDC/touch_800x480.c **** 
+ 116:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+ 117:BSP/LTDC/touch_800x480.c **** *	函 数 名:	GT9XX_WriteReg
+ 118:BSP/LTDC/touch_800x480.c **** *	入口参数:	addr - 要写入的寄存器区域首地址
+ 119:BSP/LTDC/touch_800x480.c **** *					cnt  - 数据长度
+ 120:BSP/LTDC/touch_800x480.c **** *					value - 要写入的数据区
+ 121:BSP/LTDC/touch_800x480.c **** *	返 回 值:	SUCCESS - 操作成功
+ 122:BSP/LTDC/touch_800x480.c **** *					ERROR	  - 操作失败
+ 123:BSP/LTDC/touch_800x480.c **** *	函数功能:	GT9XX 写寄存器
+ 124:BSP/LTDC/touch_800x480.c **** *	说    明:	往芯片的寄存器区写入指定长度的数据
+ 125:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+ 126:BSP/LTDC/touch_800x480.c **** 
+ 127:BSP/LTDC/touch_800x480.c **** uint8_t GT9XX_WriteReg (uint16_t addr, uint8_t cnt, uint8_t *value)
+ 128:BSP/LTDC/touch_800x480.c **** {
+ 277              		.loc 1 128 1 is_stmt 1 view -0
+ 278              		.cfi_startproc
+ 279              		@ args = 0, pretend = 0, frame = 0
+ 280              		@ frame_needed = 0, uses_anonymous_args = 0
+ 281              		.loc 1 128 1 is_stmt 0 view .LVU63
+ 282 0000 70B5     		push	{r4, r5, r6, lr}
+ 283              		.cfi_def_cfa_offset 16
+ 284              		.cfi_offset 4, -16
+ 285              		.cfi_offset 5, -12
+ 286              		.cfi_offset 6, -8
+ 287              		.cfi_offset 14, -4
+ 288              		.loc 1 128 1 view .LVU64
+ 289 0002 0646     		mov	r6, r0
+ 290 0004 0C46     		mov	r4, r1
+ 129:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 291              		.loc 1 129 2 is_stmt 1 view .LVU65
+ 130:BSP/LTDC/touch_800x480.c **** 	uint8_t i;
+ 292              		.loc 1 130 2 view .LVU66
+ 131:BSP/LTDC/touch_800x480.c **** 
+ 132:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Start();
+ 293              		.loc 1 132 2 view .LVU67
+ 128:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 294              		.loc 1 128 1 is_stmt 0 view .LVU68
+ 295 0006 1546     		mov	r5, r2
+ 296              		.loc 1 132 2 view .LVU69
+ 297 0008 FFF7FEFF 		bl	Touch_IIC_Start
+ 298              	.LVL28:
+ 133:BSP/LTDC/touch_800x480.c **** 
+ 134:BSP/LTDC/touch_800x480.c **** 	if( GT9XX_WriteHandle(addr) == SUCCESS) 	// 写入要操作的寄存器
+ 299              		.loc 1 134 2 is_stmt 1 view .LVU70
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 9
+
+
+ 300              	.LBB20:
+ 301              	.LBI20:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 302              		.loc 1 68 9 view .LVU71
+ 303              	.LBB21:
+  70:BSP/LTDC/touch_800x480.c **** 
+ 304              		.loc 1 70 2 view .LVU72
+  72:BSP/LTDC/touch_800x480.c **** 	if( Touch_IIC_WriteByte(GT9XX_IIC_WADDR) == ACK_OK ) //写数据指令
+ 305              		.loc 1 72 2 view .LVU73
+ 306 000c FFF7FEFF 		bl	Touch_IIC_Start
+ 307              	.LVL29:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 308              		.loc 1 73 2 view .LVU74
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 309              		.loc 1 73 6 is_stmt 0 view .LVU75
+ 310 0010 BA20     		movs	r0, #186
+ 311 0012 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 312              	.LVL30:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 313              		.loc 1 73 4 view .LVU76
+ 314 0016 0128     		cmp	r0, #1
+ 315 0018 0ED0     		beq	.L29
+ 316              	.L20:
+ 317              	.LVL31:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 318              		.loc 1 73 4 view .LVU77
+ 319              	.LBE21:
+ 320              	.LBE20:
+ 135:BSP/LTDC/touch_800x480.c **** 	{
+ 136:BSP/LTDC/touch_800x480.c **** 		for(i = 0 ; i < cnt; i++)			 	// 计数
+ 321              		.loc 1 136 15 is_stmt 1 discriminator 1 view .LVU78
+ 322              		.loc 1 136 3 is_stmt 0 discriminator 1 view .LVU79
+ 323 001a 4CB1     		cbz	r4, .L22
+ 324 001c 611E     		subs	r1, r4, #1
+ 325 001e 6C1E     		subs	r4, r5, #1
+ 326 0020 55FA81F5 		uxtab	r5, r5, r1
+ 327              	.LVL32:
+ 328              	.L23:
+ 137:BSP/LTDC/touch_800x480.c **** 		{
+ 138:BSP/LTDC/touch_800x480.c **** 			Touch_IIC_WriteByte(value[i]);	// 写入数据
+ 329              		.loc 1 138 4 is_stmt 1 discriminator 3 view .LVU80
+ 330 0024 14F8010F 		ldrb	r0, [r4, #1]!	@ zero_extendqisi2
+ 331              	.LVL33:
+ 332              		.loc 1 138 4 is_stmt 0 discriminator 3 view .LVU81
+ 333 0028 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 334              	.LVL34:
+ 136:BSP/LTDC/touch_800x480.c **** 		{
+ 335              		.loc 1 136 24 is_stmt 1 discriminator 3 view .LVU82
+ 136:BSP/LTDC/touch_800x480.c **** 		{
+ 336              		.loc 1 136 15 discriminator 3 view .LVU83
+ 136:BSP/LTDC/touch_800x480.c **** 		{
+ 337              		.loc 1 136 3 is_stmt 0 discriminator 3 view .LVU84
+ 338 002c AC42     		cmp	r4, r5
+ 339 002e F9D1     		bne	.L23
+ 340              	.LVL35:
+ 341              	.L22:
+ 139:BSP/LTDC/touch_800x480.c **** 		}					
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 10
+
+
+ 140:BSP/LTDC/touch_800x480.c **** 		Touch_IIC_Stop();		// 停止IIC通信
+ 342              		.loc 1 140 3 is_stmt 1 view .LVU85
+ 343 0030 FFF7FEFF 		bl	Touch_IIC_Stop
+ 344              	.LVL36:
+ 141:BSP/LTDC/touch_800x480.c **** 		status = SUCCESS;		// 写入成功
+ 345              		.loc 1 141 3 view .LVU86
+ 142:BSP/LTDC/touch_800x480.c **** 	}
+ 143:BSP/LTDC/touch_800x480.c **** 	else
+ 144:BSP/LTDC/touch_800x480.c **** 	{
+ 145:BSP/LTDC/touch_800x480.c **** 		Touch_IIC_Stop();		// 停止IIC通信
+ 146:BSP/LTDC/touch_800x480.c **** 		status = ERROR;		// 写入失败
+ 147:BSP/LTDC/touch_800x480.c **** 	}
+ 148:BSP/LTDC/touch_800x480.c **** 	return status;	
+ 346              		.loc 1 148 2 view .LVU87
+ 149:BSP/LTDC/touch_800x480.c **** }
+ 347              		.loc 1 149 1 is_stmt 0 view .LVU88
+ 348 0034 0020     		movs	r0, #0
+ 349 0036 70BD     		pop	{r4, r5, r6, pc}
+ 350              	.LVL37:
+ 351              	.L29:
+ 352              	.LBB25:
+ 353              	.LBB24:
+ 354              	.LBB22:
+ 355              	.LBI22:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 356              		.loc 1 68 9 is_stmt 1 view .LVU89
+ 357              	.LBB23:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 358              		.loc 1 75 3 view .LVU90
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 359              		.loc 1 75 7 is_stmt 0 view .LVU91
+ 360 0038 300A     		lsrs	r0, r6, #8
+ 361 003a FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 362              	.LVL38:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 363              		.loc 1 75 5 view .LVU92
+ 364 003e 0128     		cmp	r0, #1
+ 365 0040 EBD1     		bne	.L20
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 366              		.loc 1 77 4 is_stmt 1 view .LVU93
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 367              		.loc 1 77 8 is_stmt 0 view .LVU94
+ 368 0042 F0B2     		uxtb	r0, r6
+ 369 0044 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 370              	.LVL39:
+ 371 0048 E7E7     		b	.L20
+ 372              	.LBE23:
+ 373              	.LBE22:
+ 374              	.LBE24:
+ 375              	.LBE25:
+ 376              		.cfi_endproc
+ 377              	.LFE343:
+ 379 004a 00BF     		.section	.text.GT9XX_ReadReg,"ax",%progbits
+ 380              		.align	1
+ 381              		.p2align 2,,3
+ 382              		.global	GT9XX_ReadReg
+ 383              		.syntax unified
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 11
+
+
+ 384              		.thumb
+ 385              		.thumb_func
+ 387              	GT9XX_ReadReg:
+ 388              	.LVL40:
+ 389              	.LFB344:
+ 150:BSP/LTDC/touch_800x480.c **** 
+ 151:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+ 152:BSP/LTDC/touch_800x480.c **** *	函 数 名:	GT9XX_ReadReg
+ 153:BSP/LTDC/touch_800x480.c **** *	入口参数:	addr - 要读取的寄存器区域首地址
+ 154:BSP/LTDC/touch_800x480.c **** *					cnt  - 数据长度
+ 155:BSP/LTDC/touch_800x480.c **** *					value - 要读取的数据区
+ 156:BSP/LTDC/touch_800x480.c **** *	返 回 值:	SUCCESS - 操作成功
+ 157:BSP/LTDC/touch_800x480.c **** *					ERROR	  - 操作失败
+ 158:BSP/LTDC/touch_800x480.c **** *	函数功能:	GT9XX 读寄存器
+ 159:BSP/LTDC/touch_800x480.c **** *	说    明:	从芯片的寄存器区读取指定长度的数据
+ 160:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+ 161:BSP/LTDC/touch_800x480.c **** 
+ 162:BSP/LTDC/touch_800x480.c **** uint8_t GT9XX_ReadReg (uint16_t addr, uint8_t cnt, uint8_t *value)
+ 163:BSP/LTDC/touch_800x480.c **** {
+ 390              		.loc 1 163 1 is_stmt 1 view -0
+ 391              		.cfi_startproc
+ 392              		@ args = 0, pretend = 0, frame = 8
+ 393              		@ frame_needed = 0, uses_anonymous_args = 0
+ 164:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 394              		.loc 1 164 2 view .LVU96
+ 165:BSP/LTDC/touch_800x480.c **** 	uint8_t i;
+ 395              		.loc 1 165 2 view .LVU97
+ 166:BSP/LTDC/touch_800x480.c **** 
+ 167:BSP/LTDC/touch_800x480.c **** 	status = ERROR;
+ 396              		.loc 1 167 2 view .LVU98
+ 168:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Start();		// 启动IIC通信
+ 397              		.loc 1 168 2 view .LVU99
+ 163:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 398              		.loc 1 163 1 is_stmt 0 view .LVU100
+ 399 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 400              		.cfi_def_cfa_offset 20
+ 401              		.cfi_offset 4, -20
+ 402              		.cfi_offset 5, -16
+ 403              		.cfi_offset 6, -12
+ 404              		.cfi_offset 7, -8
+ 405              		.cfi_offset 14, -4
+ 406 0002 83B0     		sub	sp, sp, #12
+ 407              		.cfi_def_cfa_offset 32
+ 163:BSP/LTDC/touch_800x480.c **** 	uint8_t status;
+ 408              		.loc 1 163 1 view .LVU101
+ 409 0004 0646     		mov	r6, r0
+ 410 0006 0D46     		mov	r5, r1
+ 411 0008 1446     		mov	r4, r2
+ 412              		.loc 1 168 2 view .LVU102
+ 413 000a FFF7FEFF 		bl	Touch_IIC_Start
+ 414              	.LVL41:
+ 169:BSP/LTDC/touch_800x480.c **** 
+ 170:BSP/LTDC/touch_800x480.c **** 	if( GT9XX_WriteHandle(addr) == SUCCESS) //写入要操作的寄存器
+ 415              		.loc 1 170 2 is_stmt 1 view .LVU103
+ 416              	.LBB30:
+ 417              	.LBI30:
+  68:BSP/LTDC/touch_800x480.c **** {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 12
+
+
+ 418              		.loc 1 68 9 view .LVU104
+ 419              	.LBB31:
+  70:BSP/LTDC/touch_800x480.c **** 
+ 420              		.loc 1 70 2 view .LVU105
+  72:BSP/LTDC/touch_800x480.c **** 	if( Touch_IIC_WriteByte(GT9XX_IIC_WADDR) == ACK_OK ) //写数据指令
+ 421              		.loc 1 72 2 view .LVU106
+ 422 000e FFF7FEFF 		bl	Touch_IIC_Start
+ 423              	.LVL42:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 424              		.loc 1 73 2 view .LVU107
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 425              		.loc 1 73 6 is_stmt 0 view .LVU108
+ 426 0012 BA20     		movs	r0, #186
+ 427 0014 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 428              	.LVL43:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 429              		.loc 1 73 4 view .LVU109
+ 430 0018 0128     		cmp	r0, #1
+ 431 001a 25D0     		beq	.L43
+ 432              	.L32:
+  83:BSP/LTDC/touch_800x480.c **** 	return status;	
+ 433              		.loc 1 83 2 is_stmt 1 view .LVU110
+ 434              	.LVL44:
+  84:BSP/LTDC/touch_800x480.c **** }
+ 435              		.loc 1 84 2 view .LVU111
+  84:BSP/LTDC/touch_800x480.c **** }
+ 436              		.loc 1 84 2 is_stmt 0 view .LVU112
+ 437              	.LBE31:
+ 438              	.LBE30:
+ 171:BSP/LTDC/touch_800x480.c **** 	{
+ 172:BSP/LTDC/touch_800x480.c **** 		Touch_IIC_Start(); //重新启动IIC通讯
+ 439              		.loc 1 172 3 is_stmt 1 view .LVU113
+ 440 001c FFF7FEFF 		bl	Touch_IIC_Start
+ 441              	.LVL45:
+ 173:BSP/LTDC/touch_800x480.c **** 
+ 174:BSP/LTDC/touch_800x480.c **** 		if (Touch_IIC_WriteByte(GT9XX_IIC_RADDR) == ACK_OK)	// 发送读命令
+ 442              		.loc 1 174 3 view .LVU114
+ 443              		.loc 1 174 7 is_stmt 0 view .LVU115
+ 444 0020 BB20     		movs	r0, #187
+ 445 0022 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 446              	.LVL46:
+ 447              		.loc 1 174 6 view .LVU116
+ 448 0026 0128     		cmp	r0, #1
+ 449 0028 06D0     		beq	.L44
+ 167:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Start();		// 启动IIC通信
+ 450              		.loc 1 167 9 view .LVU117
+ 451 002a 0120     		movs	r0, #1
+ 452              	.LVL47:
+ 453              	.L34:
+ 167:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Start();		// 启动IIC通信
+ 454              		.loc 1 167 9 view .LVU118
+ 455 002c 0190     		str	r0, [sp, #4]
+ 456              	.LVL48:
+ 175:BSP/LTDC/touch_800x480.c **** 		{	
+ 176:BSP/LTDC/touch_800x480.c **** 			for(i = 0 ; i < cnt; i++)	// 计数
+ 177:BSP/LTDC/touch_800x480.c **** 			{
+ 178:BSP/LTDC/touch_800x480.c **** 				if (i == (cnt - 1))
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 13
+
+
+ 179:BSP/LTDC/touch_800x480.c **** 				{
+ 180:BSP/LTDC/touch_800x480.c **** 					value[i] = Touch_IIC_ReadByte(0);	// 读到最后一个数据时发送 非应答信号
+ 181:BSP/LTDC/touch_800x480.c **** 				}
+ 182:BSP/LTDC/touch_800x480.c **** 				else
+ 183:BSP/LTDC/touch_800x480.c **** 				{
+ 184:BSP/LTDC/touch_800x480.c **** 					value[i] = Touch_IIC_ReadByte(1);	// 发送应答信号
+ 185:BSP/LTDC/touch_800x480.c **** 				}
+ 186:BSP/LTDC/touch_800x480.c **** 			}					
+ 187:BSP/LTDC/touch_800x480.c **** 			Touch_IIC_Stop();	// 停止IIC通信
+ 188:BSP/LTDC/touch_800x480.c **** 			status = SUCCESS;
+ 189:BSP/LTDC/touch_800x480.c **** 		}
+ 190:BSP/LTDC/touch_800x480.c **** 	}
+ 191:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Stop();	// 停止IIC通信
+ 457              		.loc 1 191 2 is_stmt 1 view .LVU119
+ 458 002e FFF7FEFF 		bl	Touch_IIC_Stop
+ 459              	.LVL49:
+ 192:BSP/LTDC/touch_800x480.c **** 	return (status);	
+ 460              		.loc 1 192 2 view .LVU120
+ 193:BSP/LTDC/touch_800x480.c **** }
+ 461              		.loc 1 193 1 is_stmt 0 view .LVU121
+ 462 0032 0198     		ldr	r0, [sp, #4]
+ 463 0034 03B0     		add	sp, sp, #12
+ 464              		.cfi_remember_state
+ 465              		.cfi_def_cfa_offset 20
+ 466              		@ sp needed
+ 467 0036 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 468              	.LVL50:
+ 469              	.L44:
+ 470              		.cfi_restore_state
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 471              		.loc 1 176 16 is_stmt 1 view .LVU122
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 472              		.loc 1 176 4 is_stmt 0 view .LVU123
+ 473 0038 85B1     		cbz	r5, .L39
+ 178:BSP/LTDC/touch_800x480.c **** 				{
+ 474              		.loc 1 178 19 view .LVU124
+ 475 003a 6F1E     		subs	r7, r5, #1
+ 476 003c 0026     		movs	r6, #0
+ 477              	.LVL51:
+ 478              	.L38:
+ 178:BSP/LTDC/touch_800x480.c **** 				{
+ 479              		.loc 1 178 5 is_stmt 1 view .LVU125
+ 184:BSP/LTDC/touch_800x480.c **** 				}
+ 480              		.loc 1 184 6 view .LVU126
+ 180:BSP/LTDC/touch_800x480.c **** 				}
+ 481              		.loc 1 180 6 view .LVU127
+ 178:BSP/LTDC/touch_800x480.c **** 				{
+ 482              		.loc 1 178 8 is_stmt 0 view .LVU128
+ 483 003e BE42     		cmp	r6, r7
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 484              		.loc 1 176 4 view .LVU129
+ 485 0040 06F10106 		add	r6, r6, #1
+ 486              	.LVL52:
+ 184:BSP/LTDC/touch_800x480.c **** 				}
+ 487              		.loc 1 184 17 view .LVU130
+ 488 0044 4FF00100 		mov	r0, #1
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 14
+
+
+ 489              		.loc 1 176 4 view .LVU131
+ 490 0048 04F10104 		add	r4, r4, #1
+ 180:BSP/LTDC/touch_800x480.c **** 				}
+ 491              		.loc 1 180 17 view .LVU132
+ 492 004c 08BF     		it	eq
+ 493 004e 0020     		moveq	r0, #0
+ 184:BSP/LTDC/touch_800x480.c **** 				}
+ 494              		.loc 1 184 17 view .LVU133
+ 495 0050 FFF7FEFF 		bl	Touch_IIC_ReadByte
+ 496              	.LVL53:
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 497              		.loc 1 176 4 view .LVU134
+ 498 0054 AE42     		cmp	r6, r5
+ 184:BSP/LTDC/touch_800x480.c **** 				}
+ 499              		.loc 1 184 15 view .LVU135
+ 500 0056 04F8010C 		strb	r0, [r4, #-1]
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 501              		.loc 1 176 25 is_stmt 1 view .LVU136
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 502              		.loc 1 176 16 view .LVU137
+ 176:BSP/LTDC/touch_800x480.c **** 			{
+ 503              		.loc 1 176 4 is_stmt 0 view .LVU138
+ 504 005a F0D1     		bne	.L38
+ 505              	.L39:
+ 187:BSP/LTDC/touch_800x480.c **** 			status = SUCCESS;
+ 506              		.loc 1 187 4 is_stmt 1 view .LVU139
+ 188:BSP/LTDC/touch_800x480.c **** 		}
+ 507              		.loc 1 188 11 is_stmt 0 view .LVU140
+ 508 005c 0020     		movs	r0, #0
+ 509 005e 0190     		str	r0, [sp, #4]
+ 187:BSP/LTDC/touch_800x480.c **** 			status = SUCCESS;
+ 510              		.loc 1 187 4 view .LVU141
+ 511 0060 FFF7FEFF 		bl	Touch_IIC_Stop
+ 512              	.LVL54:
+ 188:BSP/LTDC/touch_800x480.c **** 		}
+ 513              		.loc 1 188 4 is_stmt 1 view .LVU142
+ 188:BSP/LTDC/touch_800x480.c **** 		}
+ 514              		.loc 1 188 4 is_stmt 0 view .LVU143
+ 515 0064 0198     		ldr	r0, [sp, #4]
+ 516 0066 E1E7     		b	.L34
+ 517              	.LVL55:
+ 518              	.L43:
+ 519              	.LBB35:
+ 520              	.LBB34:
+ 521              	.LBB32:
+ 522              	.LBI32:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 523              		.loc 1 68 9 is_stmt 1 view .LVU144
+ 524              	.LBB33:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 525              		.loc 1 75 3 view .LVU145
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 526              		.loc 1 75 7 is_stmt 0 view .LVU146
+ 527 0068 300A     		lsrs	r0, r6, #8
+ 528 006a FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 529              	.LVL56:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 15
+
+
+ 530              		.loc 1 75 5 view .LVU147
+ 531 006e 0128     		cmp	r0, #1
+ 532 0070 D4D1     		bne	.L32
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 533              		.loc 1 77 4 is_stmt 1 view .LVU148
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 534              		.loc 1 77 8 is_stmt 0 view .LVU149
+ 535 0072 F0B2     		uxtb	r0, r6
+ 536 0074 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 537              	.LVL57:
+ 538 0078 D0E7     		b	.L32
+ 539              	.LBE33:
+ 540              	.LBE32:
+ 541              	.LBE34:
+ 542              	.LBE35:
+ 543              		.cfi_endproc
+ 544              	.LFE344:
+ 546 007a 00BF     		.section	.text.PanelRecognition,"ax",%progbits
+ 547              		.align	1
+ 548              		.p2align 2,,3
+ 549              		.global	PanelRecognition
+ 550              		.syntax unified
+ 551              		.thumb
+ 552              		.thumb_func
+ 554              	PanelRecognition:
+ 555              	.LFB345:
+ 194:BSP/LTDC/touch_800x480.c **** 
+ 195:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+ 196:BSP/LTDC/touch_800x480.c **** *	函 数 名: PanelRecognition
+ 197:BSP/LTDC/touch_800x480.c **** *	入口参数: 无
+ 198:BSP/LTDC/touch_800x480.c **** *	返 回 值: 无    
+ 199:BSP/LTDC/touch_800x480.c **** *	函数功能: 识别屏幕的版本
+ 200:BSP/LTDC/touch_800x480.c **** *	说    明: 在 RGB070M1-800*480 V1.1 之前的硬件版本，触摸屏的分辨率为1024*600，
+ 201:BSP/LTDC/touch_800x480.c **** *				 为了程序上的兼容，这里进行判断处理，旧版本的RST和INT引脚并没有连接到核心板，
+ 202:BSP/LTDC/touch_800x480.c **** *				 因此可以根据这两个引脚的电平状态进行识别，此段代码只对旧版的7寸屏有用，
+ 203:BSP/LTDC/touch_800x480.c **** *				 其它尺寸的屏幕无需理会
+ 204:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+ 205:BSP/LTDC/touch_800x480.c **** 
+ 206:BSP/LTDC/touch_800x480.c **** void	PanelRecognition (void)
+ 207:BSP/LTDC/touch_800x480.c **** {
+ 556              		.loc 1 207 1 is_stmt 1 view -0
+ 557              		.cfi_startproc
+ 558              		@ args = 0, pretend = 0, frame = 32
+ 559              		@ frame_needed = 0, uses_anonymous_args = 0
+ 208:BSP/LTDC/touch_800x480.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 560              		.loc 1 208 2 view .LVU151
+ 207:BSP/LTDC/touch_800x480.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 561              		.loc 1 207 1 is_stmt 0 view .LVU152
+ 562 0000 30B5     		push	{r4, r5, lr}
+ 563              		.cfi_def_cfa_offset 12
+ 564              		.cfi_offset 4, -12
+ 565              		.cfi_offset 5, -8
+ 566              		.cfi_offset 14, -4
+ 567              	.LBB36:
+ 209:BSP/LTDC/touch_800x480.c **** 	
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_INT_CLK_ENABLE;	//初始化IO口时钟
+ 568              		.loc 1 210 2 view .LVU153
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 16
+
+
+ 569 0002 224B     		ldr	r3, .L54
+ 570              	.LBE36:
+ 207:BSP/LTDC/touch_800x480.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 571              		.loc 1 207 1 view .LVU154
+ 572 0004 89B0     		sub	sp, sp, #36
+ 573              		.cfi_def_cfa_offset 48
+ 208:BSP/LTDC/touch_800x480.c **** 	
+ 574              		.loc 1 208 19 view .LVU155
+ 575 0006 0022     		movs	r2, #0
+ 211:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 212:BSP/LTDC/touch_800x480.c **** 
+ 213:BSP/LTDC/touch_800x480.c **** 		
+ 214:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Mode  = GPIO_MODE_INPUT;      		//	输入模式
+ 215:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Pull  = GPIO_PULLDOWN;		 			//	下拉输入
+ 576              		.loc 1 215 24 view .LVU156
+ 577 0008 0221     		movs	r1, #2
+ 216:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ 217:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Pin   = Touch_INT_PIN ;  				// 初始化 INT 引脚
+ 578              		.loc 1 217 24 view .LVU157
+ 579 000a 0824     		movs	r4, #8
+ 218:BSP/LTDC/touch_800x480.c **** 	
+ 219:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);			
+ 580              		.loc 1 219 2 view .LVU158
+ 581 000c 2048     		ldr	r0, .L54+4
+ 220:BSP/LTDC/touch_800x480.c **** 
+ 221:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Pin  = Touch_RST_PIN; 					//	RST
+ 582              		.loc 1 221 23 view .LVU159
+ 583 000e 1025     		movs	r5, #16
+ 208:BSP/LTDC/touch_800x480.c **** 	
+ 584              		.loc 1 208 19 view .LVU160
+ 585 0010 CDE90422 		strd	r2, r2, [sp, #16]
+ 586 0014 CDE90622 		strd	r2, r2, [sp, #24]
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 587              		.loc 1 210 2 is_stmt 1 view .LVU161
+ 588              	.LBB37:
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 589              		.loc 1 210 2 view .LVU162
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 590              		.loc 1 210 2 view .LVU163
+ 591 0018 D3F8E020 		ldr	r2, [r3, #224]
+ 592 001c 42F04002 		orr	r2, r2, #64
+ 593 0020 C3F8E020 		str	r2, [r3, #224]
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 594              		.loc 1 210 2 view .LVU164
+ 595 0024 D3F8E020 		ldr	r2, [r3, #224]
+ 596 0028 02F04002 		and	r2, r2, #64
+ 597 002c 0192     		str	r2, [sp, #4]
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 598              		.loc 1 210 2 view .LVU165
+ 599 002e 019A     		ldr	r2, [sp, #4]
+ 600              	.LBE37:
+ 210:BSP/LTDC/touch_800x480.c **** 	Touch_RST_CLK_ENABLE;		
+ 601              		.loc 1 210 2 view .LVU166
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 602              		.loc 1 211 2 view .LVU167
+ 603              	.LBB38:
+ 211:BSP/LTDC/touch_800x480.c **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 17
+
+
+ 604              		.loc 1 211 2 view .LVU168
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 605              		.loc 1 211 2 view .LVU169
+ 606 0030 D3F8E020 		ldr	r2, [r3, #224]
+ 607 0034 42F08002 		orr	r2, r2, #128
+ 608 0038 C3F8E020 		str	r2, [r3, #224]
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 609              		.loc 1 211 2 view .LVU170
+ 610 003c D3F8E030 		ldr	r3, [r3, #224]
+ 611              	.LBE38:
+ 215:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ 612              		.loc 1 215 24 is_stmt 0 view .LVU171
+ 613 0040 0591     		str	r1, [sp, #20]
+ 219:BSP/LTDC/touch_800x480.c **** 
+ 614              		.loc 1 219 2 view .LVU172
+ 615 0042 03A9     		add	r1, sp, #12
+ 616              	.LBB39:
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 617              		.loc 1 211 2 view .LVU173
+ 618 0044 03F08003 		and	r3, r3, #128
+ 619              	.LBE39:
+ 217:BSP/LTDC/touch_800x480.c **** 	
+ 620              		.loc 1 217 24 view .LVU174
+ 621 0048 0394     		str	r4, [sp, #12]
+ 622              	.LBB40:
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 623              		.loc 1 211 2 view .LVU175
+ 624 004a 0293     		str	r3, [sp, #8]
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 625              		.loc 1 211 2 is_stmt 1 view .LVU176
+ 626 004c 029B     		ldr	r3, [sp, #8]
+ 627              	.LBE40:
+ 211:BSP/LTDC/touch_800x480.c **** 
+ 628              		.loc 1 211 2 view .LVU177
+ 214:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Pull  = GPIO_PULLDOWN;		 			//	下拉输入
+ 629              		.loc 1 214 2 view .LVU178
+ 215:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ 630              		.loc 1 215 2 view .LVU179
+ 216:BSP/LTDC/touch_800x480.c **** 	GPIO_InitStruct.Pin   = Touch_INT_PIN ;  				// 初始化 INT 引脚
+ 631              		.loc 1 216 2 view .LVU180
+ 217:BSP/LTDC/touch_800x480.c **** 	
+ 632              		.loc 1 217 2 view .LVU181
+ 219:BSP/LTDC/touch_800x480.c **** 
+ 633              		.loc 1 219 2 view .LVU182
+ 634 004e FFF7FEFF 		bl	HAL_GPIO_Init
+ 635              	.LVL58:
+ 636              		.loc 1 221 2 view .LVU183
+ 222:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_Init(Touch_RST_PORT, &GPIO_InitStruct);					   
+ 637              		.loc 1 222 2 is_stmt 0 view .LVU184
+ 638 0052 03A9     		add	r1, sp, #12
+ 639 0054 0F48     		ldr	r0, .L54+8
+ 221:BSP/LTDC/touch_800x480.c **** 	HAL_GPIO_Init(Touch_RST_PORT, &GPIO_InitStruct);					   
+ 640              		.loc 1 221 23 view .LVU185
+ 641 0056 0395     		str	r5, [sp, #12]
+ 642              		.loc 1 222 2 is_stmt 1 view .LVU186
+ 643 0058 FFF7FEFF 		bl	HAL_GPIO_Init
+ 644              	.LVL59:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 18
+
+
+ 223:BSP/LTDC/touch_800x480.c **** 
+ 224:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_Delay(4000);		// 延时
+ 645              		.loc 1 224 2 view .LVU187
+ 646 005c 4FF47A60 		mov	r0, #4000
+ 647 0060 FFF7FEFF 		bl	Touch_IIC_Delay
+ 648              	.LVL60:
+ 225:BSP/LTDC/touch_800x480.c **** 	
+ 226:BSP/LTDC/touch_800x480.c **** 	//	旧版本的RST和INT引脚并没有连接到核心板，因此可以根据这两个引脚的电平状态进行识别，
+ 227:BSP/LTDC/touch_800x480.c **** 	//	新版本的硬件这两个脚做了上拉处理
+ 228:BSP/LTDC/touch_800x480.c **** 	if( (HAL_GPIO_ReadPin(Touch_RST_PORT,Touch_RST_PIN) != 1) && (HAL_GPIO_ReadPin(Touch_INT_PORT,Touc
+ 649              		.loc 1 228 2 view .LVU188
+ 650              		.loc 1 228 7 is_stmt 0 view .LVU189
+ 651 0064 2946     		mov	r1, r5
+ 652 0066 0B48     		ldr	r0, .L54+8
+ 653 0068 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 654              	.LVL61:
+ 655              		.loc 1 228 4 view .LVU190
+ 656 006c 0128     		cmp	r0, #1
+ 657 006e 01D1     		bne	.L53
+ 658              	.L45:
+ 229:BSP/LTDC/touch_800x480.c **** 	{
+ 230:BSP/LTDC/touch_800x480.c **** 		// 在 V1.1 之前的硬件版本，触摸屏的分辨率为1024*600，为了程序上的兼容，这里进行判断处理
+ 231:BSP/LTDC/touch_800x480.c **** 		//	该变量标志主要用于判断是否需要软件修改采集到的触摸坐标
+ 232:BSP/LTDC/touch_800x480.c **** 		// 此段代码只对旧版的7寸屏有用，其它尺寸的屏幕无需理会
+ 233:BSP/LTDC/touch_800x480.c **** 		Modify_Flag	= 1;			
+ 234:BSP/LTDC/touch_800x480.c **** 	}
+ 235:BSP/LTDC/touch_800x480.c **** }
+ 659              		.loc 1 235 1 view .LVU191
+ 660 0070 09B0     		add	sp, sp, #36
+ 661              		.cfi_remember_state
+ 662              		.cfi_def_cfa_offset 12
+ 663              		@ sp needed
+ 664 0072 30BD     		pop	{r4, r5, pc}
+ 665              	.L53:
+ 666              		.cfi_restore_state
+ 228:BSP/LTDC/touch_800x480.c **** 	{
+ 667              		.loc 1 228 64 discriminator 1 view .LVU192
+ 668 0074 2146     		mov	r1, r4
+ 669 0076 0648     		ldr	r0, .L54+4
+ 670 0078 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 671              	.LVL62:
+ 228:BSP/LTDC/touch_800x480.c **** 	{
+ 672              		.loc 1 228 60 discriminator 1 view .LVU193
+ 673 007c 0128     		cmp	r0, #1
+ 674 007e F7D0     		beq	.L45
+ 233:BSP/LTDC/touch_800x480.c **** 	}
+ 675              		.loc 1 233 3 is_stmt 1 view .LVU194
+ 233:BSP/LTDC/touch_800x480.c **** 	}
+ 676              		.loc 1 233 15 is_stmt 0 view .LVU195
+ 677 0080 054B     		ldr	r3, .L54+12
+ 678 0082 0122     		movs	r2, #1
+ 679 0084 1A70     		strb	r2, [r3]
+ 680              		.loc 1 235 1 view .LVU196
+ 681 0086 09B0     		add	sp, sp, #36
+ 682              		.cfi_def_cfa_offset 12
+ 683              		@ sp needed
+ 684 0088 30BD     		pop	{r4, r5, pc}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 19
+
+
+ 685              	.L55:
+ 686 008a 00BF     		.align	2
+ 687              	.L54:
+ 688 008c 00440258 		.word	1476543488
+ 689 0090 00180258 		.word	1476532224
+ 690 0094 001C0258 		.word	1476533248
+ 691 0098 00000000 		.word	.LANCHOR0
+ 692              		.cfi_endproc
+ 693              	.LFE345:
+ 695              		.section	.rodata.Touch_Init.str1.4,"aMS",%progbits,1
+ 696              		.align	2
+ 697              	.LC0:
+ 698 0000 546F7563 		.ascii	"Touch ID: GT%.4s \015\012\000"
+ 698      68204944 
+ 698      3A204754 
+ 698      252E3473 
+ 698      200D0A00 
+ 699              		.align	2
+ 700              	.LC1:
+ 701 0014 B9CCBCFE 		.ascii	"\271\314\274\376\260\346\261\276\243\272 0X%.4x\015"
+ 701      B0E6B1BE 
+ 701      A3BA2030 
+ 701      58252E34 
+ 701      780D
+ 702 0026 0A00     		.ascii	"\012\000"
+ 703              		.align	2
+ 704              	.LC2:
+ 705 0028 B4A5C3FE 		.ascii	"\264\245\303\376\267\326\261\346\302\312\243\272%d "
+ 705      B7D6B1E6 
+ 705      C2CAA3BA 
+ 705      256420
+ 706 0037 2A202564 		.ascii	"* %d\015\012\000"
+ 706      0D0A00
+ 707 003e 0000     		.align	2
+ 708              	.LC3:
+ 709 0040 B4A5C3FE 		.ascii	"\264\245\303\376\262\316\312\375\305\344\326\303\260"
+ 709      B2CECAFD 
+ 709      C5E4D6C3 
+ 709      B0
+ 710 004d E6B1BEA3 		.ascii	"\346\261\276\243\272 0X%.2x \015\012\000"
+ 710      BA203058 
+ 710      252E3278 
+ 710      200D0A00 
+ 711 005d 000000   		.align	2
+ 712              	.LC4:
+ 713 0060 546F7563 		.ascii	"Touch Error\015\000"
+ 713      68204572 
+ 713      726F720D 
+ 713      00
+ 714              		.section	.text.Touch_Init,"ax",%progbits
+ 715              		.align	1
+ 716              		.p2align 2,,3
+ 717              		.global	Touch_Init
+ 718              		.syntax unified
+ 719              		.thumb
+ 720              		.thumb_func
+ 722              	Touch_Init:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 20
+
+
+ 723              	.LFB346:
+ 236:BSP/LTDC/touch_800x480.c **** 
+ 237:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+ 238:BSP/LTDC/touch_800x480.c **** *	函 数 名: Touch_Init
+ 239:BSP/LTDC/touch_800x480.c **** *	入口参数: 无
+ 240:BSP/LTDC/touch_800x480.c **** *	返 回 值: SUCCESS  - 初始化成功
+ 241:BSP/LTDC/touch_800x480.c **** *            ERROR 	 - 错误，未检测到触摸屏	
+ 242:BSP/LTDC/touch_800x480.c **** *	函数功能: 触摸IC初始化，并读取相应信息发送到串口
+ 243:BSP/LTDC/touch_800x480.c **** *	说    明: 初始化触摸面板
+ 244:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+ 245:BSP/LTDC/touch_800x480.c **** 
+ 246:BSP/LTDC/touch_800x480.c **** uint8_t Touch_Init(void)
+ 247:BSP/LTDC/touch_800x480.c **** {
+ 724              		.loc 1 247 1 is_stmt 1 view -0
+ 725              		.cfi_startproc
+ 726              		@ args = 0, pretend = 0, frame = 16
+ 727              		@ frame_needed = 0, uses_anonymous_args = 0
+ 248:BSP/LTDC/touch_800x480.c **** 	uint8_t GT9XX_Info[11];	// 触摸屏IC信息
+ 728              		.loc 1 248 2 view .LVU198
+ 249:BSP/LTDC/touch_800x480.c **** 	uint8_t cfgVersion = 0;	// 触摸配置版本
+ 729              		.loc 1 249 2 view .LVU199
+ 247:BSP/LTDC/touch_800x480.c **** 	uint8_t GT9XX_Info[11];	// 触摸屏IC信息
+ 730              		.loc 1 247 1 is_stmt 0 view .LVU200
+ 731 0000 10B5     		push	{r4, lr}
+ 732              		.cfi_def_cfa_offset 8
+ 733              		.cfi_offset 4, -8
+ 734              		.cfi_offset 14, -4
+ 735              		.loc 1 249 10 view .LVU201
+ 736 0002 0024     		movs	r4, #0
+ 247:BSP/LTDC/touch_800x480.c **** 	uint8_t GT9XX_Info[11];	// 触摸屏IC信息
+ 737              		.loc 1 247 1 view .LVU202
+ 738 0004 84B0     		sub	sp, sp, #16
+ 739              		.cfi_def_cfa_offset 24
+ 740              		.loc 1 249 10 view .LVU203
+ 741 0006 8DF80340 		strb	r4, [sp, #3]
+ 250:BSP/LTDC/touch_800x480.c **** 
+ 251:BSP/LTDC/touch_800x480.c **** 	
+ 252:BSP/LTDC/touch_800x480.c **** 	// 识别屏幕的版本，在 RGB070M1-800*480 V1.1以及之后的硬件版本，无需理会此段代码	
+ 253:BSP/LTDC/touch_800x480.c **** 	// 此段代码只对旧版的7寸屏有用，其它尺寸的屏幕无需理会
+ 254:BSP/LTDC/touch_800x480.c **** 	PanelRecognition();			
+ 742              		.loc 1 254 2 is_stmt 1 view .LVU204
+ 743 000a FFF7FEFF 		bl	PanelRecognition
+ 744              	.LVL63:
+ 255:BSP/LTDC/touch_800x480.c **** 	
+ 256:BSP/LTDC/touch_800x480.c **** 	Touch_IIC_GPIO_Config(); 	// 初始化IIC引脚
+ 745              		.loc 1 256 2 view .LVU205
+ 746 000e FFF7FEFF 		bl	Touch_IIC_GPIO_Config
+ 747              	.LVL64:
+ 257:BSP/LTDC/touch_800x480.c **** 	GT9XX_Reset();					// 复位IC
+ 748              		.loc 1 257 2 view .LVU206
+ 749 0012 FFF7FEFF 		bl	GT9XX_Reset
+ 750              	.LVL65:
+ 258:BSP/LTDC/touch_800x480.c **** 		
+ 259:BSP/LTDC/touch_800x480.c **** 	GT9XX_ReadReg (GT9XX_ID_ADDR,11,GT9XX_Info);		// 读触摸屏IC信息
+ 751              		.loc 1 259 2 view .LVU207
+ 752 0016 01AA     		add	r2, sp, #4
+ 753 0018 0B21     		movs	r1, #11
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 21
+
+
+ 754 001a 48F24010 		movw	r0, #33088
+ 755 001e FFF7FEFF 		bl	GT9XX_ReadReg
+ 756              	.LVL66:
+ 260:BSP/LTDC/touch_800x480.c **** 	GT9XX_ReadReg (GT9XX_CFG_ADDR,1,&cfgVersion);	// 读触摸配置版本
+ 757              		.loc 1 260 2 view .LVU208
+ 758 0022 0DF10302 		add	r2, sp, #3
+ 759 0026 0121     		movs	r1, #1
+ 760 0028 48F24700 		movw	r0, #32839
+ 761 002c FFF7FEFF 		bl	GT9XX_ReadReg
+ 762              	.LVL67:
+ 261:BSP/LTDC/touch_800x480.c **** 
+ 262:BSP/LTDC/touch_800x480.c **** 	
+ 263:BSP/LTDC/touch_800x480.c **** 	if( GT9XX_Info[0] == '9' )	//判断第一个字符是否为 9
+ 763              		.loc 1 263 2 view .LVU209
+ 764              		.loc 1 263 4 is_stmt 0 view .LVU210
+ 765 0030 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 766 0034 392B     		cmp	r3, #57
+ 767 0036 05D0     		beq	.L62
+ 264:BSP/LTDC/touch_800x480.c **** 	{
+ 265:BSP/LTDC/touch_800x480.c **** 		printf("Touch ID: GT%.4s \r\n",GT9XX_Info);	//打印触摸芯片的ID
+ 266:BSP/LTDC/touch_800x480.c **** 		printf("固件版本： 0X%.4x\r\n",(GT9XX_Info[5]<<8) + GT9XX_Info[4]);	// 芯片固件版本
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸分辨率：%d * %d\r\n",(GT9XX_Info[7]<<8) + GT9XX_Info[6],(GT9XX_Info[9]<<8) +GT9XX_Inf
+ 268:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 269:BSP/LTDC/touch_800x480.c **** 
+ 270:BSP/LTDC/touch_800x480.c **** /*---------版本识别，RGB070M1-800*480 V1.1以及之后的硬件版本或者其它尺寸的屏幕，无需理会此段代码---
+ 271:BSP/LTDC/touch_800x480.c **** 		
+ 272:BSP/LTDC/touch_800x480.c **** 		if( ( (GT9XX_Info[7]<<8) + GT9XX_Info[6] ) == 1024 )		// 判断触摸屏的X轴分辨率是否为1024
+ 273:BSP/LTDC/touch_800x480.c **** 		{
+ 274:BSP/LTDC/touch_800x480.c **** 			// 在 RGB070M1-800*480 V1.1 之前的硬件版本，触摸屏的分辨率为1024*600，为了程序上的兼容，这里进行
+ 275:BSP/LTDC/touch_800x480.c **** 			//	该变量标志主要用于判断是否需要软件修改采集到的触摸坐标
+ 276:BSP/LTDC/touch_800x480.c **** 			Modify_Flag	= 1;	
+ 277:BSP/LTDC/touch_800x480.c **** 		}
+ 278:BSP/LTDC/touch_800x480.c **** 		else if( ( (GT9XX_Info[7]<<8) + GT9XX_Info[6] ) == 800 )	// 触摸屏的X轴分辨率为800
+ 279:BSP/LTDC/touch_800x480.c **** 		{
+ 280:BSP/LTDC/touch_800x480.c **** 			Modify_Flag	= 0;	// 置0标志位，无需做处理
+ 281:BSP/LTDC/touch_800x480.c **** 		}
+ 282:BSP/LTDC/touch_800x480.c **** 		
+ 283:BSP/LTDC/touch_800x480.c **** /*-------------------------------------------------------------------------------------------------
+ 284:BSP/LTDC/touch_800x480.c **** 		return SUCCESS;
+ 285:BSP/LTDC/touch_800x480.c **** 	}
+ 286:BSP/LTDC/touch_800x480.c **** 	else
+ 287:BSP/LTDC/touch_800x480.c **** 	{
+ 288:BSP/LTDC/touch_800x480.c **** 		printf("Touch Error\r\n");	//错误，未检测到触摸屏
+ 768              		.loc 1 288 3 is_stmt 1 view .LVU211
+ 769 0038 1F48     		ldr	r0, .L65
+ 770 003a FFF7FEFF 		bl	puts
+ 771              	.LVL68:
+ 289:BSP/LTDC/touch_800x480.c **** 		return ERROR;
+ 772              		.loc 1 289 3 view .LVU212
+ 773              		.loc 1 289 10 is_stmt 0 view .LVU213
+ 774 003e 0120     		movs	r0, #1
+ 775              	.L59:
+ 290:BSP/LTDC/touch_800x480.c **** 	}
+ 291:BSP/LTDC/touch_800x480.c **** 
+ 292:BSP/LTDC/touch_800x480.c **** }
+ 776              		.loc 1 292 1 view .LVU214
+ 777 0040 04B0     		add	sp, sp, #16
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 22
+
+
+ 778              		.cfi_remember_state
+ 779              		.cfi_def_cfa_offset 8
+ 780              		@ sp needed
+ 781 0042 10BD     		pop	{r4, pc}
+ 782              	.L62:
+ 783              		.cfi_restore_state
+ 265:BSP/LTDC/touch_800x480.c **** 		printf("固件版本： 0X%.4x\r\n",(GT9XX_Info[5]<<8) + GT9XX_Info[4]);	// 芯片固件版本
+ 784              		.loc 1 265 3 is_stmt 1 view .LVU215
+ 785 0044 01A9     		add	r1, sp, #4
+ 786 0046 1D48     		ldr	r0, .L65+4
+ 787 0048 FFF7FEFF 		bl	printf
+ 788              	.LVL69:
+ 266:BSP/LTDC/touch_800x480.c **** 		printf("触摸分辨率：%d * %d\r\n",(GT9XX_Info[7]<<8) + GT9XX_Info[6],(GT9XX_Info[9]<<8) +GT9XX_Inf
+ 789              		.loc 1 266 3 view .LVU216
+ 266:BSP/LTDC/touch_800x480.c **** 		printf("触摸分辨率：%d * %d\r\n",(GT9XX_Info[7]<<8) + GT9XX_Info[6],(GT9XX_Info[9]<<8) +GT9XX_Inf
+ 790              		.loc 1 266 65 is_stmt 0 view .LVU217
+ 791 004c 9DF80830 		ldrb	r3, [sp, #8]	@ zero_extendqisi2
+ 266:BSP/LTDC/touch_800x480.c **** 		printf("触摸分辨率：%d * %d\r\n",(GT9XX_Info[7]<<8) + GT9XX_Info[6],(GT9XX_Info[9]<<8) +GT9XX_Inf
+ 792              		.loc 1 266 45 view .LVU218
+ 793 0050 9DF80910 		ldrb	r1, [sp, #9]	@ zero_extendqisi2
+ 266:BSP/LTDC/touch_800x480.c **** 		printf("触摸分辨率：%d * %d\r\n",(GT9XX_Info[7]<<8) + GT9XX_Info[6],(GT9XX_Info[9]<<8) +GT9XX_Inf
+ 794              		.loc 1 266 3 view .LVU219
+ 795 0054 1A48     		ldr	r0, .L65+8
+ 796 0056 03EB0121 		add	r1, r3, r1, lsl #8
+ 797 005a FFF7FEFF 		bl	printf
+ 798              	.LVL70:
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 799              		.loc 1 267 3 is_stmt 1 view .LVU220
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 800              		.loc 1 267 67 is_stmt 0 view .LVU221
+ 801 005e 9DF80A30 		ldrb	r3, [sp, #10]	@ zero_extendqisi2
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 802              		.loc 1 267 82 view .LVU222
+ 803 0062 9DF80D00 		ldrb	r0, [sp, #13]	@ zero_extendqisi2
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 804              		.loc 1 267 101 view .LVU223
+ 805 0066 9DF80C20 		ldrb	r2, [sp, #12]	@ zero_extendqisi2
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 806              		.loc 1 267 47 view .LVU224
+ 807 006a 9DF80B10 		ldrb	r1, [sp, #11]	@ zero_extendqisi2
+ 267:BSP/LTDC/touch_800x480.c **** 		printf("触摸参数配置版本： 0X%.2x \r\n",cfgVersion);	// 触摸配置版本	
+ 808              		.loc 1 267 3 view .LVU225
+ 809 006e 02EB0022 		add	r2, r2, r0, lsl #8
+ 810 0072 1448     		ldr	r0, .L65+12
+ 811 0074 03EB0121 		add	r1, r3, r1, lsl #8
+ 812 0078 FFF7FEFF 		bl	printf
+ 813              	.LVL71:
+ 268:BSP/LTDC/touch_800x480.c **** 
+ 814              		.loc 1 268 3 is_stmt 1 view .LVU226
+ 815 007c 9DF80310 		ldrb	r1, [sp, #3]	@ zero_extendqisi2
+ 816 0080 1148     		ldr	r0, .L65+16
+ 817 0082 FFF7FEFF 		bl	printf
+ 818              	.LVL72:
+ 272:BSP/LTDC/touch_800x480.c **** 		{
+ 819              		.loc 1 272 3 view .LVU227
+ 272:BSP/LTDC/touch_800x480.c **** 		{
+ 820              		.loc 1 272 20 is_stmt 0 view .LVU228
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 23
+
+
+ 821 0086 9DF80B20 		ldrb	r2, [sp, #11]	@ zero_extendqisi2
+ 272:BSP/LTDC/touch_800x480.c **** 		{
+ 822              		.loc 1 272 40 view .LVU229
+ 823 008a 9DF80A30 		ldrb	r3, [sp, #10]	@ zero_extendqisi2
+ 272:BSP/LTDC/touch_800x480.c **** 		{
+ 824              		.loc 1 272 28 view .LVU230
+ 825 008e 03EB0223 		add	r3, r3, r2, lsl #8
+ 272:BSP/LTDC/touch_800x480.c **** 		{
+ 826              		.loc 1 272 5 view .LVU231
+ 827 0092 B3F5806F 		cmp	r3, #1024
+ 828 0096 09D0     		beq	.L63
+ 278:BSP/LTDC/touch_800x480.c **** 		{
+ 829              		.loc 1 278 8 is_stmt 1 view .LVU232
+ 278:BSP/LTDC/touch_800x480.c **** 		{
+ 830              		.loc 1 278 10 is_stmt 0 view .LVU233
+ 831 0098 B3F5487F 		cmp	r3, #800
+ 832 009c 02D0     		beq	.L64
+ 284:BSP/LTDC/touch_800x480.c **** 	}
+ 833              		.loc 1 284 10 view .LVU234
+ 834 009e 2046     		mov	r0, r4
+ 835              		.loc 1 292 1 view .LVU235
+ 836 00a0 04B0     		add	sp, sp, #16
+ 837              		.cfi_remember_state
+ 838              		.cfi_def_cfa_offset 8
+ 839              		@ sp needed
+ 840 00a2 10BD     		pop	{r4, pc}
+ 841              	.L64:
+ 842              		.cfi_restore_state
+ 280:BSP/LTDC/touch_800x480.c **** 		}
+ 843              		.loc 1 280 4 is_stmt 1 view .LVU236
+ 280:BSP/LTDC/touch_800x480.c **** 		}
+ 844              		.loc 1 280 16 is_stmt 0 view .LVU237
+ 845 00a4 094B     		ldr	r3, .L65+20
+ 284:BSP/LTDC/touch_800x480.c **** 	}
+ 846              		.loc 1 284 10 view .LVU238
+ 847 00a6 2046     		mov	r0, r4
+ 280:BSP/LTDC/touch_800x480.c **** 		}
+ 848              		.loc 1 280 16 view .LVU239
+ 849 00a8 1C70     		strb	r4, [r3]
+ 850 00aa C9E7     		b	.L59
+ 851              	.L63:
+ 276:BSP/LTDC/touch_800x480.c **** 		}
+ 852              		.loc 1 276 4 is_stmt 1 view .LVU240
+ 276:BSP/LTDC/touch_800x480.c **** 		}
+ 853              		.loc 1 276 16 is_stmt 0 view .LVU241
+ 854 00ac 074B     		ldr	r3, .L65+20
+ 855 00ae 0122     		movs	r2, #1
+ 284:BSP/LTDC/touch_800x480.c **** 	}
+ 856              		.loc 1 284 10 view .LVU242
+ 857 00b0 2046     		mov	r0, r4
+ 276:BSP/LTDC/touch_800x480.c **** 		}
+ 858              		.loc 1 276 16 view .LVU243
+ 859 00b2 1A70     		strb	r2, [r3]
+ 860              		.loc 1 292 1 view .LVU244
+ 861 00b4 04B0     		add	sp, sp, #16
+ 862              		.cfi_def_cfa_offset 8
+ 863              		@ sp needed
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 24
+
+
+ 864 00b6 10BD     		pop	{r4, pc}
+ 865              	.L66:
+ 866              		.align	2
+ 867              	.L65:
+ 868 00b8 60000000 		.word	.LC4
+ 869 00bc 00000000 		.word	.LC0
+ 870 00c0 14000000 		.word	.LC1
+ 871 00c4 28000000 		.word	.LC2
+ 872 00c8 40000000 		.word	.LC3
+ 873 00cc 00000000 		.word	.LANCHOR0
+ 874              		.cfi_endproc
+ 875              	.LFE346:
+ 877              		.section	.text.Touch_Scan,"ax",%progbits
+ 878              		.align	1
+ 879              		.p2align 2,,3
+ 880              		.global	Touch_Scan
+ 881              		.syntax unified
+ 882              		.thumb
+ 883              		.thumb_func
+ 885              	Touch_Scan:
+ 886              	.LFB347:
+ 293:BSP/LTDC/touch_800x480.c **** 
+ 294:BSP/LTDC/touch_800x480.c **** /**************************************************************************************************
+ 295:BSP/LTDC/touch_800x480.c **** *	函 数 名: Touch_Scan
+ 296:BSP/LTDC/touch_800x480.c **** *	入口参数: 无
+ 297:BSP/LTDC/touch_800x480.c **** *	返 回 值: 无
+ 298:BSP/LTDC/touch_800x480.c **** *	函数功能: 触摸扫描
+ 299:BSP/LTDC/touch_800x480.c **** *	说    明: 在程序里周期性的调用该函数，用以检测触摸操作，触摸信息存储在 touchInfo 结构体
+ 300:BSP/LTDC/touch_800x480.c **** ***************************************************************************************************
+ 301:BSP/LTDC/touch_800x480.c **** 
+ 302:BSP/LTDC/touch_800x480.c **** void Touch_Scan(void)
+ 303:BSP/LTDC/touch_800x480.c **** {
+ 887              		.loc 1 303 1 is_stmt 1 view -0
+ 888              		.cfi_startproc
+ 889              		@ args = 0, pretend = 0, frame = 48
+ 890              		@ frame_needed = 0, uses_anonymous_args = 0
+ 304:BSP/LTDC/touch_800x480.c ****  	uint8_t  touchData[2 + 8 * TOUCH_MAX ]; 		// 用于存储触摸数据
+ 891              		.loc 1 304 3 view .LVU246
+ 305:BSP/LTDC/touch_800x480.c **** 	uint8_t  i = 0;	
+ 892              		.loc 1 305 2 view .LVU247
+ 893              	.LVL73:
+ 306:BSP/LTDC/touch_800x480.c **** 	
+ 307:BSP/LTDC/touch_800x480.c **** 	GT9XX_ReadReg (GT9XX_READ_ADDR,2 + 8 * TOUCH_MAX ,touchData);	// 读数据
+ 894              		.loc 1 307 2 view .LVU248
+ 303:BSP/LTDC/touch_800x480.c ****  	uint8_t  touchData[2 + 8 * TOUCH_MAX ]; 		// 用于存储触摸数据
+ 895              		.loc 1 303 1 is_stmt 0 view .LVU249
+ 896 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 897              		.cfi_def_cfa_offset 20
+ 898              		.cfi_offset 4, -20
+ 899              		.cfi_offset 5, -16
+ 900              		.cfi_offset 6, -12
+ 901              		.cfi_offset 7, -8
+ 902              		.cfi_offset 14, -4
+ 903 0002 8DB0     		sub	sp, sp, #52
+ 904              		.cfi_def_cfa_offset 72
+ 905              		.loc 1 307 2 view .LVU250
+ 906 0004 2A21     		movs	r1, #42
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 25
+
+
+ 907 0006 48F24E10 		movw	r0, #33102
+ 908 000a 01AA     		add	r2, sp, #4
+ 909 000c FFF7FEFF 		bl	GT9XX_ReadReg
+ 910              	.LVL74:
+ 308:BSP/LTDC/touch_800x480.c **** 	GT9XX_WriteData (GT9XX_READ_ADDR,0);									//	清除触摸芯片的寄存器标志位
+ 911              		.loc 1 308 2 is_stmt 1 view .LVU251
+ 912              	.LBB47:
+ 913              	.LBI47:
+  97:BSP/LTDC/touch_800x480.c **** {
+ 914              		.loc 1 97 9 view .LVU252
+ 915              	.LBB48:
+  99:BSP/LTDC/touch_800x480.c **** 	
+ 916              		.loc 1 99 2 view .LVU253
+ 101:BSP/LTDC/touch_800x480.c **** 
+ 917              		.loc 1 101 2 view .LVU254
+ 918 0010 FFF7FEFF 		bl	Touch_IIC_Start
+ 919              	.LVL75:
+ 103:BSP/LTDC/touch_800x480.c **** 	{
+ 920              		.loc 1 103 2 view .LVU255
+ 921              	.LBB49:
+ 922              	.LBI49:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 923              		.loc 1 68 9 view .LVU256
+ 924              	.LBB50:
+  70:BSP/LTDC/touch_800x480.c **** 
+ 925              		.loc 1 70 2 view .LVU257
+  72:BSP/LTDC/touch_800x480.c **** 	if( Touch_IIC_WriteByte(GT9XX_IIC_WADDR) == ACK_OK ) //写数据指令
+ 926              		.loc 1 72 2 view .LVU258
+ 927 0014 FFF7FEFF 		bl	Touch_IIC_Start
+ 928              	.LVL76:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 929              		.loc 1 73 2 view .LVU259
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 930              		.loc 1 73 6 is_stmt 0 view .LVU260
+ 931 0018 BA20     		movs	r0, #186
+ 932 001a FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 933              	.LVL77:
+  73:BSP/LTDC/touch_800x480.c **** 	{
+ 934              		.loc 1 73 4 view .LVU261
+ 935 001e 0128     		cmp	r0, #1
+ 936 0020 62D0     		beq	.L84
+ 937              	.L69:
+  83:BSP/LTDC/touch_800x480.c **** 	return status;	
+ 938              		.loc 1 83 2 is_stmt 1 view .LVU262
+ 939              	.LVL78:
+  84:BSP/LTDC/touch_800x480.c **** }
+ 940              		.loc 1 84 2 view .LVU263
+  84:BSP/LTDC/touch_800x480.c **** }
+ 941              		.loc 1 84 2 is_stmt 0 view .LVU264
+ 942              	.LBE50:
+ 943              	.LBE49:
+ 105:BSP/LTDC/touch_800x480.c **** 		{
+ 944              		.loc 1 105 3 is_stmt 1 view .LVU265
+ 105:BSP/LTDC/touch_800x480.c **** 		{
+ 945              		.loc 1 105 7 is_stmt 0 view .LVU266
+ 946 0022 0020     		movs	r0, #0
+ 947 0024 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 26
+
+
+ 948              	.LVL79:
+ 110:BSP/LTDC/touch_800x480.c **** 	
+ 949              		.loc 1 110 2 is_stmt 1 view .LVU267
+ 950 0028 FFF7FEFF 		bl	Touch_IIC_Stop
+ 951              	.LVL80:
+ 112:BSP/LTDC/touch_800x480.c **** 	return status;
+ 952              		.loc 1 112 2 view .LVU268
+ 113:BSP/LTDC/touch_800x480.c **** }
+ 953              		.loc 1 113 2 view .LVU269
+ 113:BSP/LTDC/touch_800x480.c **** }
+ 954              		.loc 1 113 2 is_stmt 0 view .LVU270
+ 955              	.LBE48:
+ 956              	.LBE47:
+ 309:BSP/LTDC/touch_800x480.c **** 	touchInfo.num = touchData[0] & 0x0f;									// 取当前的触摸点数
+ 957              		.loc 1 309 2 is_stmt 1 view .LVU271
+ 958              		.loc 1 309 31 is_stmt 0 view .LVU272
+ 959 002c 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 960              		.loc 1 309 16 view .LVU273
+ 961 0030 374B     		ldr	r3, .L85+16
+ 962              		.loc 1 309 31 view .LVU274
+ 963 0032 02F00F02 		and	r2, r2, #15
+ 964              		.loc 1 309 16 view .LVU275
+ 965 0036 5A70     		strb	r2, [r3, #1]
+ 310:BSP/LTDC/touch_800x480.c **** 	
+ 311:BSP/LTDC/touch_800x480.c **** 	if ( (touchInfo.num >= 1) && (touchInfo.num <=5) ) 	//	当触摸数在 1-5 之间时
+ 966              		.loc 1 311 2 is_stmt 1 view .LVU276
+ 967              		.loc 1 311 17 is_stmt 0 view .LVU277
+ 968 0038 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 969              		.loc 1 311 5 view .LVU278
+ 970 003a 002A     		cmp	r2, #0
+ 971 003c 50D0     		beq	.L71
+ 972              		.loc 1 311 41 discriminator 1 view .LVU279
+ 973 003e 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 974              		.loc 1 311 28 discriminator 1 view .LVU280
+ 975 0040 052A     		cmp	r2, #5
+ 976 0042 4DD8     		bhi	.L71
+ 312:BSP/LTDC/touch_800x480.c **** 	{
+ 313:BSP/LTDC/touch_800x480.c **** 		for(i=0;i<touchInfo.num;i++)		// 取相应的触摸坐标
+ 977              		.loc 1 313 11 is_stmt 1 view .LVU281
+ 978              		.loc 1 313 22 is_stmt 0 view .LVU282
+ 979 0044 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 980              		.loc 1 313 3 view .LVU283
+ 981 0046 002A     		cmp	r2, #0
+ 982 0048 46D0     		beq	.L72
+ 983 004a 4FF0000C 		mov	ip, #0
+ 984 004e 314C     		ldr	r4, .L85+20
+ 314:BSP/LTDC/touch_800x480.c **** 		{
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.y[i] = (touchData[5+8*i]<<8) | touchData[4+8*i];	// 获取Y坐标
+ 316:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 317:BSP/LTDC/touch_800x480.c **** 
+ 318:BSP/LTDC/touch_800x480.c **** /*---------版本识别，RGB070M1-800*480 V1.1以及之后的硬件版本或者其它尺寸的屏幕，无需理会此段代码---
+ 319:BSP/LTDC/touch_800x480.c **** 	
+ 320:BSP/LTDC/touch_800x480.c **** 			// 在 V1.1 之前的硬件版本，触摸屏的分辨率为1024*600，为了程序上的兼容，这里进行判断处理
+ 321:BSP/LTDC/touch_800x480.c **** 			//	该变量标志主要用于判断是否需要软件修改采集到的触摸坐标
+ 322:BSP/LTDC/touch_800x480.c **** 			if( Modify_Flag == 1)
+ 323:BSP/LTDC/touch_800x480.c **** 			{
+ 324:BSP/LTDC/touch_800x480.c **** 				touchInfo.y[i] *= 0.8;		// 将1024*600分辨率的触摸坐标换算成800*480的分辨率
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 27
+
+
+ 985              		.loc 1 324 20 view .LVU284
+ 986 0050 9FED2B5B 		vldr.64	d5, .L85
+ 325:BSP/LTDC/touch_800x480.c **** 				touchInfo.x[i] *= 0.78;		// 将1024*600分辨率的触摸坐标换算成800*480的分辨率
+ 987              		.loc 1 325 20 view .LVU285
+ 988 0054 9FED2C6B 		vldr.64	d6, .L85+8
+ 989 0058 6246     		mov	r2, ip
+ 990              	.LVL81:
+ 991              	.L74:
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 992              		.loc 1 315 4 is_stmt 1 view .LVU286
+ 313:BSP/LTDC/touch_800x480.c **** 		{
+ 993              		.loc 1 313 27 view .LVU287
+ 313:BSP/LTDC/touch_800x480.c **** 		{
+ 994              		.loc 1 313 11 view .LVU288
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 995              		.loc 1 315 31 is_stmt 0 view .LVU289
+ 996 005a 0CA9     		add	r1, sp, #48
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 997              		.loc 1 315 19 view .LVU290
+ 998 005c 171D     		adds	r7, r2, #4
+ 316:BSP/LTDC/touch_800x480.c **** 
+ 999              		.loc 1 316 19 view .LVU291
+ 1000 005e 03EB420E 		add	lr, r3, r2, lsl #1
+ 313:BSP/LTDC/touch_800x480.c **** 		{
+ 1001              		.loc 1 313 3 view .LVU292
+ 1002 0062 0CF1010C 		add	ip, ip, #1
+ 1003              	.LVL82:
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 1004              		.loc 1 315 31 view .LVU293
+ 1005 0066 01EBC201 		add	r1, r1, r2, lsl #3
+ 316:BSP/LTDC/touch_800x480.c **** 
+ 1006              		.loc 1 316 31 view .LVU294
+ 1007 006a 11F8292C 		ldrb	r2, [r1, #-41]	@ zero_extendqisi2
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 1008              		.loc 1 315 31 view .LVU295
+ 1009 006e 11F8276C 		ldrb	r6, [r1, #-39]	@ zero_extendqisi2
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 1010              		.loc 1 315 54 view .LVU296
+ 1011 0072 11F8285C 		ldrb	r5, [r1, #-40]	@ zero_extendqisi2
+ 316:BSP/LTDC/touch_800x480.c **** 
+ 1012              		.loc 1 316 54 view .LVU297
+ 1013 0076 11F82A0C 		ldrb	r0, [r1, #-42]	@ zero_extendqisi2
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 1014              		.loc 1 315 19 view .LVU298
+ 1015 007a 03EB4701 		add	r1, r3, r7, lsl #1
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 1016              		.loc 1 315 43 view .LVU299
+ 1017 007e 45EA0625 		orr	r5, r5, r6, lsl #8
+ 316:BSP/LTDC/touch_800x480.c **** 
+ 1018              		.loc 1 316 43 view .LVU300
+ 1019 0082 40EA0220 		orr	r0, r0, r2, lsl #8
+ 315:BSP/LTDC/touch_800x480.c **** 			touchInfo.x[i] = (touchData[3+8*i]<<8) | touchData[2+8*i];	//	获取X坐标	
+ 1020              		.loc 1 315 19 view .LVU301
+ 1021 0086 8D80     		strh	r5, [r1, #4]	@ movhi
+ 316:BSP/LTDC/touch_800x480.c **** 
+ 1022              		.loc 1 316 4 is_stmt 1 view .LVU302
+ 313:BSP/LTDC/touch_800x480.c **** 		{
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 28
+
+
+ 1023              		.loc 1 313 3 is_stmt 0 view .LVU303
+ 1024 0088 5FFA8CF2 		uxtb	r2, ip
+ 316:BSP/LTDC/touch_800x480.c **** 
+ 1025              		.loc 1 316 19 view .LVU304
+ 1026 008c AEF80200 		strh	r0, [lr, #2]	@ movhi
+ 322:BSP/LTDC/touch_800x480.c **** 			{
+ 1027              		.loc 1 322 4 is_stmt 1 view .LVU305
+ 322:BSP/LTDC/touch_800x480.c **** 			{
+ 1028              		.loc 1 322 20 is_stmt 0 view .LVU306
+ 1029 0090 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 322:BSP/LTDC/touch_800x480.c **** 			{
+ 1030              		.loc 1 322 6 view .LVU307
+ 1031 0092 0128     		cmp	r0, #1
+ 1032 0094 1DD1     		bne	.L73
+ 324:BSP/LTDC/touch_800x480.c **** 				touchInfo.x[i] *= 0.78;		// 将1024*600分辨率的触摸坐标换算成800*480的分辨率
+ 1033              		.loc 1 324 5 is_stmt 1 view .LVU308
+ 324:BSP/LTDC/touch_800x480.c **** 				touchInfo.x[i] *= 0.78;		// 将1024*600分辨率的触摸坐标换算成800*480的分辨率
+ 1034              		.loc 1 324 20 is_stmt 0 view .LVU309
+ 1035 0096 8888     		ldrh	r0, [r1, #4]
+ 1036 0098 80B2     		uxth	r0, r0
+ 1037 009a 07EE100A 		vmov	s14, r0	@ int
+ 1038 009e B8EEC77B 		vcvt.f64.s32	d7, s14
+ 1039 00a2 27EE057B 		vmul.f64	d7, d7, d5
+ 1040 00a6 BCEEC77B 		vcvt.u32.f64	s14, d7
+ 1041 00aa 17EE100A 		vmov	r0, s14	@ int
+ 1042 00ae 80B2     		uxth	r0, r0
+ 1043 00b0 8880     		strh	r0, [r1, #4]	@ movhi
+ 1044              		.loc 1 325 5 is_stmt 1 view .LVU310
+ 1045              		.loc 1 325 20 is_stmt 0 view .LVU311
+ 1046 00b2 BEF80210 		ldrh	r1, [lr, #2]
+ 1047 00b6 89B2     		uxth	r1, r1
+ 1048 00b8 07EE101A 		vmov	s14, r1	@ int
+ 1049 00bc B8EEC77B 		vcvt.f64.s32	d7, s14
+ 1050 00c0 27EE067B 		vmul.f64	d7, d7, d6
+ 1051 00c4 BCEEC77B 		vcvt.u32.f64	s14, d7
+ 1052 00c8 17EE101A 		vmov	r1, s14	@ int
+ 1053 00cc 89B2     		uxth	r1, r1
+ 1054 00ce AEF80210 		strh	r1, [lr, #2]	@ movhi
+ 1055              	.L73:
+ 313:BSP/LTDC/touch_800x480.c **** 		{
+ 1056              		.loc 1 313 22 discriminator 2 view .LVU312
+ 1057 00d2 5978     		ldrb	r1, [r3, #1]	@ zero_extendqisi2
+ 313:BSP/LTDC/touch_800x480.c **** 		{
+ 1058              		.loc 1 313 3 discriminator 2 view .LVU313
+ 1059 00d4 9142     		cmp	r1, r2
+ 1060 00d6 C0D8     		bhi	.L74
+ 1061              	.L72:
+ 326:BSP/LTDC/touch_800x480.c **** 			}		
+ 327:BSP/LTDC/touch_800x480.c **** /*-------------------------------------------------------------------------------------------------
+ 328:BSP/LTDC/touch_800x480.c **** 			
+ 329:BSP/LTDC/touch_800x480.c **** 		}
+ 330:BSP/LTDC/touch_800x480.c **** 		touchInfo.flag = 1;	// 触摸标志位置1，代表有触摸动作发生
+ 1062              		.loc 1 330 3 is_stmt 1 view .LVU314
+ 1063              		.loc 1 330 18 is_stmt 0 view .LVU315
+ 1064 00d8 0122     		movs	r2, #1
+ 1065 00da 1A70     		strb	r2, [r3]
+ 331:BSP/LTDC/touch_800x480.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 29
+
+
+ 332:BSP/LTDC/touch_800x480.c **** 	else                       
+ 333:BSP/LTDC/touch_800x480.c **** 	{
+ 334:BSP/LTDC/touch_800x480.c **** 		touchInfo.flag = 0;	// 触摸标志位置0，无触摸动作
+ 335:BSP/LTDC/touch_800x480.c **** 	}
+ 336:BSP/LTDC/touch_800x480.c **** }
+ 1066              		.loc 1 336 1 view .LVU316
+ 1067 00dc 0DB0     		add	sp, sp, #52
+ 1068              		.cfi_remember_state
+ 1069              		.cfi_def_cfa_offset 20
+ 1070              		@ sp needed
+ 1071 00de F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1072              	.LVL83:
+ 1073              	.L71:
+ 1074              		.cfi_restore_state
+ 334:BSP/LTDC/touch_800x480.c **** 	}
+ 1075              		.loc 1 334 3 is_stmt 1 view .LVU317
+ 334:BSP/LTDC/touch_800x480.c **** 	}
+ 1076              		.loc 1 334 18 is_stmt 0 view .LVU318
+ 1077 00e0 0022     		movs	r2, #0
+ 1078 00e2 1A70     		strb	r2, [r3]
+ 1079              		.loc 1 336 1 view .LVU319
+ 1080 00e4 0DB0     		add	sp, sp, #52
+ 1081              		.cfi_remember_state
+ 1082              		.cfi_def_cfa_offset 20
+ 1083              		@ sp needed
+ 1084 00e6 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1085              	.LVL84:
+ 1086              	.L84:
+ 1087              		.cfi_restore_state
+ 1088              	.LBB56:
+ 1089              	.LBB55:
+ 1090              	.LBB54:
+ 1091              	.LBB53:
+ 1092              	.LBB51:
+ 1093              	.LBI51:
+  68:BSP/LTDC/touch_800x480.c **** {
+ 1094              		.loc 1 68 9 is_stmt 1 view .LVU320
+ 1095              	.LBB52:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 1096              		.loc 1 75 3 view .LVU321
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 1097              		.loc 1 75 7 is_stmt 0 view .LVU322
+ 1098 00e8 8120     		movs	r0, #129
+ 1099 00ea FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 1100              	.LVL85:
+  75:BSP/LTDC/touch_800x480.c **** 		{
+ 1101              		.loc 1 75 5 view .LVU323
+ 1102 00ee 0128     		cmp	r0, #1
+ 1103 00f0 97D1     		bne	.L69
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 1104              		.loc 1 77 4 is_stmt 1 view .LVU324
+  77:BSP/LTDC/touch_800x480.c **** 			{
+ 1105              		.loc 1 77 8 is_stmt 0 view .LVU325
+ 1106 00f2 4E20     		movs	r0, #78
+ 1107 00f4 FFF7FEFF 		bl	Touch_IIC_WriteByte
+ 1108              	.LVL86:
+ 1109 00f8 93E7     		b	.L69
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 30
+
+
+ 1110              	.L86:
+ 1111 00fa 00BFAFF3 		.align	3
+ 1111      0080
+ 1112              	.L85:
+ 1113 0100 9A999999 		.word	-1717986918
+ 1114 0104 9999E93F 		.word	1072273817
+ 1115 0108 F6285C8F 		.word	-1889785610
+ 1116 010c C2F5E83F 		.word	1072231874
+ 1117 0110 00000000 		.word	.LANCHOR1
+ 1118 0114 00000000 		.word	.LANCHOR0
+ 1119              	.LBE52:
+ 1120              	.LBE51:
+ 1121              	.LBE53:
+ 1122              	.LBE54:
+ 1123              	.LBE55:
+ 1124              	.LBE56:
+ 1125              		.cfi_endproc
+ 1126              	.LFE347:
+ 1128              		.global	touchInfo
+ 1129              		.section	.bss.Modify_Flag,"aw",%nobits
+ 1130              		.set	.LANCHOR0,. + 0
+ 1133              	Modify_Flag:
+ 1134 0000 00       		.space	1
+ 1135              		.section	.bss.touchInfo,"aw",%nobits
+ 1136              		.align	2
+ 1137              		.set	.LANCHOR1,. + 0
+ 1140              	touchInfo:
+ 1141 0000 00000000 		.space	22
+ 1141      00000000 
+ 1141      00000000 
+ 1141      00000000 
+ 1141      00000000 
+ 1142              		.text
+ 1143              	.Letext0:
+ 1144              		.file 2 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 1145              		.file 3 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 1146              		.file 4 "../libdaisy_IIT6/libDaisy/Drivers/CMSIS-Device/ST/STM32H7xx/Include/stm32h743xx.h"
+ 1147              		.file 5 "../libdaisy_IIT6/libDaisy/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ 1148              		.file 6 "../libdaisy_IIT6/libDaisy/Drivers/CMSIS-Device/ST/STM32H7xx/Include/stm32h7xx.h"
+ 1149              		.file 7 "BSP/LTDC/touch_800x480.h"
+ 1150              		.file 8 "BSP/LTDC/touch_iic.h"
+ 1151              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdio.h"
+ 1152              		.file 10 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s 			page 31
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 touch_800x480.c
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:19     .text.GT9XX_Reset:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:26     .text.GT9XX_Reset:0000000000000000 GT9XX_Reset
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:96     .text.GT9XX_Reset:0000000000000054 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:104    .text.GT9XX_WriteHandle:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:111    .text.GT9XX_WriteHandle:0000000000000000 GT9XX_WriteHandle
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:171    .text.GT9XX_WriteData:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:178    .text.GT9XX_WriteData:0000000000000000 GT9XX_WriteData
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:267    .text.GT9XX_WriteReg:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:274    .text.GT9XX_WriteReg:0000000000000000 GT9XX_WriteReg
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:380    .text.GT9XX_ReadReg:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:387    .text.GT9XX_ReadReg:0000000000000000 GT9XX_ReadReg
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:547    .text.PanelRecognition:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:554    .text.PanelRecognition:0000000000000000 PanelRecognition
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:688    .text.PanelRecognition:000000000000008c $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:696    .rodata.Touch_Init.str1.4:0000000000000000 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:715    .text.Touch_Init:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:722    .text.Touch_Init:0000000000000000 Touch_Init
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:868    .text.Touch_Init:00000000000000b8 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:878    .text.Touch_Scan:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:885    .text.Touch_Scan:0000000000000000 Touch_Scan
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:1113   .text.Touch_Scan:0000000000000100 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:1140   .bss.touchInfo:0000000000000000 touchInfo
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:1133   .bss.Modify_Flag:0000000000000000 Modify_Flag
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:1134   .bss.Modify_Flag:0000000000000000 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc1EFPoo.s:1136   .bss.touchInfo:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+Touch_INT_Out
+HAL_GPIO_WritePin
+Touch_IIC_Delay
+Touch_INT_In
+Touch_IIC_Start
+Touch_IIC_WriteByte
+Touch_IIC_Stop
+Touch_IIC_ReadByte
+HAL_GPIO_Init
+HAL_GPIO_ReadPin
+Touch_IIC_GPIO_Config
+puts
+printf

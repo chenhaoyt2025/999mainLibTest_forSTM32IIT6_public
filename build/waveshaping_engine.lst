@@ -1,0 +1,3771 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"waveshaping_engine.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text._ZN6plaits17WaveshapingEngine12LoadUserDataEPKh,"axG",%progbits,_ZN6plaits17Wavesha
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.weak	_ZN6plaits17WaveshapingEngine12LoadUserDataEPKh
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	_ZN6plaits17WaveshapingEngine12LoadUserDataEPKh:
+  27              	.LVL0:
+  28              	.LFB638:
+  29              		.file 1 "mi/plaits/dsp/engine/waveshaping_engine.h"
+   1:mi/plaits/dsp/engine/waveshaping_engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/waveshaping_engine.h **** //
+   3:mi/plaits/dsp/engine/waveshaping_engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/waveshaping_engine.h **** //
+   5:mi/plaits/dsp/engine/waveshaping_engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/waveshaping_engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/waveshaping_engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/waveshaping_engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/waveshaping_engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/waveshaping_engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/waveshaping_engine.h **** // 
+  12:mi/plaits/dsp/engine/waveshaping_engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/waveshaping_engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/waveshaping_engine.h **** // 
+  15:mi/plaits/dsp/engine/waveshaping_engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/waveshaping_engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/waveshaping_engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/waveshaping_engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/waveshaping_engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/waveshaping_engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/waveshaping_engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/waveshaping_engine.h **** // 
+  23:mi/plaits/dsp/engine/waveshaping_engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/waveshaping_engine.h **** //
+  25:mi/plaits/dsp/engine/waveshaping_engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/waveshaping_engine.h **** //
+  27:mi/plaits/dsp/engine/waveshaping_engine.h **** // Slope -> Waveshaper -> Wavefolder.
+  28:mi/plaits/dsp/engine/waveshaping_engine.h **** 
+  29:mi/plaits/dsp/engine/waveshaping_engine.h **** #ifndef PLAITS_DSP_ENGINE_WAVESHAPING_ENGINE_H_
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 2
+
+
+  30:mi/plaits/dsp/engine/waveshaping_engine.h **** #define PLAITS_DSP_ENGINE_WAVESHAPING_ENGINE_H_
+  31:mi/plaits/dsp/engine/waveshaping_engine.h **** 
+  32:mi/plaits/dsp/engine/waveshaping_engine.h **** #include "plaits/dsp/engine/engine.h"
+  33:mi/plaits/dsp/engine/waveshaping_engine.h **** #include "plaits/dsp/oscillator/oscillator.h"
+  34:mi/plaits/dsp/engine/waveshaping_engine.h **** 
+  35:mi/plaits/dsp/engine/waveshaping_engine.h **** namespace plaits {
+  36:mi/plaits/dsp/engine/waveshaping_engine.h ****   
+  37:mi/plaits/dsp/engine/waveshaping_engine.h **** class WaveshapingEngine : public Engine {
+  38:mi/plaits/dsp/engine/waveshaping_engine.h ****  public:
+  39:mi/plaits/dsp/engine/waveshaping_engine.h ****   WaveshapingEngine() { }
+  40:mi/plaits/dsp/engine/waveshaping_engine.h ****   ~WaveshapingEngine() { }
+  41:mi/plaits/dsp/engine/waveshaping_engine.h ****   
+  42:mi/plaits/dsp/engine/waveshaping_engine.h ****   virtual void Init(stmlib::BufferAllocator* allocator);
+  43:mi/plaits/dsp/engine/waveshaping_engine.h ****   virtual void Reset();
+  44:mi/plaits/dsp/engine/waveshaping_engine.h ****   virtual void LoadUserData(const uint8_t* user_data) { }
+  30              		.loc 1 44 16 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35              		.loc 1 44 57 is_stmt 0 view .LVU1
+  36 0000 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE638:
+  40 0002 00BF     		.section	.text._ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE,"ax",%progbits
+  41              		.align	1
+  42              		.p2align 2,,3
+  43              		.global	_ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  48              	_ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE:
+  49              	.LVL1:
+  50              	.LFB1522:
+  51              		.file 2 "mi/plaits/dsp/engine/waveshaping_engine.cpp"
+   1:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/waveshaping_engine.cpp **** //
+   3:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/waveshaping_engine.cpp **** //
+   5:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // 
+  12:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // 
+  15:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 3
+
+
+  23:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/waveshaping_engine.cpp **** //
+  25:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/waveshaping_engine.cpp **** //
+  27:mi/plaits/dsp/engine/waveshaping_engine.cpp **** // Slope -> Waveshaper -> Wavefolder.
+  28:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  29:mi/plaits/dsp/engine/waveshaping_engine.cpp **** #include "plaits/dsp/engine/waveshaping_engine.h"
+  30:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  31:mi/plaits/dsp/engine/waveshaping_engine.cpp **** #include <algorithm>
+  32:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  33:mi/plaits/dsp/engine/waveshaping_engine.cpp **** #include "stmlib/dsp/parameter_interpolator.h"
+  34:mi/plaits/dsp/engine/waveshaping_engine.cpp **** #include "stmlib/utils/dsp.h"
+  35:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  36:mi/plaits/dsp/engine/waveshaping_engine.cpp **** #include "plaits/dsp/oscillator/sine_oscillator.h"
+  37:mi/plaits/dsp/engine/waveshaping_engine.cpp **** #include "plaits/resources.h"
+  38:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  39:mi/plaits/dsp/engine/waveshaping_engine.cpp **** namespace plaits {
+  40:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  41:mi/plaits/dsp/engine/waveshaping_engine.cpp **** using namespace std;
+  42:mi/plaits/dsp/engine/waveshaping_engine.cpp **** using namespace stmlib;
+  43:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  44:mi/plaits/dsp/engine/waveshaping_engine.cpp **** void WaveshapingEngine::Init(BufferAllocator* allocator) {
+  52              		.loc 2 44 58 is_stmt 1 view -0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  45:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   slope_.Init();
+  57              		.loc 2 45 3 view .LVU3
+  58              	.LBB86:
+  59              	.LBB87:
+  60              		.file 3 "mi/plaits/dsp/oscillator/oscillator.h"
+   1:mi/plaits/dsp/oscillator/oscillator.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/oscillator/oscillator.h **** //
+   3:mi/plaits/dsp/oscillator/oscillator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/oscillator/oscillator.h **** //
+   5:mi/plaits/dsp/oscillator/oscillator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/oscillator/oscillator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/oscillator/oscillator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/oscillator/oscillator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/oscillator/oscillator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/oscillator/oscillator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/oscillator/oscillator.h **** // 
+  12:mi/plaits/dsp/oscillator/oscillator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/oscillator/oscillator.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/oscillator/oscillator.h **** // 
+  15:mi/plaits/dsp/oscillator/oscillator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/oscillator/oscillator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/oscillator/oscillator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/oscillator/oscillator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/oscillator/oscillator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/oscillator/oscillator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/oscillator/oscillator.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/oscillator/oscillator.h **** // 
+  23:mi/plaits/dsp/oscillator/oscillator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/oscillator/oscillator.h **** //
+  25:mi/plaits/dsp/oscillator/oscillator.h **** // -----------------------------------------------------------------------------
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 4
+
+
+  26:mi/plaits/dsp/oscillator/oscillator.h **** //
+  27:mi/plaits/dsp/oscillator/oscillator.h **** // Single waveform oscillator. Can optionally do audio-rate linear FM, with
+  28:mi/plaits/dsp/oscillator/oscillator.h **** // through-zero capabilities (negative frequencies).
+  29:mi/plaits/dsp/oscillator/oscillator.h **** 
+  30:mi/plaits/dsp/oscillator/oscillator.h **** #ifndef PLAITS_DSP_OSCILLATOR_OSCILLATOR_H_
+  31:mi/plaits/dsp/oscillator/oscillator.h **** #define PLAITS_DSP_OSCILLATOR_OSCILLATOR_H_
+  32:mi/plaits/dsp/oscillator/oscillator.h **** 
+  33:mi/plaits/dsp/oscillator/oscillator.h **** #include "stmlib/dsp/dsp.h"
+  34:mi/plaits/dsp/oscillator/oscillator.h **** #include "stmlib/dsp/parameter_interpolator.h"
+  35:mi/plaits/dsp/oscillator/oscillator.h **** #include "stmlib/dsp/polyblep.h"
+  36:mi/plaits/dsp/oscillator/oscillator.h **** 
+  37:mi/plaits/dsp/oscillator/oscillator.h **** namespace plaits {
+  38:mi/plaits/dsp/oscillator/oscillator.h **** 
+  39:mi/plaits/dsp/oscillator/oscillator.h **** enum OscillatorShape {
+  40:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_IMPULSE_TRAIN,
+  41:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_SAW,
+  42:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_TRIANGLE,
+  43:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_SLOPE,
+  44:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_SQUARE,
+  45:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_SQUARE_BRIGHT,
+  46:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_SQUARE_DARK,
+  47:mi/plaits/dsp/oscillator/oscillator.h ****   OSCILLATOR_SHAPE_SQUARE_TRIANGLE
+  48:mi/plaits/dsp/oscillator/oscillator.h **** };
+  49:mi/plaits/dsp/oscillator/oscillator.h **** 
+  50:mi/plaits/dsp/oscillator/oscillator.h **** const float kMaxFrequency = 0.25f;
+  51:mi/plaits/dsp/oscillator/oscillator.h **** const float kMinFrequency = 0.000001f;
+  52:mi/plaits/dsp/oscillator/oscillator.h **** 
+  53:mi/plaits/dsp/oscillator/oscillator.h **** class Oscillator {
+  54:mi/plaits/dsp/oscillator/oscillator.h ****  public:
+  55:mi/plaits/dsp/oscillator/oscillator.h ****   Oscillator() { }
+  56:mi/plaits/dsp/oscillator/oscillator.h ****   ~Oscillator() { }
+  57:mi/plaits/dsp/oscillator/oscillator.h ****   
+  58:mi/plaits/dsp/oscillator/oscillator.h ****   void Init() {
+  59:mi/plaits/dsp/oscillator/oscillator.h ****     phase_ = 0.5f;
+  60:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = 0.0f;
+  61              		.loc 3 60 18 is_stmt 0 view .LVU4
+  62 0000 0023     		movs	r3, #0
+  63              	.LVL2:
+  64              		.loc 3 60 18 view .LVU5
+  65              	.LBE87:
+  66              	.LBI86:
+  58:mi/plaits/dsp/oscillator/oscillator.h ****     phase_ = 0.5f;
+  67              		.loc 3 58 8 is_stmt 1 view .LVU6
+  68              	.LBB88:
+  59:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = 0.0f;
+  69              		.loc 3 59 5 view .LVU7
+  59:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = 0.0f;
+  70              		.loc 3 59 12 is_stmt 0 view .LVU8
+  71 0002 4FF07C52 		mov	r2, #1056964608
+  61:mi/plaits/dsp/oscillator/oscillator.h ****     lp_state_ = 1.0f;
+  72              		.loc 3 61 15 view .LVU9
+  73 0006 4FF07E5C 		mov	ip, #1065353216
+  62:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+  63:mi/plaits/dsp/oscillator/oscillator.h ****     high_ = true;
+  74              		.loc 3 63 11 view .LVU10
+  75 000a 0121     		movs	r1, #1
+  76              	.LVL3:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 5
+
+
+  60:mi/plaits/dsp/oscillator/oscillator.h ****     lp_state_ = 1.0f;
+  77              		.loc 3 60 18 view .LVU11
+  78 000c 4361     		str	r3, [r0, #20]	@ float
+  62:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+  79              		.loc 3 62 15 view .LVU12
+  80 000e C361     		str	r3, [r0, #28]	@ float
+  81              	.LBE88:
+  82              	.LBE86:
+  83              	.LBB92:
+  84              	.LBB93:
+  60:mi/plaits/dsp/oscillator/oscillator.h ****     lp_state_ = 1.0f;
+  85              		.loc 3 60 18 view .LVU13
+  86 0010 0363     		str	r3, [r0, #48]	@ float
+  62:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+  87              		.loc 3 62 15 view .LVU14
+  88 0012 8363     		str	r3, [r0, #56]	@ float
+  89              	.LBE93:
+  90              	.LBE92:
+  46:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   triangle_.Init();
+  47:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   previous_shape_ = 0.0f;
+  91              		.loc 2 47 19 view .LVU15
+  92 0014 8364     		str	r3, [r0, #72]	@ float
+  48:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   previous_wavefolder_gain_ = 0.0f;
+  93              		.loc 2 48 29 view .LVU16
+  94 0016 C364     		str	r3, [r0, #76]	@ float
+  49:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   previous_overtone_gain_ = 0.0f;
+  95              		.loc 2 49 27 view .LVU17
+  96 0018 0365     		str	r3, [r0, #80]	@ float
+  97              	.LBB97:
+  98              	.LBB89:
+  64:mi/plaits/dsp/oscillator/oscillator.h **** 
+  65:mi/plaits/dsp/oscillator/oscillator.h ****     frequency_ = 0.001f;
+  99              		.loc 3 65 16 view .LVU18
+ 100 001a 084B     		ldr	r3, .L4
+  59:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = 0.0f;
+ 101              		.loc 3 59 12 view .LVU19
+ 102 001c 0261     		str	r2, [r0, #16]	@ float
+  60:mi/plaits/dsp/oscillator/oscillator.h ****     lp_state_ = 1.0f;
+ 103              		.loc 3 60 5 is_stmt 1 view .LVU20
+  61:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+ 104              		.loc 3 61 5 view .LVU21
+  61:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+ 105              		.loc 3 61 15 is_stmt 0 view .LVU22
+ 106 001e C0F818C0 		str	ip, [r0, #24]	@ float
+  62:mi/plaits/dsp/oscillator/oscillator.h ****     high_ = true;
+ 107              		.loc 3 62 5 is_stmt 1 view .LVU23
+  63:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 108              		.loc 3 63 5 view .LVU24
+ 109              	.LBE89:
+ 110              	.LBE97:
+ 111              	.LBB98:
+ 112              	.LBB94:
+  61:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+ 113              		.loc 3 61 15 is_stmt 0 view .LVU25
+ 114 0022 C0F834C0 		str	ip, [r0, #52]	@ float
+ 115              	.LBE94:
+ 116              	.LBE98:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 6
+
+
+ 117              	.LBB99:
+ 118              	.LBB90:
+  63:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 119              		.loc 3 63 11 view .LVU26
+ 120 0026 80F82010 		strb	r1, [r0, #32]
+ 121              		.loc 3 65 5 is_stmt 1 view .LVU27
+  66:mi/plaits/dsp/oscillator/oscillator.h ****     pw_ = 0.5f;
+ 122              		.loc 3 66 9 is_stmt 0 view .LVU28
+ 123 002a 8262     		str	r2, [r0, #40]	@ float
+ 124              	.LBE90:
+ 125              	.LBE99:
+ 126              	.LBB100:
+ 127              	.LBB95:
+  59:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = 0.0f;
+ 128              		.loc 3 59 12 view .LVU29
+ 129 002c C262     		str	r2, [r0, #44]	@ float
+  63:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 130              		.loc 3 63 11 view .LVU30
+ 131 002e 80F83C10 		strb	r1, [r0, #60]
+ 132              		.loc 3 66 9 view .LVU31
+ 133 0032 4264     		str	r2, [r0, #68]	@ float
+ 134              	.LBE95:
+ 135              	.LBE100:
+ 136              	.LBB101:
+ 137              	.LBB91:
+  65:mi/plaits/dsp/oscillator/oscillator.h ****     pw_ = 0.5f;
+ 138              		.loc 3 65 16 view .LVU32
+ 139 0034 4362     		str	r3, [r0, #36]	@ float
+ 140              		.loc 3 66 5 is_stmt 1 view .LVU33
+ 141              	.LVL4:
+ 142              		.loc 3 66 5 is_stmt 0 view .LVU34
+ 143              	.LBE91:
+ 144              	.LBE101:
+  46:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   previous_shape_ = 0.0f;
+ 145              		.loc 2 46 3 is_stmt 1 view .LVU35
+ 146              	.LBB102:
+ 147              	.LBI92:
+  58:mi/plaits/dsp/oscillator/oscillator.h ****     phase_ = 0.5f;
+ 148              		.loc 3 58 8 view .LVU36
+ 149              	.LBB96:
+  59:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = 0.0f;
+ 150              		.loc 3 59 5 view .LVU37
+  60:mi/plaits/dsp/oscillator/oscillator.h ****     lp_state_ = 1.0f;
+ 151              		.loc 3 60 5 view .LVU38
+  61:mi/plaits/dsp/oscillator/oscillator.h ****     hp_state_ = 0.0f;
+ 152              		.loc 3 61 5 view .LVU39
+  62:mi/plaits/dsp/oscillator/oscillator.h ****     high_ = true;
+ 153              		.loc 3 62 5 view .LVU40
+  63:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 154              		.loc 3 63 5 view .LVU41
+  65:mi/plaits/dsp/oscillator/oscillator.h ****     pw_ = 0.5f;
+ 155              		.loc 3 65 5 view .LVU42
+  65:mi/plaits/dsp/oscillator/oscillator.h ****     pw_ = 0.5f;
+ 156              		.loc 3 65 16 is_stmt 0 view .LVU43
+ 157 0036 0364     		str	r3, [r0, #64]	@ float
+ 158              		.loc 3 66 5 is_stmt 1 view .LVU44
+ 159              	.LVL5:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 7
+
+
+ 160              		.loc 3 66 5 is_stmt 0 view .LVU45
+ 161              	.LBE96:
+ 162              	.LBE102:
+  47:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   previous_wavefolder_gain_ = 0.0f;
+ 163              		.loc 2 47 3 is_stmt 1 view .LVU46
+  48:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   previous_overtone_gain_ = 0.0f;
+ 164              		.loc 2 48 3 view .LVU47
+ 165              		.loc 2 49 3 view .LVU48
+  50:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 166              		.loc 2 50 1 is_stmt 0 view .LVU49
+ 167 0038 7047     		bx	lr
+ 168              	.L5:
+ 169 003a 00BF     		.align	2
+ 170              	.L4:
+ 171 003c 6F12833A 		.word	981668463
+ 172              		.cfi_endproc
+ 173              	.LFE1522:
+ 175              		.section	.text._ZN6plaits17WaveshapingEngine5ResetEv,"ax",%progbits
+ 176              		.align	1
+ 177              		.p2align 2,,3
+ 178              		.global	_ZN6plaits17WaveshapingEngine5ResetEv
+ 179              		.syntax unified
+ 180              		.thumb
+ 181              		.thumb_func
+ 183              	_ZN6plaits17WaveshapingEngine5ResetEv:
+ 184              	.LVL6:
+ 185              	.LFB1523:
+  51:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  52:mi/plaits/dsp/engine/waveshaping_engine.cpp **** void WaveshapingEngine::Reset() {
+ 186              		.loc 2 52 33 is_stmt 1 view -0
+ 187              		.cfi_startproc
+ 188              		@ args = 0, pretend = 0, frame = 0
+ 189              		@ frame_needed = 0, uses_anonymous_args = 0
+ 190              		@ link register save eliminated.
+  53:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   
+  54:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 191              		.loc 2 54 1 is_stmt 0 view .LVU51
+ 192 0000 7047     		bx	lr
+ 193              		.cfi_endproc
+ 194              	.LFE1523:
+ 196 0002 00BF     		.section	.text._ZN6plaits4TameEfff,"ax",%progbits
+ 197              		.align	1
+ 198              		.p2align 2,,3
+ 199              		.global	_ZN6plaits4TameEfff
+ 200              		.syntax unified
+ 201              		.thumb
+ 202              		.thumb_func
+ 204              	_ZN6plaits4TameEfff:
+ 205              	.LVL7:
+ 206              	.LFB1524:
+  55:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  56:mi/plaits/dsp/engine/waveshaping_engine.cpp **** float Tame(float f0, float harmonics, float order) {
+ 207              		.loc 2 56 52 is_stmt 1 view -0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 0
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+ 211              		@ link register save eliminated.
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 8
+
+
+  57:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   f0 *= harmonics;
+ 212              		.loc 2 57 3 view .LVU53
+  58:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_f = 0.5f / order;
+ 213              		.loc 2 58 9 is_stmt 0 view .LVU54
+ 214 0000 B6EE007A 		vmov.f32	s14, #5.0e-1
+ 215              	.LVL8:
+ 216              		.loc 2 58 3 is_stmt 1 view .LVU55
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_amount = 1.0f - (f0 - max_f) / (0.5f - max_f);
+ 217              		.loc 2 59 9 is_stmt 0 view .LVU56
+ 218 0004 F7EE007A 		vmov.f32	s15, #1.0e+0
+  58:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_f = 0.5f / order;
+ 219              		.loc 2 58 9 view .LVU57
+ 220 0008 C7EE016A 		vdiv.f32	s13, s14, s2
+ 221              	.LVL9:
+ 222              		.loc 2 59 3 is_stmt 1 view .LVU58
+ 223              		.loc 2 59 33 is_stmt 0 view .LVU59
+ 224 000c B0EE666A 		vmov.f32	s12, s13
+ 225              		.loc 2 59 50 view .LVU60
+ 226 0010 37EE667A 		vsub.f32	s14, s14, s13
+ 227              		.loc 2 59 33 view .LVU61
+ 228 0014 90EE206A 		vfnms.f32	s12, s0, s1
+ 229              		.loc 2 59 42 view .LVU62
+ 230 0018 86EE070A 		vdiv.f32	s0, s12, s14
+ 231              	.LVL10:
+ 232              		.loc 2 59 9 view .LVU63
+ 233 001c 37EEC07A 		vsub.f32	s14, s15, s0
+ 234              	.LVL11:
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 235              		.loc 2 60 3 is_stmt 1 view .LVU64
+ 236 0020 B5EEC07A 		vcmpe.f32	s14, #0
+ 237 0024 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 238 0028 0CD4     		bmi	.L9
+ 239              		.loc 2 60 3 discriminator 2 view .LVU65
+ 240 002a B4EEE77A 		vcmpe.f32	s14, s15
+ 241 002e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 242 0032 02DD     		ble	.L11
+ 243 0034 B0EE670A 		vmov.f32	s0, s15
+ 244              	.LVL12:
+ 245              		.loc 2 60 36 view .LVU66
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 246              		.loc 2 61 3 view .LVU67
+  62:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 247              		.loc 2 62 1 is_stmt 0 view .LVU68
+ 248 0038 7047     		bx	lr
+ 249              	.LVL13:
+ 250              	.L11:
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 251              		.loc 2 61 21 view .LVU69
+ 252 003a 27EE070A 		vmul.f32	s0, s14, s14
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 253              		.loc 2 61 36 view .LVU70
+ 254 003e 20EE070A 		vmul.f32	s0, s0, s14
+ 255 0042 7047     		bx	lr
+ 256              	.L9:
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 257              		.loc 2 61 36 view .LVU71
+ 258 0044 9FED010A 		vldr.32	s0, .L12
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 9
+
+
+ 259 0048 7047     		bx	lr
+ 260              	.L13:
+ 261 004a 00BF     		.align	2
+ 262              	.L12:
+ 263 004c 00000000 		.word	0
+ 264              		.cfi_endproc
+ 265              	.LFE1524:
+ 267              		.section	.text._ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj,"axG",%pr
+ 268              		.align	1
+ 269              		.p2align 2,,3
+ 270              		.weak	_ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj
+ 271              		.syntax unified
+ 272              		.thumb
+ 273              		.thumb_func
+ 275              	_ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj:
+ 276              	.LVL14:
+ 277              	.LFB1534:
+  67:mi/plaits/dsp/oscillator/oscillator.h ****   }
+  68:mi/plaits/dsp/oscillator/oscillator.h **** 
+  69:mi/plaits/dsp/oscillator/oscillator.h ****   template<OscillatorShape shape>
+  70:mi/plaits/dsp/oscillator/oscillator.h ****   void Render(float frequency, float pw, float* out, size_t size) {
+  71:mi/plaits/dsp/oscillator/oscillator.h ****     Render<shape, false, false>(frequency, pw, NULL, out, size);
+  72:mi/plaits/dsp/oscillator/oscillator.h ****   }
+  73:mi/plaits/dsp/oscillator/oscillator.h ****   
+  74:mi/plaits/dsp/oscillator/oscillator.h ****   template<OscillatorShape shape>
+  75:mi/plaits/dsp/oscillator/oscillator.h ****   void Render(
+  76:mi/plaits/dsp/oscillator/oscillator.h ****       float frequency,
+  77:mi/plaits/dsp/oscillator/oscillator.h ****       float pw,
+  78:mi/plaits/dsp/oscillator/oscillator.h ****       const float* fm,
+  79:mi/plaits/dsp/oscillator/oscillator.h ****       float* out,
+  80:mi/plaits/dsp/oscillator/oscillator.h ****       size_t size) {
+  81:mi/plaits/dsp/oscillator/oscillator.h ****     if (!fm) {
+  82:mi/plaits/dsp/oscillator/oscillator.h ****       Render<shape, false, false>(frequency, pw, NULL, out, size);
+  83:mi/plaits/dsp/oscillator/oscillator.h ****     } else {
+  84:mi/plaits/dsp/oscillator/oscillator.h ****       Render<shape, true, true>(frequency, pw, fm, out, size);
+  85:mi/plaits/dsp/oscillator/oscillator.h ****     }
+  86:mi/plaits/dsp/oscillator/oscillator.h ****   }
+  87:mi/plaits/dsp/oscillator/oscillator.h **** 
+  88:mi/plaits/dsp/oscillator/oscillator.h ****   template<OscillatorShape shape, bool has_external_fm, bool through_zero_fm>
+  89:mi/plaits/dsp/oscillator/oscillator.h ****   void Render(
+ 278              		.loc 3 89 8 is_stmt 1 view -0
+ 279              		.cfi_startproc
+ 280              		@ args = 0, pretend = 0, frame = 0
+ 281              		@ frame_needed = 0, uses_anonymous_args = 0
+ 282              		@ link register save eliminated.
+  90:mi/plaits/dsp/oscillator/oscillator.h ****       float frequency,
+  91:mi/plaits/dsp/oscillator/oscillator.h ****       float pw,
+  92:mi/plaits/dsp/oscillator/oscillator.h ****       const float* external_fm,
+  93:mi/plaits/dsp/oscillator/oscillator.h ****       float* out,
+  94:mi/plaits/dsp/oscillator/oscillator.h ****       size_t size) {
+  95:mi/plaits/dsp/oscillator/oscillator.h ****     
+  96:mi/plaits/dsp/oscillator/oscillator.h ****     if (!has_external_fm) {
+  97:mi/plaits/dsp/oscillator/oscillator.h ****       if (!through_zero_fm) {
+  98:mi/plaits/dsp/oscillator/oscillator.h ****         CONSTRAIN(frequency, kMinFrequency, kMaxFrequency);
+ 283              		.loc 3 98 9 is_stmt 0 view .LVU73
+ 284 0000 9FED727A 		vldr.32	s14, .L38
+ 285 0004 B4EEC70A 		vcmpe.f32	s0, s14
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 10
+
+
+ 286 0008 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 287 000c 0CD4     		bmi	.L26
+ 288              		.loc 3 98 9 discriminator 2 view .LVU74
+ 289 000e B5EE007A 		vmov.f32	s14, #2.5e-1
+ 290 0012 B4EEC70A 		vcmpe.f32	s0, s14
+ 291 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 292 001a 40F3D280 		ble	.L36
+ 293 001e F6EE007A 		vmov.f32	s15, #5.0e-1
+ 294              		.loc 3 98 9 view .LVU75
+ 295 0022 B0EE470A 		vmov.f32	s0, s14
+ 296              	.LVL15:
+ 297              		.loc 3 98 9 view .LVU76
+ 298 0026 03E0     		b	.L15
+ 299              	.LVL16:
+ 300              	.L26:
+ 301              		.loc 3 98 9 view .LVU77
+ 302 0028 B0EE470A 		vmov.f32	s0, s14
+ 303              	.LVL17:
+ 304              		.loc 3 98 9 view .LVU78
+ 305 002c DFED687A 		vldr.32	s15, .L38+4
+ 306              	.L15:
+ 307              	.LVL18:
+  99:mi/plaits/dsp/oscillator/oscillator.h ****       } else {
+ 100:mi/plaits/dsp/oscillator/oscillator.h ****         CONSTRAIN(frequency, -kMaxFrequency, kMaxFrequency);
+ 101:mi/plaits/dsp/oscillator/oscillator.h ****       }
+ 102:mi/plaits/dsp/oscillator/oscillator.h ****       CONSTRAIN(pw, fabsf(frequency) * 2.0f, 1.0f - 2.0f * fabsf(frequency))
+ 308              		.loc 3 102 7 view .LVU79
+ 309 0030 F4EEE70A 		vcmpe.f32	s1, s15
+ 310 0034 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 311 0038 0AD4     		bmi	.L16
+ 312              		.loc 3 102 7 discriminator 2 view .LVU80
+ 313 003a B7EE007A 		vmov.f32	s14, #1.0e+0
+ 314 003e 77EE677A 		vsub.f32	s15, s14, s15
+ 315 0042 F4EEE07A 		vcmpe.f32	s15, s1
+ 316 0046 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 317 004a 58BF     		it	pl
+ 318 004c F0EE607A 		vmovpl.f32	s15, s1
+ 319              	.L16:
+ 320              	.LVL19:
+ 321              	.LBB103:
+ 322              	.LBI103:
+ 323              		.file 4 "mi/stmlib/dsp/parameter_interpolator.h"
+   1:mi/stmlib/dsp/parameter_interpolator.h **** // Copyright 2015 Emilie Gillet.
+   2:mi/stmlib/dsp/parameter_interpolator.h **** //
+   3:mi/stmlib/dsp/parameter_interpolator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/parameter_interpolator.h **** //
+   5:mi/stmlib/dsp/parameter_interpolator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/parameter_interpolator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/parameter_interpolator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/parameter_interpolator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/parameter_interpolator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/parameter_interpolator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  12:mi/stmlib/dsp/parameter_interpolator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/parameter_interpolator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  15:mi/stmlib/dsp/parameter_interpolator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 11
+
+
+  16:mi/stmlib/dsp/parameter_interpolator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/parameter_interpolator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/parameter_interpolator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/parameter_interpolator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/parameter_interpolator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/parameter_interpolator.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  23:mi/stmlib/dsp/parameter_interpolator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/parameter_interpolator.h **** //
+  25:mi/stmlib/dsp/parameter_interpolator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/parameter_interpolator.h **** //
+  27:mi/stmlib/dsp/parameter_interpolator.h **** // Linear interpolation of parameters in rendering loops.
+  28:mi/stmlib/dsp/parameter_interpolator.h **** 
+  29:mi/stmlib/dsp/parameter_interpolator.h **** #ifndef STMLIB_DSP_PARAMETER_INTERPOLATOR_H_
+  30:mi/stmlib/dsp/parameter_interpolator.h **** #define STMLIB_DSP_PARAMETER_INTERPOLATOR_H_
+  31:mi/stmlib/dsp/parameter_interpolator.h **** 
+  32:mi/stmlib/dsp/parameter_interpolator.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/parameter_interpolator.h **** 
+  34:mi/stmlib/dsp/parameter_interpolator.h **** namespace stmlib {
+  35:mi/stmlib/dsp/parameter_interpolator.h **** 
+  36:mi/stmlib/dsp/parameter_interpolator.h **** class ParameterInterpolator {
+  37:mi/stmlib/dsp/parameter_interpolator.h ****  public:
+  38:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator() { }
+  39:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator(float* state, float new_value, size_t size) {
+ 324              		.loc 4 39 3 is_stmt 1 view .LVU81
+ 325              	.LBE103:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 326              		.loc 4 40 5 view .LVU82
+ 327              	.LBB112:
+ 328              	.LBB104:
+ 329              	.LBI104:
+  41:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  42:mi/stmlib/dsp/parameter_interpolator.h **** 
+  43:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator(float* state, float new_value, float step) {
+  44:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+  45:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+  46:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) * step;
+  47:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  48:mi/stmlib/dsp/parameter_interpolator.h **** 
+  49:mi/stmlib/dsp/parameter_interpolator.h ****   ~ParameterInterpolator() {
+  50:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+  51:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  52:mi/stmlib/dsp/parameter_interpolator.h ****   
+  53:mi/stmlib/dsp/parameter_interpolator.h ****   inline void Init(float* state, float new_value, size_t size) {
+ 330              		.loc 4 53 15 view .LVU83
+ 331              	.LBB105:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 332              		.loc 4 54 5 view .LVU84
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 333              		.loc 4 55 5 view .LVU85
+ 334              		.loc 4 55 14 is_stmt 0 view .LVU86
+ 335 0050 D0ED054A 		vldr.32	s9, [r0, #20]
+ 336              	.LVL20:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 337              		.loc 4 56 5 is_stmt 1 view .LVU87
+ 338              		.loc 4 56 41 is_stmt 0 view .LVU88
+ 339 0054 07EE103A 		vmov	s14, r3	@ int
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 12
+
+
+ 340              	.LBE105:
+ 341              	.LBE104:
+ 342              	.LBE112:
+ 343              	.LBB113:
+ 344              	.LBB114:
+ 345              	.LBB115:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 346              		.loc 4 55 14 view .LVU89
+ 347 0058 D0ED065A 		vldr.32	s11, [r0, #24]
+ 348              	.LBE115:
+ 349              	.LBE114:
+ 350              	.LBE113:
+ 103:mi/plaits/dsp/oscillator/oscillator.h ****     }
+ 104:mi/plaits/dsp/oscillator/oscillator.h ****     
+ 105:mi/plaits/dsp/oscillator/oscillator.h ****     stmlib::ParameterInterpolator fm(&frequency_, frequency, size);
+ 106:mi/plaits/dsp/oscillator/oscillator.h ****     stmlib::ParameterInterpolator pwm(&pw_, pw, size);
+ 107:mi/plaits/dsp/oscillator/oscillator.h ****   
+ 108:mi/plaits/dsp/oscillator/oscillator.h ****     float next_sample = next_sample_;
+ 109:mi/plaits/dsp/oscillator/oscillator.h ****   
+ 110:mi/plaits/dsp/oscillator/oscillator.h ****     while (size--) {
+ 351              		.loc 3 110 5 view .LVU90
+ 352 005c 591E     		subs	r1, r3, #1
+ 353              	.LVL21:
+ 354              	.LBB120:
+ 355              	.LBB109:
+ 356              	.LBB106:
+ 357              		.loc 4 56 41 view .LVU91
+ 358 005e B8EE477A 		vcvt.f32.u32	s14, s14
+ 359              	.LBE106:
+ 360              	.LBE109:
+ 361              	.LBE120:
+ 108:mi/plaits/dsp/oscillator/oscillator.h ****   
+ 362              		.loc 3 108 11 view .LVU92
+ 363 0062 D0ED012A 		vldr.32	s5, [r0, #4]
+ 364              	.LBB121:
+ 365              	.LBB110:
+ 366              	.LBB107:
+ 367              		.loc 4 56 29 view .LVU93
+ 368 0066 30EE640A 		vsub.f32	s0, s0, s9
+ 369              	.LVL22:
+ 370              		.loc 4 56 29 view .LVU94
+ 371              	.LBE107:
+ 372              	.LBE110:
+ 373              	.LBE121:
+ 374              	.LBB122:
+ 375              	.LBB118:
+ 376              	.LBB116:
+ 377 006a 77EEE57A 		vsub.f32	s15, s15, s11
+ 378              	.LVL23:
+ 379              		.loc 4 56 29 view .LVU95
+ 380              	.LBE116:
+ 381              	.LBE118:
+ 382              	.LBE122:
+ 383              	.LBB123:
+ 384              	.LBB111:
+ 385              	.LBB108:
+ 386              		.loc 4 56 39 view .LVU96
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 13
+
+
+ 387 006e 80EE073A 		vdiv.f32	s6, s0, s14
+ 388              	.LVL24:
+ 389              		.loc 4 56 39 view .LVU97
+ 390              	.LBE108:
+ 391              	.LBE111:
+ 392              	.LBE123:
+ 393              	.LBB124:
+ 394              	.LBI113:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 395              		.loc 4 39 3 is_stmt 1 view .LVU98
+ 396              	.LBE124:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 397              		.loc 4 40 5 view .LVU99
+ 398              	.LBB125:
+ 399              	.LBB119:
+ 400              	.LBI114:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 401              		.loc 4 53 15 view .LVU100
+ 402              	.LBB117:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 403              		.loc 4 54 5 view .LVU101
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 404              		.loc 4 55 5 view .LVU102
+ 405              		.loc 4 56 5 view .LVU103
+ 406              		.loc 4 56 39 is_stmt 0 view .LVU104
+ 407 0072 C7EE873A 		vdiv.f32	s7, s15, s14
+ 408              	.LVL25:
+ 409              		.loc 4 56 39 view .LVU105
+ 410              	.LBE117:
+ 411              	.LBE119:
+ 412              	.LBE125:
+ 413              		.loc 3 110 5 is_stmt 1 view .LVU106
+ 414              		.loc 3 110 5 is_stmt 0 view .LVU107
+ 415 0076 BBBB     		cbnz	r3, .L25
+ 416 0078 9CE0     		b	.L18
+ 417              	.LVL26:
+ 418              	.L37:
+ 419              	.LBB126:
+ 420              	.LBB127:
+ 421              	.LBB128:
+ 422              	.LBB129:
+ 111:mi/plaits/dsp/oscillator/oscillator.h ****       float this_sample = next_sample;
+ 112:mi/plaits/dsp/oscillator/oscillator.h ****       next_sample = 0.0f;
+ 113:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 114:mi/plaits/dsp/oscillator/oscillator.h ****       float frequency = fm.Next();
+ 115:mi/plaits/dsp/oscillator/oscillator.h ****       if (has_external_fm) {
+ 116:mi/plaits/dsp/oscillator/oscillator.h ****         frequency *= (1.0f + *external_fm++);
+ 117:mi/plaits/dsp/oscillator/oscillator.h ****         if (!through_zero_fm) {
+ 118:mi/plaits/dsp/oscillator/oscillator.h ****           CONSTRAIN(frequency, kMinFrequency, kMaxFrequency);
+ 119:mi/plaits/dsp/oscillator/oscillator.h ****         } else {
+ 120:mi/plaits/dsp/oscillator/oscillator.h ****           CONSTRAIN(frequency, -kMaxFrequency, kMaxFrequency);
+ 121:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 122:mi/plaits/dsp/oscillator/oscillator.h ****       }
+ 123:mi/plaits/dsp/oscillator/oscillator.h ****       float pw = (shape == OSCILLATOR_SHAPE_SQUARE_TRIANGLE ||
+ 124:mi/plaits/dsp/oscillator/oscillator.h ****                   shape == OSCILLATOR_SHAPE_TRIANGLE) ? 0.5f : pwm.Next();
+ 125:mi/plaits/dsp/oscillator/oscillator.h ****       if (has_external_fm) {
+ 126:mi/plaits/dsp/oscillator/oscillator.h ****         CONSTRAIN(pw, fabsf(frequency) * 2.0f, 1.0f - 2.0f * fabsf(frequency))
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 14
+
+
+ 127:mi/plaits/dsp/oscillator/oscillator.h ****       }
+ 128:mi/plaits/dsp/oscillator/oscillator.h ****       phase_ += frequency;
+ 129:mi/plaits/dsp/oscillator/oscillator.h ****       
+ 130:mi/plaits/dsp/oscillator/oscillator.h ****       if (shape <= OSCILLATOR_SHAPE_SAW) {
+ 131:mi/plaits/dsp/oscillator/oscillator.h ****         if (phase_ >= 1.0f) {
+ 132:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 133:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 134:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample -= stmlib::ThisBlepSample(t);
+ 135:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample -= stmlib::NextBlepSample(t);
+ 136:mi/plaits/dsp/oscillator/oscillator.h ****         } else if (through_zero_fm && phase_ < 0.0f) {
+ 137:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 138:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ += 1.0f;
+ 139:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample += stmlib::ThisBlepSample(t);
+ 140:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample += stmlib::NextBlepSample(t);
+ 141:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 142:mi/plaits/dsp/oscillator/oscillator.h ****         next_sample += phase_;
+ 143:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 144:mi/plaits/dsp/oscillator/oscillator.h ****         if (shape == OSCILLATOR_SHAPE_SAW) {
+ 145:mi/plaits/dsp/oscillator/oscillator.h ****           *out++ = 2.0f * this_sample - 1.0f;
+ 146:mi/plaits/dsp/oscillator/oscillator.h ****         } else {
+ 147:mi/plaits/dsp/oscillator/oscillator.h ****           lp_state_ += 0.25f * ((hp_state_ - this_sample) - lp_state_);
+ 148:mi/plaits/dsp/oscillator/oscillator.h ****           *out++ = 4.0f * lp_state_;
+ 149:mi/plaits/dsp/oscillator/oscillator.h ****           hp_state_ = this_sample;
+ 150:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 151:mi/plaits/dsp/oscillator/oscillator.h ****       } else if (shape <= OSCILLATOR_SHAPE_SLOPE) {
+ 152:mi/plaits/dsp/oscillator/oscillator.h ****         float slope_up = 2.0f;
+ 153:mi/plaits/dsp/oscillator/oscillator.h ****         float slope_down = 2.0f;
+ 154:mi/plaits/dsp/oscillator/oscillator.h ****         if (shape == OSCILLATOR_SHAPE_SLOPE) {
+ 155:mi/plaits/dsp/oscillator/oscillator.h ****           slope_up = 1.0f / (pw);
+ 156:mi/plaits/dsp/oscillator/oscillator.h ****           slope_down = 1.0f / (1.0f - pw);
+ 157:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****         if (high_ ^ (phase_ < pw)) {
+ 159:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 160:mi/plaits/dsp/oscillator/oscillator.h ****           float discontinuity = (slope_up + slope_down) * frequency;
+ 161:mi/plaits/dsp/oscillator/oscillator.h ****           if (through_zero_fm && frequency < 0.0f) {
+ 162:mi/plaits/dsp/oscillator/oscillator.h ****             discontinuity = -discontinuity;
+ 163:mi/plaits/dsp/oscillator/oscillator.h ****           }
+ 164:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample -= stmlib::ThisIntegratedBlepSample(t) * discontinuity;
+ 165:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample -= stmlib::NextIntegratedBlepSample(t) * discontinuity;
+ 166:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = phase_ < pw;
+ 167:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 168:mi/plaits/dsp/oscillator/oscillator.h ****         if (phase_ >= 1.0f) {
+ 169:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 423              		.loc 3 169 18 view .LVU108
+ 424 007a 77EEC77A 		vsub.f32	s15, s15, s14
+ 170:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 171:mi/plaits/dsp/oscillator/oscillator.h ****           float discontinuity = (slope_up + slope_down) * frequency;
+ 172:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample += stmlib::ThisIntegratedBlepSample(t) * discontinuity;
+ 173:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample += stmlib::NextIntegratedBlepSample(t) * discontinuity;
+ 174:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = true;
+ 425              		.loc 3 174 17 view .LVU109
+ 426 007e 0374     		strb	r3, [r0, #16]
+ 171:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample += stmlib::ThisIntegratedBlepSample(t) * discontinuity;
+ 427              		.loc 3 171 43 view .LVU110
+ 428 0080 32EE044A 		vadd.f32	s8, s4, s8
+ 429              	.LVL27:
+ 170:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 15
+
+
+ 430              		.loc 3 170 17 view .LVU111
+ 431 0084 C7EEA46A 		vdiv.f32	s13, s15, s9
+ 432              	.LVL28:
+ 169:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 433              		.loc 3 169 18 view .LVU112
+ 434 0088 C0ED007A 		vstr.32	s15, [r0]
+ 171:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample += stmlib::ThisIntegratedBlepSample(t) * discontinuity;
+ 435              		.loc 3 171 17 view .LVU113
+ 436 008c 24EE244A 		vmul.f32	s8, s8, s9
+ 437              	.LVL29:
+ 438              	.LBB130:
+ 439              	.LBI130:
+ 440              		.file 5 "mi/stmlib/dsp/polyblep.h"
+   1:mi/stmlib/dsp/polyblep.h **** // Copyright 2017 Emilie Gillet.
+   2:mi/stmlib/dsp/polyblep.h **** //
+   3:mi/stmlib/dsp/polyblep.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/polyblep.h **** //
+   5:mi/stmlib/dsp/polyblep.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/polyblep.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/polyblep.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/polyblep.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/polyblep.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/polyblep.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/polyblep.h **** // 
+  12:mi/stmlib/dsp/polyblep.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/polyblep.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/polyblep.h **** // 
+  15:mi/stmlib/dsp/polyblep.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/polyblep.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/polyblep.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/polyblep.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/polyblep.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/polyblep.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/polyblep.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/polyblep.h **** // 
+  23:mi/stmlib/dsp/polyblep.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/polyblep.h **** //
+  25:mi/stmlib/dsp/polyblep.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/polyblep.h **** //
+  27:mi/stmlib/dsp/polyblep.h **** // Polynomial approximation of band-limited step for band-limited waveform
+  28:mi/stmlib/dsp/polyblep.h **** // synthesis.
+  29:mi/stmlib/dsp/polyblep.h **** 
+  30:mi/stmlib/dsp/polyblep.h **** #ifndef STMLIB_DSP_POLYBLEP_H_
+  31:mi/stmlib/dsp/polyblep.h **** #define STMLIB_DSP_POLYBLEP_H_
+  32:mi/stmlib/dsp/polyblep.h **** 
+  33:mi/stmlib/dsp/polyblep.h **** #include "stmlib/stmlib.h"
+  34:mi/stmlib/dsp/polyblep.h **** 
+  35:mi/stmlib/dsp/polyblep.h **** namespace stmlib {
+  36:mi/stmlib/dsp/polyblep.h **** 
+  37:mi/stmlib/dsp/polyblep.h **** inline float ThisBlepSample(float t) {
+  38:mi/stmlib/dsp/polyblep.h ****   return 0.5f * t * t;
+  39:mi/stmlib/dsp/polyblep.h **** }
+  40:mi/stmlib/dsp/polyblep.h **** 
+  41:mi/stmlib/dsp/polyblep.h **** inline float NextBlepSample(float t) {
+  42:mi/stmlib/dsp/polyblep.h ****   t = 1.0f - t;
+  43:mi/stmlib/dsp/polyblep.h ****   return -0.5f * t * t;
+  44:mi/stmlib/dsp/polyblep.h **** }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 16
+
+
+  45:mi/stmlib/dsp/polyblep.h **** 
+  46:mi/stmlib/dsp/polyblep.h **** inline float NextIntegratedBlepSample(float t) {
+  47:mi/stmlib/dsp/polyblep.h ****   const float t1 = 0.5f * t;
+  48:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+  49:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+  50:mi/stmlib/dsp/polyblep.h ****   return 0.1875f - t1 + 1.5f * t2 - t4;
+  51:mi/stmlib/dsp/polyblep.h **** }
+  52:mi/stmlib/dsp/polyblep.h **** 
+  53:mi/stmlib/dsp/polyblep.h **** inline float ThisIntegratedBlepSample(float t) {
+ 441              		.loc 5 53 14 is_stmt 1 view .LVU114
+ 442              	.LBB131:
+  54:mi/stmlib/dsp/polyblep.h ****   return NextIntegratedBlepSample(1.0f - t);
+ 443              		.loc 5 54 3 view .LVU115
+ 444              	.LBB132:
+ 445              	.LBI132:
+  46:mi/stmlib/dsp/polyblep.h ****   const float t1 = 0.5f * t;
+ 446              		.loc 5 46 14 view .LVU116
+ 447              	.LBB133:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 448              		.loc 5 47 3 view .LVU117
+ 449              	.LBE133:
+ 450              	.LBE132:
+ 451              		.loc 5 54 34 is_stmt 0 view .LVU118
+ 452 0090 37EE667A 		vsub.f32	s14, s14, s13
+ 453              	.LVL30:
+ 454              		.loc 5 54 34 view .LVU119
+ 455              	.LBE131:
+ 456              	.LBE130:
+ 457              	.LBB152:
+ 458              	.LBB153:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 459              		.loc 5 47 15 view .LVU120
+ 460 0094 66EEA16A 		vmul.f32	s13, s13, s3
+ 461              	.LVL31:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 462              		.loc 5 47 15 view .LVU121
+ 463              	.LBE153:
+ 464              	.LBE152:
+ 465              	.LBB158:
+ 466              	.LBB146:
+ 467              	.LBB140:
+ 468              	.LBB134:
+ 469 0098 27EE217A 		vmul.f32	s14, s14, s3
+ 470              	.LVL32:
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 471              		.loc 5 48 3 is_stmt 1 view .LVU122
+ 472              	.LBE134:
+ 473              	.LBE140:
+ 474              	.LBE146:
+ 475              	.LBE158:
+ 476              	.LBB159:
+ 477              	.LBB154:
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 478              		.loc 5 48 15 is_stmt 0 view .LVU123
+ 479 009c 26EEA61A 		vmul.f32	s2, s13, s13
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 480              		.loc 5 50 18 view .LVU124
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 17
+
+
+ 481 00a0 76EE666A 		vsub.f32	s13, s12, s13
+ 482              	.LBE154:
+ 483              	.LBE159:
+ 484              	.LBB160:
+ 485              	.LBB147:
+ 486              	.LBB141:
+ 487              	.LBB135:
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 488              		.loc 5 48 15 view .LVU125
+ 489 00a4 67EE071A 		vmul.f32	s3, s14, s14
+ 490              	.LVL33:
+  49:mi/stmlib/dsp/polyblep.h ****   return 0.1875f - t1 + 1.5f * t2 - t4;
+ 491              		.loc 5 49 3 is_stmt 1 view .LVU126
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 492              		.loc 5 50 3 view .LVU127
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 493              		.loc 5 50 18 is_stmt 0 view .LVU128
+ 494 00a8 36EE476A 		vsub.f32	s12, s12, s14
+ 495              	.LBE135:
+ 496              	.LBE141:
+ 497              	.LBE147:
+ 498              	.LBE160:
+ 499              	.LBB161:
+ 500              	.LBB155:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 501              		.loc 5 50 23 view .LVU129
+ 502 00ac E1EE206A 		vfma.f32	s13, s2, s1
+ 503              	.LBE155:
+ 504              	.LBE161:
+ 505              	.LBB162:
+ 506              	.LBB148:
+ 507              	.LBB142:
+ 508              	.LBB136:
+ 509 00b0 A1EEA06A 		vfma.f32	s12, s3, s1
+ 510              	.LBE136:
+ 511              	.LBE142:
+ 512              	.LBE148:
+ 513              	.LBE162:
+ 514              	.LBB163:
+ 515              	.LBB156:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 516              		.loc 5 50 37 view .LVU130
+ 517 00b4 E1EE416A 		vfms.f32	s13, s2, s2
+ 518              	.LBE156:
+ 519              	.LBE163:
+ 520              	.LBB164:
+ 521              	.LBB149:
+ 522              	.LBB143:
+ 523              	.LBB137:
+ 524 00b8 A1EEE16A 		vfms.f32	s12, s3, s3
+ 525              	.LVL34:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 526              		.loc 5 50 37 view .LVU131
+ 527              	.LBE137:
+ 528              	.LBE143:
+ 529              	.LBE149:
+ 530              	.LBE164:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 18
+
+
+ 173:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = true;
+ 531              		.loc 3 173 23 view .LVU132
+ 532 00bc A4EE265A 		vfma.f32	s10, s8, s13
+ 533              	.LVL35:
+ 172:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample += stmlib::NextIntegratedBlepSample(t) * discontinuity;
+ 534              		.loc 3 172 23 view .LVU133
+ 535 00c0 F0EE626A 		vmov.f32	s13, s5
+ 536 00c4 E4EE066A 		vfma.f32	s13, s8, s12
+ 537              	.LVL36:
+ 538              	.LBB165:
+ 539              	.LBI152:
+  46:mi/stmlib/dsp/polyblep.h ****   const float t1 = 0.5f * t;
+ 540              		.loc 5 46 14 is_stmt 1 view .LVU134
+ 541              	.LBB157:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 542              		.loc 5 47 3 view .LVU135
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 543              		.loc 5 48 3 view .LVU136
+  49:mi/stmlib/dsp/polyblep.h ****   return 0.1875f - t1 + 1.5f * t2 - t4;
+ 544              		.loc 5 49 3 view .LVU137
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 545              		.loc 5 50 3 view .LVU138
+ 546              	.L22:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 547              		.loc 5 50 3 is_stmt 0 view .LVU139
+ 548              	.LBE157:
+ 549              	.LBE165:
+ 550              	.LBE129:
+ 551              	.LBE128:
+ 175:mi/plaits/dsp/oscillator/oscillator.h ****         } else if (through_zero_fm && phase_ < 0.0f) {
+ 176:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 177:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ += 1.0f;
+ 178:mi/plaits/dsp/oscillator/oscillator.h ****           float discontinuity = (slope_up + slope_down) * frequency;
+ 179:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample -= stmlib::ThisIntegratedBlepSample(t) * discontinuity;
+ 180:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample -= stmlib::NextIntegratedBlepSample(t) * discontinuity;
+ 181:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = false;
+ 182:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 183:mi/plaits/dsp/oscillator/oscillator.h ****         next_sample += high_
+ 184:mi/plaits/dsp/oscillator/oscillator.h ****           ? phase_ * slope_up
+ 552              		.loc 3 184 11 discriminator 1 view .LVU140
+ 553 00c8 22EE277A 		vmul.f32	s14, s4, s15
+ 554              	.L24:
+ 185:mi/plaits/dsp/oscillator/oscillator.h ****           : 1.0f - (phase_ - pw) * slope_down;
+ 186:mi/plaits/dsp/oscillator/oscillator.h ****         *out++ = 2.0f * this_sample - 1.0f;
+ 555              		.loc 3 186 37 view .LVU141
+ 556 00cc B0EE006A 		vmov.f32	s12, #2.0e+0
+ 557              	.LBE127:
+ 558              	.LBE126:
+ 110:mi/plaits/dsp/oscillator/oscillator.h ****       float this_sample = next_sample;
+ 559              		.loc 3 110 5 view .LVU142
+ 560 00d0 0139     		subs	r1, r1, #1
+ 561              	.LVL37:
+ 562              	.LBB233:
+ 563              	.LBB222:
+ 564              		.loc 3 186 37 view .LVU143
+ 565 00d2 FFEE007A 		vmov.f32	s15, #-1.0e+0
+ 566              	.LBE222:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 19
+
+
+ 567              	.LBE233:
+ 110:mi/plaits/dsp/oscillator/oscillator.h ****       float this_sample = next_sample;
+ 568              		.loc 3 110 5 view .LVU144
+ 569 00d6 B1F1FF3F 		cmp	r1, #-1
+ 570              	.LBB234:
+ 571              	.LBB223:
+ 183:mi/plaits/dsp/oscillator/oscillator.h ****           ? phase_ * slope_up
+ 572              		.loc 3 183 21 view .LVU145
+ 573 00da 77EE052A 		vadd.f32	s5, s14, s10
+ 574              	.LVL38:
+ 575              		.loc 3 186 37 view .LVU146
+ 576 00de E6EE867A 		vfma.f32	s15, s13, s12
+ 577              		.loc 3 186 16 view .LVU147
+ 578 00e2 E2EC017A 		vstmia.32	r2!, {s15}
+ 579              	.LVL39:
+ 580              		.loc 3 186 16 view .LVU148
+ 581              	.LBE223:
+ 582              	.LBE234:
+ 110:mi/plaits/dsp/oscillator/oscillator.h ****       float this_sample = next_sample;
+ 583              		.loc 3 110 5 is_stmt 1 view .LVU149
+ 110:mi/plaits/dsp/oscillator/oscillator.h ****       float this_sample = next_sample;
+ 584              		.loc 3 110 5 is_stmt 0 view .LVU150
+ 585 00e6 65D0     		beq	.L18
+ 586              	.LVL40:
+ 587              	.L25:
+ 588              	.LBB235:
+ 589              	.LBB224:
+ 590              	.LBI224:
+  57:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  58:mi/stmlib/dsp/parameter_interpolator.h **** 
+  59:mi/stmlib/dsp/parameter_interpolator.h ****   inline float Next() {
+ 591              		.loc 4 59 16 is_stmt 1 view .LVU151
+ 592              	.LBB225:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 593              		.loc 4 60 5 view .LVU152
+ 594              		.loc 4 60 12 is_stmt 0 view .LVU153
+ 595 00e8 74EE834A 		vadd.f32	s9, s9, s6
+ 596              	.LVL41:
+  61:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 597              		.loc 4 61 5 is_stmt 1 view .LVU154
+ 598              		.loc 4 61 5 is_stmt 0 view .LVU155
+ 599              	.LBE225:
+ 600              	.LBE224:
+ 601              	.LBB226:
+ 602              	.LBI226:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 603              		.loc 4 59 16 is_stmt 1 view .LVU156
+ 604              	.LBB227:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 605              		.loc 4 60 5 view .LVU157
+ 606              	.LBE227:
+ 607              	.LBE226:
+ 128:mi/plaits/dsp/oscillator/oscillator.h ****       
+ 608              		.loc 3 128 14 is_stmt 0 view .LVU158
+ 609 00ec D0ED007A 		vldr.32	s15, [r0]
+ 610              	.LBB229:
+ 611              	.LBB228:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 20
+
+
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 612              		.loc 4 60 12 view .LVU159
+ 613 00f0 75EEA35A 		vadd.f32	s11, s11, s7
+ 614              	.LVL42:
+ 615              		.loc 4 61 5 is_stmt 1 view .LVU160
+ 616              		.loc 4 61 5 is_stmt 0 view .LVU161
+ 617              	.LBE228:
+ 618              	.LBE229:
+ 619              	.LBB230:
+ 620              	.LBB170:
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 621              		.loc 3 158 9 view .LVU162
+ 622 00f4 90F810C0 		ldrb	ip, [r0, #16]	@ zero_extendqisi2
+ 623              	.LBE170:
+ 155:mi/plaits/dsp/oscillator/oscillator.h ****           slope_down = 1.0f / (1.0f - pw);
+ 624              		.loc 3 155 20 view .LVU163
+ 625 00f8 F7EE006A 		vmov.f32	s13, #1.0e+0
+ 626              	.LBB215:
+ 627              	.LBB171:
+ 165:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = phase_ < pw;
+ 628              		.loc 3 165 23 view .LVU164
+ 629 00fc 9FED350A 		vldr.32	s0, .L38+8
+ 630              	.LBE171:
+ 631              	.LBE215:
+ 632              	.LBE230:
+ 128:mi/plaits/dsp/oscillator/oscillator.h ****       
+ 633              		.loc 3 128 14 view .LVU165
+ 634 0100 74EEA77A 		vadd.f32	s15, s9, s15
+ 635              	.LBB231:
+ 636              	.LBB216:
+ 637              	.LBB212:
+ 638              	.LBB172:
+ 639              	.LBB173:
+ 640              	.LBB174:
+ 641              	.LBB175:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 642              		.loc 5 47 15 view .LVU166
+ 643 0104 F6EE001A 		vmov.f32	s3, #5.0e-1
+ 644              	.LBE175:
+ 645              	.LBE174:
+ 646              	.LBE173:
+ 647              	.LBE172:
+ 648              	.LBE212:
+ 649              	.LBE216:
+ 156:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 650              		.loc 3 156 37 view .LVU167
+ 651 0108 36EEE57A 		vsub.f32	s14, s13, s11
+ 652              	.LBB217:
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 653              		.loc 3 158 29 view .LVU168
+ 654 010c F4EEE75A 		vcmpe.f32	s11, s15
+ 655              	.LBE217:
+ 656              	.LBE231:
+ 128:mi/plaits/dsp/oscillator/oscillator.h ****       
+ 657              		.loc 3 128 14 view .LVU169
+ 658 0110 C0ED007A 		vstr.32	s15, [r0]
+ 659              	.LVL43:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 21
+
+
+ 660              	.LBB232:
+ 155:mi/plaits/dsp/oscillator/oscillator.h ****           slope_down = 1.0f / (1.0f - pw);
+ 661              		.loc 3 155 20 view .LVU170
+ 662 0114 86EEA52A 		vdiv.f32	s4, s13, s11
+ 663              	.LVL44:
+ 664              	.LBB218:
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 665              		.loc 3 158 29 view .LVU171
+ 666 0118 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 667              	.LBE218:
+ 156:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 668              		.loc 3 156 22 view .LVU172
+ 669 011c 86EE874A 		vdiv.f32	s8, s13, s14
+ 670              	.LVL45:
+ 671              	.LBB219:
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 672              		.loc 3 158 29 view .LVU173
+ 673 0120 CCBF     		ite	gt
+ 674 0122 0123     		movgt	r3, #1
+ 675 0124 0023     		movle	r3, #0
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 676              		.loc 3 158 9 view .LVU174
+ 677 0126 9C45     		cmp	ip, r3
+ 678              	.LBB213:
+ 679              	.LBB195:
+ 680              	.LBB188:
+ 681              	.LBB182:
+ 682              	.LBB176:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 683              		.loc 5 50 18 view .LVU175
+ 684 0128 B4EE085A 		vmov.f32	s10, #1.875e-1
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 685              		.loc 5 50 23 view .LVU176
+ 686 012c F7EE080A 		vmov.f32	s1, #1.5e+0
+ 687              	.LBE176:
+ 688              	.LBE182:
+ 689              	.LBE188:
+ 690              	.LBE195:
+ 691              	.LBE213:
+ 158:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 692              		.loc 3 158 9 view .LVU177
+ 693 0130 3DD0     		beq	.L29
+ 694              	.LBB214:
+ 159:mi/plaits/dsp/oscillator/oscillator.h ****           float discontinuity = (slope_up + slope_down) * frequency;
+ 695              		.loc 3 159 29 view .LVU178
+ 696 0132 37EEE57A 		vsub.f32	s14, s15, s11
+ 166:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 697              		.loc 3 166 17 view .LVU179
+ 698 0136 0374     		strb	r3, [r0, #16]
+ 159:mi/plaits/dsp/oscillator/oscillator.h ****           float discontinuity = (slope_up + slope_down) * frequency;
+ 699              		.loc 3 159 17 view .LVU180
+ 700 0138 87EE246A 		vdiv.f32	s12, s14, s9
+ 701              	.LVL46:
+ 160:mi/plaits/dsp/oscillator/oscillator.h ****           if (through_zero_fm && frequency < 0.0f) {
+ 702              		.loc 3 160 43 view .LVU181
+ 703 013c 32EE047A 		vadd.f32	s14, s4, s8
+ 704              	.LVL47:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 22
+
+
+ 705              	.LBB196:
+ 706              	.LBI172:
+  53:mi/stmlib/dsp/polyblep.h ****   return NextIntegratedBlepSample(1.0f - t);
+ 707              		.loc 5 53 14 is_stmt 1 view .LVU182
+ 708              	.LBB189:
+ 709              		.loc 5 54 3 view .LVU183
+ 710              	.LBB183:
+ 711              	.LBI174:
+  46:mi/stmlib/dsp/polyblep.h ****   const float t1 = 0.5f * t;
+ 712              		.loc 5 46 14 view .LVU184
+ 713              	.LBB177:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 714              		.loc 5 47 3 view .LVU185
+ 715              	.LBE177:
+ 716              	.LBE183:
+ 717              	.LBE189:
+ 718              	.LBE196:
+ 164:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample -= stmlib::NextIntegratedBlepSample(t) * discontinuity;
+ 719              		.loc 3 164 23 is_stmt 0 view .LVU186
+ 720 0140 24EEC77A 		vnmul.f32	s14, s9, s14
+ 721              	.LVL48:
+ 722              	.LBB197:
+ 723              	.LBB190:
+ 724              		.loc 5 54 34 view .LVU187
+ 725 0144 76EEC66A 		vsub.f32	s13, s13, s12
+ 726              	.LVL49:
+ 727              		.loc 5 54 34 view .LVU188
+ 728              	.LBE190:
+ 729              	.LBE197:
+ 730              	.LBB198:
+ 731              	.LBB199:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 732              		.loc 5 47 15 view .LVU189
+ 733 0148 26EE216A 		vmul.f32	s12, s12, s3
+ 734              	.LVL50:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 735              		.loc 5 47 15 view .LVU190
+ 736              	.LBE199:
+ 737              	.LBE198:
+ 738              	.LBB204:
+ 739              	.LBB191:
+ 740              	.LBB184:
+ 741              	.LBB178:
+ 742 014c 66EEA16A 		vmul.f32	s13, s13, s3
+ 743              	.LVL51:
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 744              		.loc 5 48 3 is_stmt 1 view .LVU191
+ 745              	.LBE178:
+ 746              	.LBE184:
+ 747              	.LBE191:
+ 748              	.LBE204:
+ 749              	.LBB205:
+ 750              	.LBB200:
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 751              		.loc 5 48 15 is_stmt 0 view .LVU192
+ 752 0150 26EE061A 		vmul.f32	s2, s12, s12
+  50:mi/stmlib/dsp/polyblep.h **** }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 23
+
+
+ 753              		.loc 5 50 18 view .LVU193
+ 754 0154 35EE466A 		vsub.f32	s12, s10, s12
+ 755              	.LBE200:
+ 756              	.LBE205:
+ 757              	.LBB206:
+ 758              	.LBB192:
+ 759              	.LBB185:
+ 760              	.LBB179:
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 761              		.loc 5 48 15 view .LVU194
+ 762 0158 66EEA61A 		vmul.f32	s3, s13, s13
+ 763              	.LVL52:
+  49:mi/stmlib/dsp/polyblep.h ****   return 0.1875f - t1 + 1.5f * t2 - t4;
+ 764              		.loc 5 49 3 is_stmt 1 view .LVU195
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 765              		.loc 5 50 3 view .LVU196
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 766              		.loc 5 50 18 is_stmt 0 view .LVU197
+ 767 015c 75EE666A 		vsub.f32	s13, s10, s13
+ 768              	.LVL53:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 769              		.loc 5 50 18 view .LVU198
+ 770              	.LBE179:
+ 771              	.LBE185:
+ 772              	.LBE192:
+ 773              	.LBE206:
+ 774              	.LBB207:
+ 775              	.LBB201:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 776              		.loc 5 50 23 view .LVU199
+ 777 0160 A1EE206A 		vfma.f32	s12, s2, s1
+ 778              	.LBE201:
+ 779              	.LBE207:
+ 165:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = phase_ < pw;
+ 780              		.loc 3 165 23 view .LVU200
+ 781 0164 B0EE405A 		vmov.f32	s10, s0
+ 782              	.LBB208:
+ 783              	.LBB193:
+ 784              	.LBB186:
+ 785              	.LBB180:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 786              		.loc 5 50 23 view .LVU201
+ 787 0168 E1EEA06A 		vfma.f32	s13, s3, s1
+ 788              	.LBE180:
+ 789              	.LBE186:
+ 790              	.LBE193:
+ 791              	.LBE208:
+ 792              	.LBB209:
+ 793              	.LBB202:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 794              		.loc 5 50 37 view .LVU202
+ 795 016c A1EE416A 		vfms.f32	s12, s2, s2
+ 796              	.LBE202:
+ 797              	.LBE209:
+ 798              	.LBB210:
+ 799              	.LBB194:
+ 800              	.LBB187:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 24
+
+
+ 801              	.LBB181:
+ 802 0170 E1EEE16A 		vfms.f32	s13, s3, s3
+ 803              	.LVL54:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 804              		.loc 5 50 37 view .LVU203
+ 805              	.LBE181:
+ 806              	.LBE187:
+ 807              	.LBE194:
+ 808              	.LBE210:
+ 165:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = phase_ < pw;
+ 809              		.loc 3 165 23 view .LVU204
+ 810 0174 A7EE065A 		vfma.f32	s10, s14, s12
+ 164:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample -= stmlib::NextIntegratedBlepSample(t) * discontinuity;
+ 811              		.loc 3 164 23 view .LVU205
+ 812 0178 E7EE262A 		vfma.f32	s5, s14, s13
+ 813              	.LVL55:
+ 814              	.LBB211:
+ 815              	.LBI198:
+  46:mi/stmlib/dsp/polyblep.h ****   const float t1 = 0.5f * t;
+ 816              		.loc 5 46 14 is_stmt 1 view .LVU206
+ 817              	.LBB203:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 818              		.loc 5 47 3 view .LVU207
+  48:mi/stmlib/dsp/polyblep.h ****   const float t4 = t2 * t2;
+ 819              		.loc 5 48 3 view .LVU208
+  49:mi/stmlib/dsp/polyblep.h ****   return 0.1875f - t1 + 1.5f * t2 - t4;
+ 820              		.loc 5 49 3 view .LVU209
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 821              		.loc 5 50 3 view .LVU210
+ 822              	.L19:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 823              		.loc 5 50 3 is_stmt 0 view .LVU211
+ 824              	.LBE203:
+ 825              	.LBE211:
+ 826              	.LBE214:
+ 827              	.LBE219:
+ 828              	.LBB220:
+ 168:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 829              		.loc 3 168 9 view .LVU212
+ 830 017c B7EE007A 		vmov.f32	s14, #1.0e+0
+ 831              	.LBB168:
+ 174:mi/plaits/dsp/oscillator/oscillator.h ****         } else if (through_zero_fm && phase_ < 0.0f) {
+ 832              		.loc 3 174 17 view .LVU213
+ 833 0180 0123     		movs	r3, #1
+ 834              	.LBB166:
+ 835              	.LBB150:
+ 836              	.LBB144:
+ 837              	.LBB138:
+  47:mi/stmlib/dsp/polyblep.h ****   const float t2 = t1 * t1;
+ 838              		.loc 5 47 15 view .LVU214
+ 839 0182 F6EE001A 		vmov.f32	s3, #5.0e-1
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 840              		.loc 5 50 18 view .LVU215
+ 841 0186 B4EE086A 		vmov.f32	s12, #1.875e-1
+ 842              	.LBE138:
+ 843              	.LBE144:
+ 844              	.LBE150:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 25
+
+
+ 845              	.LBE166:
+ 846              	.LBE168:
+ 168:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 847              		.loc 3 168 9 view .LVU216
+ 848 018a F4EEC77A 		vcmpe.f32	s15, s14
+ 849              	.LBB169:
+ 850              	.LBB167:
+ 851              	.LBB151:
+ 852              	.LBB145:
+ 853              	.LBB139:
+  50:mi/stmlib/dsp/polyblep.h **** }
+ 854              		.loc 5 50 23 view .LVU217
+ 855 018e F7EE080A 		vmov.f32	s1, #1.5e+0
+ 856              	.LBE139:
+ 857              	.LBE145:
+ 858              	.LBE151:
+ 859              	.LBE167:
+ 860              	.LBE169:
+ 861              	.LBE220:
+ 184:mi/plaits/dsp/oscillator/oscillator.h ****           : 1.0f - (phase_ - pw) * slope_down;
+ 862              		.loc 3 184 11 view .LVU218
+ 863 0192 F0EE626A 		vmov.f32	s13, s5
+ 864              	.LBB221:
+ 168:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 865              		.loc 3 168 9 view .LVU219
+ 866 0196 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 867 019a BFF66EAF 		bge	.L37
+ 168:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 868              		.loc 3 168 9 view .LVU220
+ 869              	.LBE221:
+ 184:mi/plaits/dsp/oscillator/oscillator.h ****           : 1.0f - (phase_ - pw) * slope_down;
+ 870              		.loc 3 184 11 view .LVU221
+ 871 019e 037C     		ldrb	r3, [r0, #16]	@ zero_extendqisi2
+ 872 01a0 002B     		cmp	r3, #0
+ 873 01a2 91D1     		bne	.L22
+ 185:mi/plaits/dsp/oscillator/oscillator.h ****         *out++ = 2.0f * this_sample - 1.0f;
+ 874              		.loc 3 185 28 discriminator 2 view .LVU222
+ 875 01a4 77EEE57A 		vsub.f32	s15, s15, s11
+ 184:mi/plaits/dsp/oscillator/oscillator.h ****           : 1.0f - (phase_ - pw) * slope_down;
+ 876              		.loc 3 184 11 discriminator 2 view .LVU223
+ 877 01a8 A7EEC47A 		vfms.f32	s14, s15, s8
+ 878 01ac 8EE7     		b	.L24
+ 879              	.LVL56:
+ 880              	.L29:
+ 184:mi/plaits/dsp/oscillator/oscillator.h ****           : 1.0f - (phase_ - pw) * slope_down;
+ 881              		.loc 3 184 11 discriminator 2 view .LVU224
+ 882              	.LBE232:
+ 112:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 883              		.loc 3 112 19 view .LVU225
+ 884 01ae 9FED095A 		vldr.32	s10, .L38+8
+ 885 01b2 E3E7     		b	.L19
+ 886              	.LVL57:
+ 887              	.L18:
+ 112:mi/plaits/dsp/oscillator/oscillator.h **** 
+ 888              		.loc 3 112 19 view .LVU226
+ 889              	.LBE235:
+ 187:mi/plaits/dsp/oscillator/oscillator.h ****       } else {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 26
+
+
+ 188:mi/plaits/dsp/oscillator/oscillator.h ****         if (high_ ^ (phase_ >= pw)) {
+ 189:mi/plaits/dsp/oscillator/oscillator.h ****           float t = (phase_ - pw) / frequency;
+ 190:mi/plaits/dsp/oscillator/oscillator.h ****           float discontinuity = 1.0f;
+ 191:mi/plaits/dsp/oscillator/oscillator.h ****           if (through_zero_fm && frequency < 0.0f) {
+ 192:mi/plaits/dsp/oscillator/oscillator.h ****             discontinuity = -discontinuity;
+ 193:mi/plaits/dsp/oscillator/oscillator.h ****           }
+ 194:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample += stmlib::ThisBlepSample(t) * discontinuity;
+ 195:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample += stmlib::NextBlepSample(t) * discontinuity;
+ 196:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = phase_ >= pw;
+ 197:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 198:mi/plaits/dsp/oscillator/oscillator.h ****         if (phase_ >= 1.0f) {
+ 199:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ -= 1.0f;
+ 200:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 201:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample -= stmlib::ThisBlepSample(t);
+ 202:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample -= stmlib::NextBlepSample(t);
+ 203:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = false;
+ 204:mi/plaits/dsp/oscillator/oscillator.h ****         } else if (through_zero_fm && phase_ < 0.0f) {
+ 205:mi/plaits/dsp/oscillator/oscillator.h ****           float t = phase_ / frequency;
+ 206:mi/plaits/dsp/oscillator/oscillator.h ****           phase_ += 1.0f;
+ 207:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample += stmlib::ThisBlepSample(t);
+ 208:mi/plaits/dsp/oscillator/oscillator.h ****           next_sample += stmlib::NextBlepSample(t);
+ 209:mi/plaits/dsp/oscillator/oscillator.h ****           high_ = true;
+ 210:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 211:mi/plaits/dsp/oscillator/oscillator.h ****         next_sample += phase_ < pw ? 0.0f : 1.0f;
+ 212:mi/plaits/dsp/oscillator/oscillator.h ****         
+ 213:mi/plaits/dsp/oscillator/oscillator.h ****         if (shape == OSCILLATOR_SHAPE_SQUARE_TRIANGLE) {
+ 214:mi/plaits/dsp/oscillator/oscillator.h ****           const float integrator_coefficient = frequency * 0.0625f;
+ 215:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample = 128.0f * (this_sample - 0.5f);
+ 216:mi/plaits/dsp/oscillator/oscillator.h ****           lp_state_ += integrator_coefficient * (this_sample - lp_state_);
+ 217:mi/plaits/dsp/oscillator/oscillator.h ****           *out++ = lp_state_;
+ 218:mi/plaits/dsp/oscillator/oscillator.h ****         } else if (shape == OSCILLATOR_SHAPE_SQUARE_DARK) {
+ 219:mi/plaits/dsp/oscillator/oscillator.h ****           const float integrator_coefficient = frequency * 2.0f;
+ 220:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample = 4.0f * (this_sample - 0.5f);
+ 221:mi/plaits/dsp/oscillator/oscillator.h ****           lp_state_ += integrator_coefficient * (this_sample - lp_state_);
+ 222:mi/plaits/dsp/oscillator/oscillator.h ****           *out++ = lp_state_;
+ 223:mi/plaits/dsp/oscillator/oscillator.h ****         } else if (shape == OSCILLATOR_SHAPE_SQUARE_BRIGHT) {
+ 224:mi/plaits/dsp/oscillator/oscillator.h ****           const float integrator_coefficient = frequency * 2.0f;
+ 225:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample = 2.0f * this_sample - 1.0f;
+ 226:mi/plaits/dsp/oscillator/oscillator.h ****           lp_state_ += integrator_coefficient * (this_sample - lp_state_);
+ 227:mi/plaits/dsp/oscillator/oscillator.h ****           *out++ = (this_sample - lp_state_) * 0.5f;
+ 228:mi/plaits/dsp/oscillator/oscillator.h ****         } else {
+ 229:mi/plaits/dsp/oscillator/oscillator.h ****           this_sample = 2.0f * this_sample - 1.0f;
+ 230:mi/plaits/dsp/oscillator/oscillator.h ****           *out++ = this_sample;
+ 231:mi/plaits/dsp/oscillator/oscillator.h ****         }
+ 232:mi/plaits/dsp/oscillator/oscillator.h ****       }
+ 233:mi/plaits/dsp/oscillator/oscillator.h ****     }
+ 234:mi/plaits/dsp/oscillator/oscillator.h ****     next_sample_ = next_sample;
+ 890              		.loc 3 234 18 view .LVU227
+ 891 01b4 C0ED012A 		vstr.32	s5, [r0, #4]
+ 892              	.LVL58:
+ 893              	.LBB236:
+ 894              	.LBI236:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 895              		.loc 4 49 3 is_stmt 1 view .LVU228
+ 896              	.LBB237:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 897              		.loc 4 50 5 view .LVU229
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 27
+
+
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 898              		.loc 4 50 13 is_stmt 0 view .LVU230
+ 899 01b8 C0ED065A 		vstr.32	s11, [r0, #24]
+ 900              	.LVL59:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 901              		.loc 4 50 13 view .LVU231
+ 902              	.LBE237:
+ 903              	.LBE236:
+ 904              	.LBB238:
+ 905              	.LBI238:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 906              		.loc 4 49 3 is_stmt 1 view .LVU232
+ 907              	.LBB239:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 908              		.loc 4 50 5 view .LVU233
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 909              		.loc 4 50 13 is_stmt 0 view .LVU234
+ 910 01bc C0ED054A 		vstr.32	s9, [r0, #20]
+ 911              	.LVL60:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 912              		.loc 4 50 13 view .LVU235
+ 913              	.LBE239:
+ 914              	.LBE238:
+ 235:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 915              		.loc 3 235 3 view .LVU236
+ 916 01c0 7047     		bx	lr
+ 917              	.LVL61:
+ 918              	.L36:
+ 102:mi/plaits/dsp/oscillator/oscillator.h ****     }
+ 919              		.loc 3 102 7 view .LVU237
+ 920 01c2 F0EEC07A 		vabs.f32	s15, s0
+ 921 01c6 77EEA77A 		vadd.f32	s15, s15, s15
+ 922 01ca 31E7     		b	.L15
+ 923              	.L39:
+ 924              		.align	2
+ 925              	.L38:
+ 926 01cc BD378635 		.word	897988541
+ 927 01d0 BD370636 		.word	906377149
+ 928 01d4 00000000 		.word	0
+ 929              		.cfi_endproc
+ 930              	.LFE1534:
+ 932              		.section	.text._ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb,"ax",%progbit
+ 933              		.align	1
+ 934              		.p2align 2,,3
+ 935              		.global	_ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 936              		.syntax unified
+ 937              		.thumb
+ 938              		.thumb_func
+ 940              	_ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb:
+ 941              	.LVL62:
+ 942              	.LFB1525:
+  63:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  64:mi/plaits/dsp/engine/waveshaping_engine.cpp **** void WaveshapingEngine::Render(
+  65:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     const EngineParameters& parameters,
+  66:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float* out,
+  67:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float* aux,
+  68:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     size_t size,
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 28
+
+
+  69:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     bool* already_enveloped) {
+ 943              		.loc 2 69 30 is_stmt 1 view -0
+ 944              		.cfi_startproc
+ 945              		@ args = 8, pretend = 0, frame = 8
+ 946              		@ frame_needed = 0, uses_anonymous_args = 0
+  70:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float root = parameters.note;
+ 947              		.loc 2 70 3 view .LVU239
+ 948              	.LBB283:
+ 949              	.LBB284:
+ 950              		.file 6 "mi/plaits/dsp/engine/engine.h"
+   1:mi/plaits/dsp/engine/engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/engine.h **** //
+   3:mi/plaits/dsp/engine/engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/engine.h **** //
+   5:mi/plaits/dsp/engine/engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/engine.h **** // 
+  12:mi/plaits/dsp/engine/engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/engine.h **** // 
+  15:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/engine.h **** // 
+  23:mi/plaits/dsp/engine/engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/engine.h **** //
+  25:mi/plaits/dsp/engine/engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/engine.h **** //
+  27:mi/plaits/dsp/engine/engine.h **** // Base class for all engines.
+  28:mi/plaits/dsp/engine/engine.h **** 
+  29:mi/plaits/dsp/engine/engine.h **** #ifndef PLAITS_DSP_ENGINE_ENGINE_H_
+  30:mi/plaits/dsp/engine/engine.h **** #define PLAITS_DSP_ENGINE_ENGINE_H_
+  31:mi/plaits/dsp/engine/engine.h **** 
+  32:mi/plaits/dsp/engine/engine.h **** #include "plaits/dsp/dsp.h"
+  33:mi/plaits/dsp/engine/engine.h **** 
+  34:mi/plaits/dsp/engine/engine.h **** #include "stmlib/dsp/units.h"
+  35:mi/plaits/dsp/engine/engine.h **** #include "stmlib/utils/buffer_allocator.h"
+  36:mi/plaits/dsp/engine/engine.h **** 
+  37:mi/plaits/dsp/engine/engine.h **** namespace plaits {
+  38:mi/plaits/dsp/engine/engine.h **** 
+  39:mi/plaits/dsp/engine/engine.h **** inline float NoteToFrequency(float midi_note) {
+  40:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 951              		.loc 6 40 13 is_stmt 0 view .LVU240
+ 952 0000 F2EE026A 		vmov.f32	s13, #9.0e+0
+ 953 0004 D1ED017A 		vldr.32	s15, [r1, #4]
+  41:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 954              		.loc 6 41 3 view .LVU241
+ 955 0008 9FEDF37A 		vldr.32	s14, .L63
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 29
+
+
+ 956              		.loc 6 40 13 view .LVU242
+ 957 000c 77EEE67A 		vsub.f32	s15, s15, s13
+ 958              	.LBE284:
+ 959              	.LBE283:
+  69:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float root = parameters.note;
+ 960              		.loc 2 69 30 view .LVU243
+ 961 0010 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 962              		.cfi_def_cfa_offset 36
+ 963              		.cfi_offset 4, -36
+ 964              		.cfi_offset 5, -32
+ 965              		.cfi_offset 6, -28
+ 966              		.cfi_offset 7, -24
+ 967              		.cfi_offset 8, -20
+ 968              		.cfi_offset 9, -16
+ 969              		.cfi_offset 10, -12
+ 970              		.cfi_offset 11, -8
+ 971              		.cfi_offset 14, -4
+ 972              	.LBB312:
+ 973              	.LBB301:
+ 974              		.loc 6 41 3 view .LVU244
+ 975 0014 F4EEC77A 		vcmpe.f32	s15, s14
+ 976              	.LBE301:
+ 977              	.LBE312:
+  69:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float root = parameters.note;
+ 978              		.loc 2 69 30 view .LVU245
+ 979 0018 0C46     		mov	r4, r1
+ 980              	.LVL63:
+  71:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   
+  72:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float f0 = NoteToFrequency(root);
+ 981              		.loc 2 72 3 is_stmt 1 view .LVU246
+ 982              	.LBB313:
+ 983              	.LBI283:
+  39:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 984              		.loc 6 39 14 view .LVU247
+ 985              	.LBB302:
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 986              		.loc 6 40 3 view .LVU248
+ 987              		.loc 6 41 3 view .LVU249
+ 988              	.LBE302:
+ 989              	.LBE313:
+  69:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float root = parameters.note;
+ 990              		.loc 2 69 30 is_stmt 0 view .LVU250
+ 991 001a 0546     		mov	r5, r0
+ 992 001c 9046     		mov	r8, r2
+ 993 001e 1E46     		mov	r6, r3
+ 994              	.LBB314:
+ 995              	.LBB303:
+ 996              		.loc 6 41 3 view .LVU251
+ 997 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 998              	.LBE303:
+ 999              	.LBE314:
+  69:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float root = parameters.note;
+ 1000              		.loc 2 69 30 view .LVU252
+ 1001 0024 2DED068B 		vpush.64	{d8, d9, d10}
+ 1002              		.cfi_def_cfa_offset 60
+ 1003              		.cfi_offset 80, -60
+ 1004              		.cfi_offset 81, -56
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 30
+
+
+ 1005              		.cfi_offset 82, -52
+ 1006              		.cfi_offset 83, -48
+ 1007              		.cfi_offset 84, -44
+ 1008              		.cfi_offset 85, -40
+ 1009 0028 83B0     		sub	sp, sp, #12
+ 1010              		.cfi_def_cfa_offset 72
+  69:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float root = parameters.note;
+ 1011              		.loc 2 69 30 view .LVU253
+ 1012 002a 129F     		ldr	r7, [sp, #72]
+ 1013              	.LBB315:
+ 1014              	.LBB304:
+ 1015              		.loc 6 41 3 view .LVU254
+ 1016 002c 0AD4     		bmi	.L48
+ 1017              		.loc 6 41 3 is_stmt 1 view .LVU255
+ 1018 002e 9FEDEB7A 		vldr.32	s14, .L63+4
+ 1019 0032 F4EEC77A 		vcmpe.f32	s15, s14
+ 1020 0036 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1021 003a 40F3F581 		ble	.L59
+ 1022 003e 0020     		movs	r0, #0
+ 1023              	.LVL64:
+ 1024              		.loc 6 41 3 is_stmt 0 view .LVU256
+ 1025 0040 FF22     		movs	r2, #255
+ 1026              	.LVL65:
+ 1027              		.loc 6 41 3 view .LVU257
+ 1028 0042 01E0     		b	.L41
+ 1029              	.LVL66:
+ 1030              	.L48:
+ 1031              		.loc 6 41 3 view .LVU258
+ 1032 0044 0020     		movs	r0, #0
+ 1033              	.LVL67:
+ 1034              		.loc 6 41 3 view .LVU259
+ 1035 0046 0246     		mov	r2, r0
+ 1036              	.LVL68:
+ 1037              	.L41:
+ 1038              		.loc 6 41 40 is_stmt 1 view .LVU260
+  42:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 1039              		.loc 6 42 3 view .LVU261
+ 1040              	.LBB285:
+ 1041              	.LBI285:
+ 1042              		.file 7 "mi/stmlib/dsp/units.h"
+   1:mi/stmlib/dsp/units.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/units.h **** //
+   3:mi/stmlib/dsp/units.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/units.h **** //
+   5:mi/stmlib/dsp/units.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/units.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/units.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/units.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/units.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/units.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/units.h **** // 
+  12:mi/stmlib/dsp/units.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/units.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/units.h **** // 
+  15:mi/stmlib/dsp/units.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/units.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/units.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 31
+
+
+  18:mi/stmlib/dsp/units.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/units.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/units.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/units.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/units.h **** // 
+  23:mi/stmlib/dsp/units.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/units.h **** //
+  25:mi/stmlib/dsp/units.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/units.h **** //
+  27:mi/stmlib/dsp/units.h **** // Conversion from semitones to frequency ratio.
+  28:mi/stmlib/dsp/units.h **** 
+  29:mi/stmlib/dsp/units.h **** #ifndef STMLIB_DSP_UNITS_H_
+  30:mi/stmlib/dsp/units.h **** #define STMLIB_DSP_UNITS_H_
+  31:mi/stmlib/dsp/units.h **** 
+  32:mi/stmlib/dsp/units.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/units.h **** #include "stmlib/dsp/dsp.h"
+  34:mi/stmlib/dsp/units.h **** 
+  35:mi/stmlib/dsp/units.h **** namespace stmlib {
+  36:mi/stmlib/dsp/units.h **** 
+  37:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_high[257];
+  38:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_low[257];
+  39:mi/stmlib/dsp/units.h **** 
+  40:mi/stmlib/dsp/units.h **** inline float SemitonesToRatio(float semitones) {
+ 1043              		.loc 7 40 14 view .LVU262
+ 1044              	.LBB286:
+  41:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+ 1045              		.loc 7 41 3 view .LVU263
+  42:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 1046              		.loc 7 42 3 view .LVU264
+ 1047              		.loc 7 42 3 view .LVU265
+  43:mi/stmlib/dsp/units.h **** 
+  44:mi/stmlib/dsp/units.h ****   return lut_pitch_ratio_high[pitch_integral] * \
+ 1048              		.loc 7 44 3 view .LVU266
+ 1049              		.loc 7 44 45 is_stmt 0 view .LVU267
+ 1050 0048 E54B     		ldr	r3, .L63+8
+ 1051              	.LVL69:
+ 1052              		.loc 7 44 45 view .LVU268
+ 1053              	.LBE286:
+ 1054              	.LBE285:
+ 1055              	.LBE304:
+ 1056              	.LBE315:
+  73:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float pw = parameters.morph * 0.45f + 0.5f;
+ 1057              		.loc 2 73 15 view .LVU269
+ 1058 004a F6EE008A 		vmov.f32	s17, #5.0e-1
+ 1059 004e 94ED037A 		vldr.32	s14, [r4, #12]
+ 1060              	.LBB316:
+ 1061              	.LBB317:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1062              		.loc 3 71 32 view .LVU270
+ 1063 0052 0021     		movs	r1, #0
+ 1064              	.LVL70:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1065              		.loc 3 71 32 view .LVU271
+ 1066              	.LBE317:
+ 1067              	.LBE316:
+ 1068              	.LBB324:
+ 1069              	.LBB305:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 32
+
+
+ 1070              	.LBB294:
+ 1071              	.LBB287:
+ 1072              		.loc 7 44 45 view .LVU272
+ 1073 0054 03EB8203 		add	r3, r3, r2, lsl #2
+ 1074              	.LBE287:
+ 1075              	.LBE294:
+ 1076              	.LBE305:
+ 1077              	.LBE324:
+ 1078              		.loc 2 73 15 view .LVU273
+ 1079 0058 DFEDE27A 		vldr.32	s15, .L63+12
+ 1080              	.LBB325:
+ 1081              	.LBB318:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1082              		.loc 3 71 32 view .LVU274
+ 1083 005c F0EE680A 		vmov.f32	s1, s17
+ 1084              	.LBE318:
+ 1085              	.LBE325:
+ 1086              	.LBB326:
+ 1087              	.LBB306:
+ 1088              		.loc 6 42 57 view .LVU275
+ 1089 0060 9FEDE10A 		vldr.32	s0, .L63+16
+ 1090              	.LBB295:
+ 1091              	.LBB288:
+  45:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 1092              		.loc 7 45 74 view .LVU276
+ 1093 0064 93ED008A 		vldr.32	s16, [r3]
+ 1094              	.LBE288:
+ 1095              	.LBE295:
+ 1096              	.LBE306:
+ 1097              	.LBE326:
+ 1098              	.LBB327:
+ 1099              	.LBB319:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1100              		.loc 3 71 32 view .LVU277
+ 1101 0068 4246     		mov	r2, r8
+ 1102              	.LBE319:
+ 1103              	.LBE327:
+ 1104              	.LBB328:
+ 1105              	.LBB307:
+ 1106              	.LBB296:
+ 1107              	.LBB289:
+ 1108              		.loc 7 45 74 view .LVU278
+ 1109 006a E04B     		ldr	r3, .L63+20
+ 1110              	.LBE289:
+ 1111              	.LBE296:
+ 1112              	.LBE307:
+ 1113              	.LBE328:
+ 1114              	.LBB329:
+ 1115              	.LBB320:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1116              		.loc 3 71 32 view .LVU279
+ 1117 006c E7EE270A 		vfma.f32	s1, s14, s15
+ 1118              	.LBE320:
+ 1119              	.LBE329:
+ 1120              	.LBB330:
+ 1121              	.LBB308:
+ 1122              	.LBB297:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 33
+
+
+ 1123              	.LBB290:
+ 1124              		.loc 7 45 74 view .LVU280
+ 1125 0070 03EB8000 		add	r0, r3, r0, lsl #2
+ 1126              	.LBE290:
+ 1127              	.LBE297:
+ 1128              	.LBE308:
+ 1129              	.LBE330:
+ 1130              	.LBB331:
+ 1131              	.LBB321:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1132              		.loc 3 71 32 view .LVU281
+ 1133 0074 3B46     		mov	r3, r7
+ 1134              	.LBE321:
+ 1135              	.LBE331:
+ 1136              	.LBB332:
+ 1137              	.LBB309:
+ 1138              	.LBB298:
+ 1139              	.LBB291:
+ 1140              		.loc 7 45 74 view .LVU282
+ 1141 0076 D0ED007A 		vldr.32	s15, [r0]
+ 1142              	.LBE291:
+ 1143              	.LBE298:
+ 1144              	.LBE309:
+ 1145              	.LBE332:
+ 1146              	.LBB333:
+ 1147              	.LBB322:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1148              		.loc 3 71 32 view .LVU283
+ 1149 007a 05F11000 		add	r0, r5, #16
+ 1150              	.LBE322:
+ 1151              	.LBE333:
+ 1152              	.LBB334:
+ 1153              	.LBB310:
+ 1154              	.LBB299:
+ 1155              	.LBB292:
+ 1156              		.loc 7 45 74 view .LVU284
+ 1157 007e 28EE278A 		vmul.f32	s16, s16, s15
+ 1158              	.LBE292:
+ 1159              	.LBE299:
+ 1160              		.loc 6 42 57 view .LVU285
+ 1161 0082 28EE008A 		vmul.f32	s16, s16, s0
+ 1162              	.LVL71:
+ 1163              		.loc 6 42 57 view .LVU286
+ 1164              	.LBE310:
+ 1165              	.LBE334:
+ 1166              		.loc 2 73 3 is_stmt 1 view .LVU287
+  74:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   
+  75:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   // Start from bandlimited slope signal.
+  76:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   slope_.Render<OSCILLATOR_SHAPE_SLOPE>(f0, pw, out, size);
+ 1167              		.loc 2 76 3 view .LVU288
+ 1168              	.LBB335:
+ 1169              	.LBI316:
+  70:mi/plaits/dsp/oscillator/oscillator.h ****     Render<shape, false, false>(frequency, pw, NULL, out, size);
+ 1170              		.loc 3 70 8 view .LVU289
+ 1171              	.LBB323:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1172              		.loc 3 71 32 is_stmt 0 view .LVU290
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 34
+
+
+ 1173 0086 B0EE480A 		vmov.f32	s0, s16
+ 1174 008a FFF7FEFF 		bl	_ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj
+ 1175              	.LVL72:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1176              		.loc 3 71 32 view .LVU291
+ 1177              	.LBE323:
+ 1178              	.LBE335:
+  77:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   triangle_.Render<OSCILLATOR_SHAPE_SLOPE>(f0, 0.5f, aux, size);
+ 1179              		.loc 2 77 3 is_stmt 1 view .LVU292
+ 1180              	.LBB336:
+ 1181              	.LBI336:
+  70:mi/plaits/dsp/oscillator/oscillator.h ****     Render<shape, false, false>(frequency, pw, NULL, out, size);
+ 1182              		.loc 3 70 8 view .LVU293
+ 1183              	.LBB337:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1184              		.loc 3 71 32 is_stmt 0 view .LVU294
+ 1185 008e F0EE680A 		vmov.f32	s1, s17
+ 1186 0092 B0EE480A 		vmov.f32	s0, s16
+ 1187 0096 3B46     		mov	r3, r7
+ 1188 0098 3246     		mov	r2, r6
+ 1189 009a 0021     		movs	r1, #0
+ 1190 009c 05F12C00 		add	r0, r5, #44
+ 1191              	.LVL73:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1192              		.loc 3 71 32 view .LVU295
+ 1193 00a0 FFF7FEFF 		bl	_ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj
+ 1194              	.LVL74:
+  71:mi/plaits/dsp/oscillator/oscillator.h ****   }
+ 1195              		.loc 3 71 32 view .LVU296
+ 1196              	.LBE337:
+ 1197              	.LBE336:
+  78:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+  79:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   // Try to estimate how rich the spectrum is, and reduce the range of the
+  80:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   // waveshaping control accordingly.
+  81:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float slope = 3.0f + fabsf(parameters.morph - 0.5f) * 5.0f;
+ 1198              		.loc 2 81 3 is_stmt 1 view .LVU297
+ 1199              		.loc 2 81 53 is_stmt 0 view .LVU298
+ 1200 00a4 94ED037A 		vldr.32	s14, [r4, #12]
+ 1201              		.loc 2 81 15 view .LVU299
+ 1202 00a8 F1EE044A 		vmov.f32	s9, #5.0e+0
+ 1203              	.LBB338:
+ 1204              	.LBB339:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1205              		.loc 2 59 33 view .LVU300
+ 1206 00ac DFEDD06A 		vldr.32	s13, .L63+24
+ 1207              	.LBE339:
+ 1208              	.LBE338:
+ 1209              		.loc 2 81 53 view .LVU301
+ 1210 00b0 37EE687A 		vsub.f32	s14, s14, s17
+  82:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float shape_amount = fabsf(parameters.harmonics - 0.5f) * 2.0f;
+ 1211              		.loc 2 82 57 view .LVU302
+ 1212 00b4 D4ED040A 		vldr.32	s1, [r4, #16]
+  81:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float shape_amount = fabsf(parameters.harmonics - 0.5f) * 2.0f;
+ 1213              		.loc 2 81 15 view .LVU303
+ 1214 00b8 F0EE087A 		vmov.f32	s15, #3.0e+0
+ 1215              	.LBB345:
+ 1216              	.LBB340:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 35
+
+
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1217              		.loc 2 60 3 view .LVU304
+ 1218 00bc 9FEDD94A 		vldr.32	s8, .L63+76
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1219              		.loc 2 59 42 view .LVU305
+ 1220 00c0 B5EE0E5A 		vmov.f32	s10, #4.6875e-1
+ 1221              	.LBE340:
+ 1222              	.LBE345:
+  81:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float shape_amount = fabsf(parameters.harmonics - 0.5f) * 2.0f;
+ 1223              		.loc 2 81 35 view .LVU306
+ 1224 00c4 B0EEC77A 		vabs.f32	s14, s14
+ 1225              	.LBB346:
+ 1226              	.LBB341:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1227              		.loc 2 59 9 view .LVU307
+ 1228 00c8 F7EE005A 		vmov.f32	s11, #1.0e+0
+ 1229              	.LBE341:
+ 1230              	.LBE346:
+ 1231              		.loc 2 82 57 view .LVU308
+ 1232 00cc 70EEE80A 		vsub.f32	s1, s1, s17
+  81:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float shape_amount = fabsf(parameters.harmonics - 0.5f) * 2.0f;
+ 1233              		.loc 2 81 15 view .LVU309
+ 1234 00d0 E7EE247A 		vfma.f32	s15, s14, s9
+ 1235 00d4 B0EE676A 		vmov.f32	s12, s15
+ 1236              	.LVL75:
+ 1237              		.loc 2 82 3 is_stmt 1 view .LVU310
+ 1238              		.loc 2 82 35 is_stmt 0 view .LVU311
+ 1239 00d8 F0EEE07A 		vabs.f32	s15, s1
+ 1240              	.LBB347:
+ 1241              	.LBB342:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1242              		.loc 2 59 33 view .LVU312
+ 1243 00dc E6EE086A 		vfma.f32	s13, s12, s16
+ 1244              	.LBE342:
+ 1245              	.LBE347:
+ 1246              		.loc 2 82 15 view .LVU313
+ 1247 00e0 77EEA77A 		vadd.f32	s15, s15, s15
+ 1248              	.LVL76:
+  83:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float shape_amount_attenuation = Tame(f0, slope, 16.0f);
+ 1249              		.loc 2 83 3 is_stmt 1 view .LVU314
+ 1250              	.LBB348:
+ 1251              	.LBI338:
+  56:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   f0 *= harmonics;
+ 1252              		.loc 2 56 7 view .LVU315
+ 1253              	.LBB343:
+  57:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_f = 0.5f / order;
+ 1254              		.loc 2 57 3 view .LVU316
+  58:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_amount = 1.0f - (f0 - max_f) / (0.5f - max_f);
+ 1255              		.loc 2 58 3 view .LVU317
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1256              		.loc 2 59 3 view .LVU318
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1257              		.loc 2 59 42 is_stmt 0 view .LVU319
+ 1258 00e4 86EE857A 		vdiv.f32	s14, s13, s10
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1259              		.loc 2 59 9 view .LVU320
+ 1260 00e8 35EEC77A 		vsub.f32	s14, s11, s14
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 36
+
+
+ 1261              	.LVL77:
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1262              		.loc 2 60 3 is_stmt 1 view .LVU321
+ 1263 00ec B4EEC47A 		vcmpe.f32	s14, s8
+ 1264 00f0 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1265 00f4 00F1BC81 		bmi	.L60
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1266              		.loc 2 60 3 view .LVU322
+ 1267 00f8 B4EEE57A 		vcmpe.f32	s14, s11
+ 1268 00fc F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1269 0100 40F3AA81 		ble	.L61
+ 1270              	.LVL78:
+ 1271              	.L44:
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1272              		.loc 2 60 36 view .LVU323
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 1273              		.loc 2 61 3 view .LVU324
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 1274              		.loc 2 61 3 is_stmt 0 view .LVU325
+ 1275              	.LBE343:
+ 1276              	.LBE348:
+  84:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float wavefolder_gain = parameters.timbre;
+ 1277              		.loc 2 84 3 is_stmt 1 view .LVU326
+  85:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float wavefolder_gain_attenuation = Tame(
+  86:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       f0,
+  87:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       slope * (3.0f + shape_amount * shape_amount_attenuation * 5.0f),
+ 1278              		.loc 2 87 21 is_stmt 0 view .LVU327
+ 1279 0104 F1EE044A 		vmov.f32	s9, #5.0e+0
+ 1280              	.LBB349:
+ 1281              	.LBB350:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1282              		.loc 2 59 33 view .LVU328
+ 1283 0108 DFEDBA5A 		vldr.32	s11, .L63+28
+ 1284              	.LBE350:
+ 1285              	.LBE349:
+ 1286              		.loc 2 87 21 view .LVU329
+ 1287 010c B0EE087A 		vmov.f32	s14, #3.0e+0
+ 1288              	.LBB356:
+ 1289              	.LBB351:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1290              		.loc 2 59 42 view .LVU330
+ 1291 0110 9FEDB95A 		vldr.32	s10, .L63+32
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1292              		.loc 2 59 9 view .LVU331
+ 1293 0114 F7EE006A 		vmov.f32	s13, #1.0e+0
+ 1294              	.LBE351:
+ 1295              	.LBE356:
+  84:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float wavefolder_gain = parameters.timbre;
+ 1296              		.loc 2 84 15 view .LVU332
+ 1297 0118 94ED024A 		vldr.32	s8, [r4, #8]
+ 1298              	.LVL79:
+  85:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float wavefolder_gain_attenuation = Tame(
+ 1299              		.loc 2 85 3 is_stmt 1 view .LVU333
+ 1300              		.loc 2 87 21 is_stmt 0 view .LVU334
+ 1301 011c A7EEA47A 		vfma.f32	s14, s15, s9
+ 1302              	.LVL80:
+ 1303              	.LBB357:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 37
+
+
+ 1304              	.LBI349:
+  56:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   f0 *= harmonics;
+ 1305              		.loc 2 56 7 is_stmt 1 view .LVU335
+ 1306              	.LBB352:
+  57:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_f = 0.5f / order;
+ 1307              		.loc 2 57 3 view .LVU336
+  58:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   float max_amount = 1.0f - (f0 - max_f) / (0.5f - max_f);
+ 1308              		.loc 2 58 3 view .LVU337
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1309              		.loc 2 59 3 view .LVU338
+ 1310              	.LBE352:
+ 1311              	.LBE357:
+  85:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       f0,
+ 1312              		.loc 2 85 49 is_stmt 0 view .LVU339
+ 1313 0120 67EE067A 		vmul.f32	s15, s14, s12
+ 1314              	.LVL81:
+ 1315              	.LBB358:
+ 1316              	.LBB353:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1317              		.loc 2 59 33 view .LVU340
+ 1318 0124 B0EE657A 		vmov.f32	s14, s11
+ 1319              	.LVL82:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1320              		.loc 2 59 33 view .LVU341
+ 1321 0128 A7EE887A 		vfma.f32	s14, s15, s16
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1322              		.loc 2 59 42 view .LVU342
+ 1323 012c C7EE057A 		vdiv.f32	s15, s14, s10
+ 1324              	.LVL83:
+  59:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   CONSTRAIN(max_amount, 0.0f, 1.0f);
+ 1325              		.loc 2 59 9 view .LVU343
+ 1326 0130 76EEE77A 		vsub.f32	s15, s13, s15
+ 1327              	.LVL84:
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1328              		.loc 2 60 3 is_stmt 1 view .LVU344
+ 1329 0134 F5EEC07A 		vcmpe.f32	s15, #0
+ 1330 0138 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1331 013c 00F19581 		bmi	.L50
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1332              		.loc 2 60 3 view .LVU345
+ 1333 0140 F4EEE67A 		vcmpe.f32	s15, s13
+ 1334 0144 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1335 0148 40F38181 		ble	.L62
+ 1336              	.L45:
+ 1337              	.LVL85:
+  60:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   return max_amount * max_amount * max_amount;
+ 1338              		.loc 2 60 36 view .LVU346
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 1339              		.loc 2 61 3 view .LVU347
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 1340              		.loc 2 61 3 is_stmt 0 view .LVU348
+ 1341              	.LBE353:
+ 1342              	.LBE358:
+  88:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       12.0f);
+  89:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   
+  90:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   // Apply waveshaper / wavefolder.
+  91:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   ParameterInterpolator shape_modulation(
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 38
+
+
+ 1343              		.loc 2 91 3 is_stmt 1 view .LVU349
+ 1344              	.LBB359:
+ 1345              	.LBI359:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 1346              		.loc 4 39 3 view .LVU350
+ 1347              	.LBE359:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1348              		.loc 4 40 5 view .LVU351
+ 1349              	.LBB372:
+ 1350              	.LBB360:
+ 1351              	.LBI360:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 1352              		.loc 4 53 15 view .LVU352
+ 1353              	.LBB361:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 1354              		.loc 4 54 5 view .LVU353
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1355              		.loc 4 55 5 view .LVU354
+ 1356              	.LBE361:
+ 1357              	.LBE360:
+ 1358              	.LBE372:
+  92:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       &previous_shape_,
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       0.5f + (parameters.harmonics - 0.5f) * shape_amount_attenuation,
+  94:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+  95:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   ParameterInterpolator wf_gain_modulation(
+  96:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       &previous_wavefolder_gain_,
+  97:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       0.03f + 0.46f * wavefolder_gain * wavefolder_gain_attenuation,
+  98:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+  99:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float overtone_gain = parameters.timbre * (2.0f - parameters.timbre);
+ 1359              		.loc 2 99 57 is_stmt 0 view .LVU355
+ 1360 014c B0EE006A 		vmov.f32	s12, #2.0e+0
+ 1361              	.LVL86:
+  97:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 1362              		.loc 2 97 21 view .LVU356
+ 1363 0150 DFEDAA3A 		vldr.32	s7, .L63+36
+  98:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float overtone_gain = parameters.timbre * (2.0f - parameters.timbre);
+ 1364              		.loc 2 98 11 view .LVU357
+ 1365 0154 DFEDAA7A 		vldr.32	s15, .L63+40
+  94:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   ParameterInterpolator wf_gain_modulation(
+ 1366              		.loc 2 94 11 view .LVU358
+ 1367 0158 B6EE005A 		vmov.f32	s10, #5.0e-1
+  97:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 1368              		.loc 2 97 21 view .LVU359
+ 1369 015c 64EE233A 		vmul.f32	s7, s8, s7
+ 1370              	.LBB373:
+ 1371              	.LBB374:
+ 1372              	.LBB375:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1373              		.loc 4 55 14 view .LVU360
+ 1374 0160 D5ED144A 		vldr.32	s9, [r5, #80]
+ 1375              	.LVL87:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1376              		.loc 4 55 14 view .LVU361
+ 1377              	.LBE375:
+ 1378              	.LBE374:
+ 1379              	.LBE373:
+ 1380              		.loc 2 99 57 view .LVU362
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 39
+
+
+ 1381 0164 36EE447A 		vsub.f32	s14, s12, s8
+ 1382              	.LBB382:
+ 1383              	.LBB367:
+ 1384              	.LBB362:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1385              		.loc 4 55 14 view .LVU363
+ 1386 0168 D5ED125A 		vldr.32	s11, [r5, #72]
+ 1387              	.LVL88:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1388              		.loc 4 56 5 is_stmt 1 view .LVU364
+ 1389              	.LBE362:
+ 1390              	.LBE367:
+ 1391              	.LBE382:
+ 1392              	.LBB383:
+ 1393              	.LBB379:
+ 1394              	.LBB376:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1395              		.loc 4 56 29 is_stmt 0 view .LVU365
+ 1396 016c F0EE642A 		vmov.f32	s5, s9
+ 1397              	.LBE376:
+ 1398              	.LBE379:
+ 1399              	.LBE383:
+  98:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   const float overtone_gain = parameters.timbre * (2.0f - parameters.timbre);
+ 1400              		.loc 2 98 11 view .LVU366
+ 1401 0170 E3EEA67A 		vfma.f32	s15, s7, s13
+ 1402              	.LBB384:
+ 1403              	.LBB368:
+ 1404              	.LBB363:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1405              		.loc 4 56 41 view .LVU367
+ 1406 0174 06EE907A 		vmov	s13, r7	@ int
+ 1407              	.LBE363:
+ 1408              	.LBE368:
+ 1409              	.LBE384:
+ 1410              		.loc 2 99 15 view .LVU368
+ 1411 0178 27EE047A 		vmul.f32	s14, s14, s8
+  94:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   ParameterInterpolator wf_gain_modulation(
+ 1412              		.loc 2 94 11 view .LVU369
+ 1413 017c 70EE850A 		vadd.f32	s1, s1, s10
+ 1414              	.LVL89:
+ 1415              	.LBB385:
+ 1416              	.LBB386:
+ 1417              	.LBB387:
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1418              		.loc 4 55 14 view .LVU370
+ 1419 0180 95ED135A 		vldr.32	s10, [r5, #76]
+ 1420              	.LBE387:
+ 1421              	.LBE386:
+ 1422              	.LBE385:
+ 1423              	.LBB392:
+ 1424              	.LBB369:
+ 1425              	.LBB364:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1426              		.loc 4 56 41 view .LVU371
+ 1427 0184 F8EE666A 		vcvt.f32.u32	s13, s13
+ 1428              	.LBE364:
+ 1429              	.LBE369:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 40
+
+
+ 1430              	.LBE392:
+ 100:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   ParameterInterpolator overtone_gain_modulation(
+ 101:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       &previous_overtone_gain_,
+ 102:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       overtone_gain * (2.0f - overtone_gain),
+ 1431              		.loc 2 102 29 view .LVU372
+ 1432 0188 36EE476A 		vsub.f32	s12, s12, s14
+ 1433              	.LBB393:
+ 1434              	.LBB370:
+ 1435              	.LBB365:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1436              		.loc 4 56 29 view .LVU373
+ 1437 018c 70EEE50A 		vsub.f32	s1, s1, s11
+ 1438              	.LVL90:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1439              		.loc 4 56 29 view .LVU374
+ 1440              	.LBE365:
+ 1441              	.LBE370:
+ 1442              	.LBE393:
+ 1443              	.LBB394:
+ 1444              	.LBB390:
+ 1445              	.LBB388:
+ 1446 0190 77EEC57A 		vsub.f32	s15, s15, s10
+ 1447              	.LBE388:
+ 1448              	.LBE390:
+ 1449              	.LBE394:
+ 1450              	.LBB395:
+ 1451              	.LBB380:
+ 1452              	.LBB377:
+ 1453 0194 D6EE072A 		vfnms.f32	s5, s12, s14
+ 1454              	.LBE377:
+ 1455              	.LBE380:
+ 1456              	.LBE395:
+ 1457              	.LBB396:
+ 1458              	.LBB371:
+ 1459              	.LBB366:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1460              		.loc 4 56 39 view .LVU375
+ 1461 0198 80EEA63A 		vdiv.f32	s6, s1, s13
+ 1462              	.LVL91:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1463              		.loc 4 56 39 view .LVU376
+ 1464              	.LBE366:
+ 1465              	.LBE371:
+ 1466              	.LBE396:
+  95:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       &previous_wavefolder_gain_,
+ 1467              		.loc 2 95 3 is_stmt 1 view .LVU377
+ 1468              	.LBB397:
+ 1469              	.LBI385:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 1470              		.loc 4 39 3 view .LVU378
+ 1471              	.LBE397:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1472              		.loc 4 40 5 view .LVU379
+ 1473              	.LBB398:
+ 1474              	.LBB391:
+ 1475              	.LBI386:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 41
+
+
+ 1476              		.loc 4 53 15 view .LVU380
+ 1477              	.LBB389:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 1478              		.loc 4 54 5 view .LVU381
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1479              		.loc 4 55 5 view .LVU382
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1480              		.loc 4 56 5 view .LVU383
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1481              		.loc 4 56 39 is_stmt 0 view .LVU384
+ 1482 019c C7EEA63A 		vdiv.f32	s7, s15, s13
+ 1483              	.LVL92:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1484              		.loc 4 56 39 view .LVU385
+ 1485              	.LBE389:
+ 1486              	.LBE391:
+ 1487              	.LBE398:
+  99:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   ParameterInterpolator overtone_gain_modulation(
+ 1488              		.loc 2 99 3 is_stmt 1 view .LVU386
+ 100:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       &previous_overtone_gain_,
+ 1489              		.loc 2 100 3 view .LVU387
+ 1490              	.LBB399:
+ 1491              	.LBI373:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 1492              		.loc 4 39 3 view .LVU388
+ 1493              	.LBE399:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1494              		.loc 4 40 5 view .LVU389
+ 1495              	.LBB400:
+ 1496              	.LBB381:
+ 1497              	.LBI374:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 1498              		.loc 4 53 15 view .LVU390
+ 1499              	.LBB378:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 1500              		.loc 4 54 5 view .LVU391
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 1501              		.loc 4 55 5 view .LVU392
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1502              		.loc 4 56 5 view .LVU393
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1503              		.loc 4 56 39 is_stmt 0 view .LVU394
+ 1504 01a0 82EEA64A 		vdiv.f32	s8, s5, s13
+ 1505              	.LVL93:
+  56:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1506              		.loc 4 56 39 view .LVU395
+ 1507              	.LBE378:
+ 1508              	.LBE381:
+ 1509              	.LBE400:
+ 103:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 104:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   
+ 105:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   for (size_t i = 0; i < size; ++i) {
+ 1510              		.loc 2 105 3 is_stmt 1 view .LVU396
+ 1511              	.LBB401:
+ 1512              		.loc 2 105 24 view .LVU397
+ 1513 01a4 002F     		cmp	r7, #0
+ 1514 01a6 00F00B81 		beq	.L46
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 42
+
+
+ 1515 01aa 08EB8703 		add	r3, r8, r7, lsl #2
+ 1516 01ae 954F     		ldr	r7, .L63+44
+ 1517 01b0 B446     		mov	ip, r6
+ 1518 01b2 4246     		mov	r2, r8
+ 1519 01b4 944E     		ldr	r6, .L63+48
+ 1520              	.LVL94:
+ 1521              		.loc 2 105 24 is_stmt 0 view .LVU398
+ 1522 01b6 07F1040E 		add	lr, r7, #4
+ 1523 01ba 9448     		ldr	r0, .L63+52
+ 1524 01bc 944C     		ldr	r4, .L63+56
+ 1525              	.LVL95:
+ 1526              		.loc 2 105 24 view .LVU399
+ 1527 01be 0195     		str	r5, [sp, #4]
+ 1528              	.LVL96:
+ 1529              	.L47:
+ 1530              	.LBB402:
+ 106:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float shape = shape_modulation.Next() * 3.9999f;
+ 1531              		.loc 2 106 5 is_stmt 1 view .LVU400
+ 1532              	.LBB403:
+ 1533              	.LBI403:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 1534              		.loc 4 59 16 view .LVU401
+ 1535              	.LBB404:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1536              		.loc 4 60 5 view .LVU402
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1537              		.loc 4 60 12 is_stmt 0 view .LVU403
+ 1538 01c0 75EE835A 		vadd.f32	s11, s11, s6
+ 1539              	.LVL97:
+ 1540              		.loc 4 61 5 is_stmt 1 view .LVU404
+ 1541              		.loc 4 61 5 is_stmt 0 view .LVU405
+ 1542              	.LBE404:
+ 1543              	.LBE403:
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(shape);
+ 108:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 109:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     const int16_t* shape_1 = lookup_table_i16_table[shape_integral];
+ 110:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     const int16_t* shape_2 = lookup_table_i16_table[shape_integral + 1];
+ 111:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 112:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float ws_index = 127.0f * out[i] + 128.0f;
+ 1544              		.loc 2 112 36 view .LVU406
+ 1545 01c4 D2ED006A 		vldr.32	s13, [r2]
+ 1546              		.loc 2 112 11 view .LVU407
+ 1547 01c8 DFED847A 		vldr.32	s15, .L63+4
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(ws_index)
+ 114:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 115:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 116:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x0 = static_cast<float>(shape_1[ws_index_integral]) / 32768.0f;
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x1 = static_cast<float>(shape_1[ws_index_integral + 1]) / 32768.0f;
+ 118:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 119:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+ 120:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y0 = static_cast<float>(shape_2[ws_index_integral]) / 32768.0f;
+ 121:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y1 = static_cast<float>(shape_2[ws_index_integral + 1]) / 32768.0f;
+ 122:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y = y0 + (y1 - y0) * ws_index_fractional;
+ 123:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 124:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float mix = x + (y - x) * shape_fractional;
+ 125:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float index = mix * wf_gain_modulation.Next() + 0.5f;
+ 1548              		.loc 2 125 53 view .LVU408
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 43
+
+
+ 1549 01cc B6EE006A 		vmov.f32	s12, #5.0e-1
+ 106:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(shape);
+ 1550              		.loc 2 106 45 view .LVU409
+ 1551 01d0 DFED902A 		vldr.32	s5, .L63+60
+ 1552              	.LBB405:
+ 1553              	.LBB406:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1554              		.loc 4 60 12 view .LVU410
+ 1555 01d4 35EE235A 		vadd.f32	s10, s10, s7
+ 1556              	.LVL98:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1557              		.loc 4 60 12 view .LVU411
+ 1558              	.LBE406:
+ 1559              	.LBE405:
+ 112:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(ws_index)
+ 1560              		.loc 2 112 11 view .LVU412
+ 1561 01d8 9FED917A 		vldr.32	s14, .L63+72
+ 1562              	.LBB408:
+ 1563              	.LBB409:
+ 1564              		.file 8 "mi/stmlib/dsp/dsp.h"
+   1:mi/stmlib/dsp/dsp.h **** // Copyright 2012 Emilie Gillet.
+   2:mi/stmlib/dsp/dsp.h **** //
+   3:mi/stmlib/dsp/dsp.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/dsp.h **** //
+   5:mi/stmlib/dsp/dsp.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/dsp.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/dsp.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/dsp.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/dsp.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/dsp.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/dsp.h **** // 
+  12:mi/stmlib/dsp/dsp.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/dsp.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/dsp.h **** // 
+  15:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/dsp.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/dsp.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/dsp.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/dsp.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/dsp.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/dsp.h **** // 
+  23:mi/stmlib/dsp/dsp.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/dsp.h **** //
+  25:mi/stmlib/dsp/dsp.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/dsp.h **** //
+  27:mi/stmlib/dsp/dsp.h **** // DSP utility routines.
+  28:mi/stmlib/dsp/dsp.h **** 
+  29:mi/stmlib/dsp/dsp.h **** #ifndef STMLIB_UTILS_DSP_DSP_H_
+  30:mi/stmlib/dsp/dsp.h **** #define STMLIB_UTILS_DSP_DSP_H_
+  31:mi/stmlib/dsp/dsp.h **** 
+  32:mi/stmlib/dsp/dsp.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/dsp.h **** 
+  34:mi/stmlib/dsp/dsp.h **** #include <cmath>
+  35:mi/stmlib/dsp/dsp.h **** #include <math.h>
+  36:mi/stmlib/dsp/dsp.h **** 
+  37:mi/stmlib/dsp/dsp.h **** namespace stmlib {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 44
+
+
+  38:mi/stmlib/dsp/dsp.h **** 
+  39:mi/stmlib/dsp/dsp.h **** #define MAKE_INTEGRAL_FRACTIONAL(x) \
+  40:mi/stmlib/dsp/dsp.h ****   int32_t x ## _integral = static_cast<int32_t>(x); \
+  41:mi/stmlib/dsp/dsp.h ****   float x ## _fractional = x - static_cast<float>(x ## _integral);
+  42:mi/stmlib/dsp/dsp.h **** 
+  43:mi/stmlib/dsp/dsp.h **** inline float Interpolate(const float* table, float index, float size) {
+  44:mi/stmlib/dsp/dsp.h ****   index *= size;
+  45:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+  46:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+  47:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+  48:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+  49:mi/stmlib/dsp/dsp.h **** }
+  50:mi/stmlib/dsp/dsp.h **** 
+  51:mi/stmlib/dsp/dsp.h **** 
+  52:mi/stmlib/dsp/dsp.h **** inline float InterpolateHermite(const float* table, float index, float size) {
+  53:mi/stmlib/dsp/dsp.h ****   index *= size;
+  54:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+  55:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 1565              		.loc 8 55 45 view .LVU413
+ 1566 01dc 6FF04041 		mvn	r1, #-1073741824
+ 1567              	.LBE409:
+ 1568              	.LBE408:
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1569              		.loc 2 117 11 view .LVU414
+ 1570 01e0 DFED8D1A 		vldr.32	s3, .L63+64
+ 1571              	.LBB427:
+ 1572              	.LBB428:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1573              		.loc 4 60 12 view .LVU415
+ 1574 01e4 74EE844A 		vadd.f32	s9, s9, s8
+ 1575              	.LVL99:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1576              		.loc 4 60 12 view .LVU416
+ 1577              	.LBE428:
+ 1578              	.LBE427:
+ 112:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(ws_index)
+ 1579              		.loc 2 112 11 view .LVU417
+ 1580 01e8 A6EEA77A 		vfma.f32	s14, s13, s15
+ 1581              	.LBB430:
+ 1582              	.LBB410:
+  53:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 1583              		.loc 8 53 9 view .LVU418
+ 1584 01ec 9FED8B1A 		vldr.32	s2, .L63+68
+ 1585              	.LBE410:
+ 1586              	.LBE430:
+ 106:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(shape);
+ 1587              		.loc 2 106 45 view .LVU419
+ 1588 01f0 65EEA27A 		vmul.f32	s15, s11, s5
+ 1589              	.LVL100:
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1590              		.loc 2 107 5 is_stmt 1 view .LVU420
+ 126:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float fold = InterpolateHermite(
+ 127:mi/plaits/dsp/engine/waveshaping_engine.cpp ****         lut_fold + 1, index, 512.0f);
+ 128:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float fold_2 = -InterpolateHermite(
+ 129:mi/plaits/dsp/engine/waveshaping_engine.cpp ****         lut_fold_2 + 1, index, 512.0f);
+ 130:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 131:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float sine = Sine(aux[i] * 0.25f + 0.5f);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 45
+
+
+ 1591              		.loc 2 131 28 is_stmt 0 view .LVU421
+ 1592 01f4 DCED002A 		vldr.32	s5, [ip]
+ 1593              		.loc 2 131 22 view .LVU422
+ 1594 01f8 F5EE006A 		vmov.f32	s13, #2.5e-1
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1595              		.loc 2 107 5 view .LVU423
+ 1596 01fc BDEEE72A 		vcvt.s32.f32	s4, s15
+ 1597 0200 12EE108A 		vmov	r8, s4	@ int
+ 1598              	.LVL101:
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1599              		.loc 2 107 5 is_stmt 1 view .LVU424
+ 1600              		.loc 2 131 22 is_stmt 0 view .LVU425
+ 1601 0204 B0EE462A 		vmov.f32	s4, s12
+ 109:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     const int16_t* shape_2 = lookup_table_i16_table[shape_integral + 1];
+ 1602              		.loc 2 109 20 view .LVU426
+ 1603 0208 56F828A0 		ldr	r10, [r6, r8, lsl #2]
+ 110:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1604              		.loc 2 110 20 view .LVU427
+ 1605 020c 08F1010B 		add	fp, r8, #1
+ 1606              		.loc 2 131 22 view .LVU428
+ 1607 0210 A2EEA62A 		vfma.f32	s4, s5, s13
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1608              		.loc 2 113 5 view .LVU429
+ 1609 0214 FDEEC76A 		vcvt.s32.f32	s13, s14
+ 110:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1610              		.loc 2 110 20 view .LVU430
+ 1611 0218 56F82BB0 		ldr	fp, [r6, fp, lsl #2]
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1612              		.loc 2 113 5 view .LVU431
+ 1613 021c CDED006A 		vstr.32	s13, [sp]	@ int
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1614              		.loc 2 107 5 view .LVU432
+ 1615 0220 06EE908A 		vmov	s13, r8	@ int
+ 114:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1616              		.loc 2 114 23 view .LVU433
+ 1617 0224 9DF80090 		ldrb	r9, [sp]	@ zero_extendqisi2
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1618              		.loc 2 107 5 view .LVU434
+ 1619 0228 F8EEE62A 		vcvt.f32.s32	s5, s13
+ 116:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x1 = static_cast<float>(shape_1[ws_index_integral + 1]) / 32768.0f;
+ 1620              		.loc 2 116 60 view .LVU435
+ 1621 022c 4FEA4908 		lsl	r8, r9, #1
+ 1622              	.LVL102:
+ 116:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x1 = static_cast<float>(shape_1[ws_index_integral + 1]) / 32768.0f;
+ 1623              		.loc 2 116 16 view .LVU436
+ 1624 0230 3AF91950 		ldrsh	r5, [r10, r9, lsl #1]
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1625              		.loc 2 113 5 view .LVU437
+ 1626 0234 FDEEC76A 		vcvt.s32.f32	s13, s14
+ 1627              	.LVL103:
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1628              		.loc 2 117 64 view .LVU438
+ 1629 0238 08F10208 		add	r8, r8, #2
+ 116:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x1 = static_cast<float>(shape_1[ws_index_integral + 1]) / 32768.0f;
+ 1630              		.loc 2 116 16 view .LVU439
+ 1631 023c 00EE105A 		vmov	s0, r5	@ int
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 46
+
+
+ 1632              		.loc 2 107 5 view .LVU440
+ 1633 0240 77EEE22A 		vsub.f32	s5, s15, s5
+ 1634              	.LVL104:
+ 107:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1635              		.loc 2 107 36 is_stmt 1 view .LVU441
+ 109:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     const int16_t* shape_2 = lookup_table_i16_table[shape_integral + 1];
+ 1636              		.loc 2 109 5 view .LVU442
+ 110:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1637              		.loc 2 110 5 view .LVU443
+ 112:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     MAKE_INTEGRAL_FRACTIONAL(ws_index)
+ 1638              		.loc 2 112 5 view .LVU444
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1639              		.loc 2 113 5 view .LVU445
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1640              		.loc 2 113 5 view .LVU446
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1641              		.loc 2 117 16 is_stmt 0 view .LVU447
+ 1642 0244 3AF90850 		ldrsh	r5, [r10, r8]
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1643              		.loc 2 113 5 view .LVU448
+ 1644 0248 F8EEE66A 		vcvt.f32.s32	s13, s13
+ 116:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x1 = static_cast<float>(shape_1[ws_index_integral + 1]) / 32768.0f;
+ 1645              		.loc 2 116 16 view .LVU449
+ 1646 024c B8EEC00A 		vcvt.f32.s32	s0, s0
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1647              		.loc 2 117 16 view .LVU450
+ 1648 0250 07EE905A 		vmov	s15, r5	@ int
+ 1649              	.LVL105:
+ 121:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y = y0 + (y1 - y0) * ws_index_fractional;
+ 1650              		.loc 2 121 16 view .LVU451
+ 1651 0254 3BF90850 		ldrsh	r5, [fp, r8]
+ 113:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     ws_index_integral &= 255;
+ 1652              		.loc 2 113 5 view .LVU452
+ 1653 0258 77EE666A 		vsub.f32	s13, s14, s13
+ 1654              	.LVL106:
+ 114:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1655              		.loc 2 114 5 is_stmt 1 view .LVU453
+ 116:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x1 = static_cast<float>(shape_1[ws_index_integral + 1]) / 32768.0f;
+ 1656              		.loc 2 116 5 view .LVU454
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1657              		.loc 2 117 5 view .LVU455
+ 118:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+ 1658              		.loc 2 118 5 view .LVU456
+ 121:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y = y0 + (y1 - y0) * ws_index_fractional;
+ 1659              		.loc 2 121 16 is_stmt 0 view .LVU457
+ 1660 025c 07EE105A 		vmov	s14, r5	@ int
+ 1661              	.LVL107:
+ 120:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y1 = static_cast<float>(shape_2[ws_index_integral + 1]) / 32768.0f;
+ 1662              		.loc 2 120 16 view .LVU458
+ 1663 0260 3BF91950 		ldrsh	r5, [fp, r9, lsl #1]
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1664              		.loc 2 117 16 view .LVU459
+ 1665 0264 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 121:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y = y0 + (y1 - y0) * ws_index_fractional;
+ 1666              		.loc 2 121 16 view .LVU460
+ 1667 0268 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 120:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y1 = static_cast<float>(shape_2[ws_index_integral + 1]) / 32768.0f;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 47
+
+
+ 1668              		.loc 2 120 16 view .LVU461
+ 1669 026c 00EE905A 		vmov	s1, r5	@ int
+ 117:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float x = x0 + (x1 - x0) * ws_index_fractional;
+ 1670              		.loc 2 117 11 view .LVU462
+ 1671 0270 67EEA17A 		vmul.f32	s15, s15, s3
+ 120:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y1 = static_cast<float>(shape_2[ws_index_integral + 1]) / 32768.0f;
+ 1672              		.loc 2 120 16 view .LVU463
+ 1673 0274 F8EEE00A 		vcvt.f32.s32	s1, s1
+ 121:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y = y0 + (y1 - y0) * ws_index_fractional;
+ 1674              		.loc 2 121 11 view .LVU464
+ 1675 0278 27EE217A 		vmul.f32	s14, s14, s3
+ 118:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+ 1676              		.loc 2 118 24 view .LVU465
+ 1677 027c E0EE617A 		vfms.f32	s15, s0, s3
+ 122:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1678              		.loc 2 122 24 view .LVU466
+ 1679 0280 A0EEE17A 		vfms.f32	s14, s1, s3
+ 118:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+ 1680              		.loc 2 118 30 view .LVU467
+ 1681 0284 67EEA67A 		vmul.f32	s15, s15, s13
+ 122:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1682              		.loc 2 122 30 view .LVU468
+ 1683 0288 27EE267A 		vmul.f32	s14, s14, s13
+ 118:mi/plaits/dsp/engine/waveshaping_engine.cpp **** 
+ 1684              		.loc 2 118 11 view .LVU469
+ 1685 028c E0EE217A 		vfma.f32	s15, s0, s3
+ 1686              	.LVL108:
+ 120:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y1 = static_cast<float>(shape_2[ws_index_integral + 1]) / 32768.0f;
+ 1687              		.loc 2 120 5 is_stmt 1 view .LVU470
+ 121:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float y = y0 + (y1 - y0) * ws_index_fractional;
+ 1688              		.loc 2 121 5 view .LVU471
+ 122:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1689              		.loc 2 122 5 view .LVU472
+ 1690              	.LBB431:
+ 1691              	.LBB432:
+ 1692              	.LBB433:
+ 1693              	.LBB434:
+  56:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+  57:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+  58:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+  59:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+  60:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+  61:mi/stmlib/dsp/dsp.h ****   const float w = c + v;
+  62:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+  63:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+  64:mi/stmlib/dsp/dsp.h ****   const float f = index_fractional;
+  65:mi/stmlib/dsp/dsp.h ****   return (((a * f) - b_neg) * f + c) * f + x0;
+  66:mi/stmlib/dsp/dsp.h **** }
+  67:mi/stmlib/dsp/dsp.h **** 
+  68:mi/stmlib/dsp/dsp.h **** inline float InterpolateWrap(const float* table, float index, float size) {
+  69:mi/stmlib/dsp/dsp.h ****   index -= static_cast<float>(static_cast<int32_t>(index));
+ 1694              		.loc 8 69 31 is_stmt 0 view .LVU473
+ 1695 0290 FDEEC26A 		vcvt.s32.f32	s13, s4
+ 1696              	.LVL109:
+ 1697              		.loc 8 69 31 view .LVU474
+ 1698              	.LBE434:
+ 1699              	.LBE433:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 48
+
+
+ 1700              	.LBE432:
+ 1701              	.LBE431:
+ 122:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 1702              		.loc 2 122 11 view .LVU475
+ 1703 0294 A0EEA17A 		vfma.f32	s14, s1, s3
+ 1704              	.LVL110:
+ 124:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float index = mix * wf_gain_modulation.Next() + 0.5f;
+ 1705              		.loc 2 124 5 is_stmt 1 view .LVU476
+ 1706              	.LBB468:
+ 1707              	.LBB457:
+ 1708              	.LBB446:
+ 1709              	.LBB435:
+ 1710              		.loc 8 69 12 is_stmt 0 view .LVU477
+ 1711 0298 F8EEE66A 		vcvt.f32.s32	s13, s13
+ 1712              		.loc 8 69 9 view .LVU478
+ 1713 029c 32EE662A 		vsub.f32	s4, s4, s13
+ 1714              	.LBE435:
+ 1715              	.LBE446:
+ 1716              	.LBE457:
+ 1717              	.LBE468:
+ 124:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float index = mix * wf_gain_modulation.Next() + 0.5f;
+ 1718              		.loc 2 124 24 view .LVU479
+ 1719 02a0 37EE677A 		vsub.f32	s14, s14, s15
+ 1720              	.LVL111:
+ 1721              	.LBB469:
+ 1722              	.LBB458:
+ 1723              	.LBB447:
+ 1724              	.LBB436:
+  70:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 1725              		.loc 8 70 9 view .LVU480
+ 1726 02a4 22EE012A 		vmul.f32	s4, s4, s2
+ 1727              	.LBE436:
+ 1728              	.LBE447:
+ 1729              	.LBE458:
+ 1730              	.LBE469:
+ 124:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float index = mix * wf_gain_modulation.Next() + 0.5f;
+ 1731              		.loc 2 124 11 view .LVU481
+ 1732 02a8 E7EE227A 		vfma.f32	s15, s14, s5
+ 1733              	.LVL112:
+ 125:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float fold = InterpolateHermite(
+ 1734              		.loc 2 125 5 is_stmt 1 view .LVU482
+ 1735              	.LBB470:
+ 1736              	.LBI405:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 1737              		.loc 4 59 16 view .LVU483
+ 1738              	.LBB407:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 1739              		.loc 4 60 5 view .LVU484
+ 1740              		.loc 4 61 5 view .LVU485
+ 1741              		.loc 4 61 5 is_stmt 0 view .LVU486
+ 1742              	.LBE407:
+ 1743              	.LBE470:
+ 125:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float fold = InterpolateHermite(
+ 1744              		.loc 2 125 53 view .LVU487
+ 1745 02ac B0EE467A 		vmov.f32	s14, s12
+ 1746              	.LBB471:
+ 1747              	.LBB459:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 49
+
+
+ 1748              	.LBB448:
+ 1749              	.LBB437:
+  71:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 1750              		.loc 8 71 3 view .LVU488
+ 1751 02b0 FDEEC20A 		vcvt.s32.f32	s1, s4
+ 1752              	.LVL113:
+ 1753              		.loc 8 71 3 view .LVU489
+ 1754              	.LBE437:
+ 1755              	.LBE448:
+ 1756              	.LBE459:
+ 1757              	.LBE471:
+ 125:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float fold = InterpolateHermite(
+ 1758              		.loc 2 125 53 view .LVU490
+ 1759 02b4 A7EE857A 		vfma.f32	s14, s15, s10
+ 1760              	.LVL114:
+ 126:mi/plaits/dsp/engine/waveshaping_engine.cpp ****         lut_fold + 1, index, 512.0f);
+ 1761              		.loc 2 126 5 is_stmt 1 view .LVU491
+ 1762              	.LBB472:
+ 1763              	.LBI408:
+  52:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 1764              		.loc 8 52 14 view .LVU492
+ 1765              	.LBB411:
+  53:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 1766              		.loc 8 53 3 view .LVU493
+  53:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 1767              		.loc 8 53 9 is_stmt 0 view .LVU494
+ 1768 02b8 67EE017A 		vmul.f32	s15, s14, s2
+ 1769              	.LVL115:
+  54:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 1770              		.loc 8 54 3 is_stmt 1 view .LVU495
+ 1771 02bc BDEEE77A 		vcvt.s32.f32	s14, s15
+ 1772              	.LVL116:
+  54:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 1773              		.loc 8 54 3 view .LVU496
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1774              		.loc 8 55 45 is_stmt 0 view .LVU497
+ 1775 02c0 17EE105A 		vmov	r5, s14	@ int
+ 1776              	.LVL117:
+  54:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 1777              		.loc 8 54 3 view .LVU498
+ 1778 02c4 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 1779              	.LVL118:
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1780              		.loc 8 55 45 view .LVU499
+ 1781 02c8 2944     		add	r1, r1, r5
+  54:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 1782              		.loc 8 54 3 view .LVU500
+ 1783 02ca 77EEC77A 		vsub.f32	s15, s15, s14
+ 1784              	.LVL119:
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1785              		.loc 8 55 3 is_stmt 1 view .LVU501
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1786              		.loc 8 55 45 is_stmt 0 view .LVU502
+ 1787 02ce 8900     		lsls	r1, r1, #2
+ 1788              	.LVL120:
+  56:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+ 1789              		.loc 8 56 3 is_stmt 1 view .LVU503
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 50
+
+
+  56:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+ 1790              		.loc 8 56 44 is_stmt 0 view .LVU504
+ 1791 02d0 01F10409 		add	r9, r1, #4
+ 1792              	.LVL121:
+  57:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+ 1793              		.loc 8 57 44 view .LVU505
+ 1794 02d4 01F10808 		add	r8, r1, #8
+ 1795              	.LVL122:
+  56:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+ 1796              		.loc 8 56 15 view .LVU506
+ 1797 02d8 00EB090A 		add	r10, r0, r9
+ 1798              	.LVL123:
+  56:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+ 1799              		.loc 8 56 15 view .LVU507
+ 1800              	.LBE411:
+ 1801              	.LBE472:
+ 1802              	.LBB473:
+ 1803              	.LBB474:
+ 1804 02dc A144     		add	r9, r9, r4
+ 1805 02de D9ED002A 		vldr.32	s5, [r9]
+ 1806              	.LVL124:
+  57:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+ 1807              		.loc 8 57 15 view .LVU508
+ 1808 02e2 04EB0809 		add	r9, r4, r8
+ 1809              	.LBE474:
+ 1810              	.LBE473:
+ 1811              	.LBB489:
+ 1812              	.LBB412:
+ 1813 02e6 8044     		add	r8, r8, r0
+  56:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+ 1814              		.loc 8 56 15 view .LVU509
+ 1815 02e8 9AED000A 		vldr.32	s0, [r10]
+ 1816              	.LVL125:
+  57:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+ 1817              		.loc 8 57 3 is_stmt 1 view .LVU510
+ 1818              	.LBE412:
+ 1819              	.LBE489:
+ 1820              	.LBB490:
+ 1821              	.LBB475:
+  57:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+ 1822              		.loc 8 57 15 is_stmt 0 view .LVU511
+ 1823 02ec D9ED008A 		vldr.32	s17, [r9]
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1824              		.loc 8 55 15 view .LVU512
+ 1825 02f0 04EB0109 		add	r9, r4, r1
+ 1826              	.LBE475:
+ 1827              	.LBE490:
+ 1828              	.LBB491:
+ 1829              	.LBB413:
+  57:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+ 1830              		.loc 8 57 15 view .LVU513
+ 1831 02f4 98ED008A 		vldr.32	s16, [r8]
+ 1832              	.LVL126:
+  58:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+ 1833              		.loc 8 58 3 is_stmt 1 view .LVU514
+  58:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+ 1834              		.loc 8 58 44 is_stmt 0 view .LVU515
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 51
+
+
+ 1835 02f8 01F10C08 		add	r8, r1, #12
+ 1836              	.LVL127:
+  59:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+ 1837              		.loc 8 59 3 is_stmt 1 view .LVU516
+ 1838              	.LBE413:
+ 1839              	.LBE491:
+ 1840              	.LBB492:
+ 1841              	.LBB476:
+  60:mi/stmlib/dsp/dsp.h ****   const float w = c + v;
+ 1842              		.loc 8 60 15 is_stmt 0 view .LVU517
+ 1843 02fc 32EEE81A 		vsub.f32	s2, s5, s17
+ 1844              	.LVL128:
+  59:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+ 1845              		.loc 8 59 23 view .LVU518
+ 1846 0300 99ED007A 		vldr.32	s14, [r9]
+ 1847              	.LBE476:
+ 1848              	.LBE492:
+ 1849              	.LBB493:
+ 1850              	.LBB414:
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1851              		.loc 8 55 15 view .LVU519
+ 1852 0304 0144     		add	r1, r1, r0
+ 1853              	.LVL129:
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 1854              		.loc 8 55 15 view .LVU520
+ 1855              	.LBE414:
+ 1856              	.LBE493:
+ 1857              	.LBB494:
+ 1858              	.LBB477:
+  58:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+ 1859              		.loc 8 58 15 view .LVU521
+ 1860 0306 04EB0809 		add	r9, r4, r8
+  59:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+ 1861              		.loc 8 59 23 view .LVU522
+ 1862 030a 78EEC78A 		vsub.f32	s17, s17, s14
+ 1863              	.LBE477:
+ 1864              	.LBE494:
+ 1865              	.LBB495:
+ 1866              	.LBB415:
+  58:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+ 1867              		.loc 8 58 15 view .LVU523
+ 1868 030e 8044     		add	r8, r8, r0
+ 1869              	.LVL130:
+  58:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+ 1870              		.loc 8 58 15 view .LVU524
+ 1871              	.LBE415:
+ 1872              	.LBE495:
+ 1873              	.LBB496:
+ 1874              	.LBB478:
+  61:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+ 1875              		.loc 8 61 15 view .LVU525
+ 1876 0310 F0EE416A 		vmov.f32	s13, s2
+ 1877              	.LBE478:
+ 1878              	.LBE496:
+ 1879              	.LBB497:
+ 1880              	.LBB416:
+  59:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 52
+
+
+ 1881              		.loc 8 59 23 view .LVU526
+ 1882 0314 91ED007A 		vldr.32	s14, [r1]
+  60:mi/stmlib/dsp/dsp.h ****   const float w = c + v;
+ 1883              		.loc 8 60 15 view .LVU527
+ 1884 0318 70EE481A 		vsub.f32	s3, s0, s16
+ 1885              	.LVL131:
+  60:mi/stmlib/dsp/dsp.h ****   const float w = c + v;
+ 1886              		.loc 8 60 15 view .LVU528
+ 1887              	.LBE416:
+ 1888              	.LBE497:
+ 1889              	.LBB498:
+ 1890              	.LBB479:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 1891              		.loc 8 62 31 view .LVU529
+ 1892 031c 99ED00AA 		vldr.32	s20, [r9]
+ 1893              	.LBE479:
+ 1894              	.LBE498:
+ 1895              	.LBB499:
+ 1896              	.LBB417:
+  59:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+ 1897              		.loc 8 59 23 view .LVU530
+ 1898 0320 38EE478A 		vsub.f32	s16, s16, s14
+ 1899              	.LVL132:
+  60:mi/stmlib/dsp/dsp.h ****   const float w = c + v;
+ 1900              		.loc 8 60 3 is_stmt 1 view .LVU531
+  61:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+ 1901              		.loc 8 61 3 view .LVU532
+ 1902              	.LBE417:
+ 1903              	.LBE499:
+ 1904              	.LBB500:
+ 1905              	.LBB460:
+ 1906              	.LBB449:
+ 1907              	.LBB438:
+  72:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 1908              		.loc 8 72 9 is_stmt 0 view .LVU533
+ 1909 0324 10EE901A 		vmov	r1, s1	@ int
+ 1910              	.LBE438:
+ 1911              	.LBE449:
+ 1912              	.LBE460:
+ 1913              	.LBE500:
+ 1914              	.LBB501:
+ 1915              	.LBB480:
+  61:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+ 1916              		.loc 8 61 15 view .LVU534
+ 1917 0328 E8EE866A 		vfma.f32	s13, s17, s12
+ 1918              	.LBE480:
+ 1919              	.LBE501:
+ 1920              	.LBB502:
+ 1921              	.LBB418:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 1922              		.loc 8 62 31 view .LVU535
+ 1923 032c 98ED009A 		vldr.32	s18, [r8]
+ 1924              	.LBE418:
+ 1925              	.LBE502:
+ 1926              	.LBB503:
+ 1927              	.LBB481:
+ 1928 0330 3AEE62AA 		vsub.f32	s20, s20, s5
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 53
+
+
+ 1929              	.LBE481:
+ 1930              	.LBE503:
+ 1931              	.LBB504:
+ 1932              	.LBB461:
+ 1933              	.LBB450:
+ 1934              	.LBB439:
+ 1935              		.loc 8 72 9 view .LVU536
+ 1936 0334 07EB8108 		add	r8, r7, r1, lsl #2
+ 1937              	.LBE439:
+ 1938              	.LBE450:
+ 1939              	.LBE461:
+ 1940              	.LBE504:
+ 1941              	.LBB505:
+ 1942              	.LBB419:
+  61:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+ 1943              		.loc 8 61 15 view .LVU537
+ 1944 0338 B0EE617A 		vmov.f32	s14, s3
+ 1945              	.LBE419:
+ 1946              	.LBE505:
+ 1947              	.LBB506:
+ 1948              	.LBB462:
+ 1949              	.LBB451:
+ 1950              	.LBB440:
+  73:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 1951              		.loc 8 73 9 view .LVU538
+ 1952 033c 0EEB8101 		add	r1, lr, r1, lsl #2
+  71:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 1953              		.loc 8 71 3 view .LVU539
+ 1954 0340 F8EEE00A 		vcvt.f32.s32	s1, s1
+  72:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 1955              		.loc 8 72 9 view .LVU540
+ 1956 0344 D8ED00AA 		vldr.32	s21, [r8]
+ 1957              	.LBE440:
+ 1958              	.LBE451:
+ 1959              	.LBE462:
+ 1960              	.LBE506:
+ 1961              	.LBB507:
+ 1962              	.LBB420:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 1963              		.loc 8 62 31 view .LVU541
+ 1964 0348 39EE409A 		vsub.f32	s18, s18, s0
+ 1965              	.LBE420:
+ 1966              	.LBE507:
+ 1967              	.LBB508:
+ 1968              	.LBB463:
+ 1969              	.LBB452:
+ 1970              	.LBB441:
+  74:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 1971              		.loc 8 74 17 view .LVU542
+ 1972 034c D1ED009A 		vldr.32	s19, [r1]
+ 1973              	.LBE441:
+ 1974              	.LBE452:
+ 1975              	.LBE463:
+ 1976              	.LBE508:
+ 1977              	.LBB509:
+ 1978              	.LBB421:
+  61:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 54
+
+
+ 1979              		.loc 8 61 15 view .LVU543
+ 1980 0350 A8EE067A 		vfma.f32	s14, s16, s12
+ 1981              	.LVL133:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 1982              		.loc 8 62 3 is_stmt 1 view .LVU544
+ 1983              	.LBE421:
+ 1984              	.LBE509:
+ 1985              	.LBB510:
+ 1986              	.LBB482:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 1987              		.loc 8 62 21 is_stmt 0 view .LVU545
+ 1988 0354 31EE261A 		vadd.f32	s2, s2, s13
+ 1989              	.LBE482:
+ 1990              	.LBE510:
+ 1991              	.LBB511:
+ 1992              	.LBB464:
+ 1993              	.LBB453:
+ 1994              	.LBB442:
+  71:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 1995              		.loc 8 71 3 view .LVU546
+ 1996 0358 72EE600A 		vsub.f32	s1, s4, s1
+ 1997              		.loc 8 74 17 view .LVU547
+ 1998 035c 79EEEA9A 		vsub.f32	s19, s19, s21
+ 1999              	.LBE442:
+ 2000              	.LBE453:
+ 2001              	.LBE464:
+ 2002              	.LBE511:
+ 2003              	.LBB512:
+ 2004              	.LBB483:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 2005              		.loc 8 62 15 view .LVU548
+ 2006 0360 AAEE061A 		vfma.f32	s2, s20, s12
+ 2007              	.LBE483:
+ 2008              	.LBE512:
+ 2009              	.LBB513:
+ 2010              	.LBB422:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 2011              		.loc 8 62 21 view .LVU549
+ 2012 0364 31EE872A 		vadd.f32	s4, s3, s14
+ 2013              	.LBE422:
+ 2014              	.LBE513:
+ 2015              	.LBB514:
+ 2016              	.LBB465:
+ 2017              	.LBB454:
+ 2018              	.LBB443:
+ 2019              		.loc 8 74 24 view .LVU550
+ 2020 0368 F0EE6A1A 		vmov.f32	s3, s21
+ 2021              	.LVL134:
+ 2022              		.loc 8 74 24 view .LVU551
+ 2023              	.LBE443:
+ 2024              	.LBE454:
+ 2025              	.LBE465:
+ 2026              	.LBE514:
+ 2027              	.LBB515:
+ 2028              	.LBB423:
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 2029              		.loc 8 62 15 view .LVU552
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 55
+
+
+ 2030 036c A9EE062A 		vfma.f32	s4, s18, s12
+ 2031              	.LVL135:
+  63:mi/stmlib/dsp/dsp.h ****   const float f = index_fractional;
+ 2032              		.loc 8 63 3 is_stmt 1 view .LVU553
+  64:mi/stmlib/dsp/dsp.h ****   return (((a * f) - b_neg) * f + c) * f + x0;
+ 2033              		.loc 8 64 3 view .LVU554
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2034              		.loc 8 65 3 view .LVU555
+ 2035              	.LBE423:
+ 2036              	.LBE515:
+ 2037              	.LBB516:
+ 2038              	.LBB484:
+  63:mi/stmlib/dsp/dsp.h ****   const float f = index_fractional;
+ 2039              		.loc 8 63 15 is_stmt 0 view .LVU556
+ 2040 0370 76EE816A 		vadd.f32	s13, s13, s2
+ 2041              	.LBE484:
+ 2042              	.LBE516:
+ 2043              	.LBB517:
+ 2044              	.LBB466:
+ 2045              	.LBB455:
+ 2046              	.LBB444:
+ 2047              		.loc 8 74 24 view .LVU557
+ 2048 0374 E0EEA91A 		vfma.f32	s3, s1, s19
+ 2049              	.LBE444:
+ 2050              	.LBE455:
+ 2051              	.LBE466:
+ 2052              	.LBE517:
+ 2053              	.LBB518:
+ 2054              	.LBB485:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2055              		.loc 8 65 20 view .LVU558
+ 2056 0378 D1EE276A 		vfnms.f32	s13, s2, s15
+ 2057              	.LBE485:
+ 2058              	.LBE518:
+ 2059              	.LBB519:
+ 2060              	.LBB424:
+  63:mi/stmlib/dsp/dsp.h ****   const float f = index_fractional;
+ 2061              		.loc 8 63 15 view .LVU559
+ 2062 037c 37EE027A 		vadd.f32	s14, s14, s4
+ 2063              	.LVL136:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2064              		.loc 8 65 20 view .LVU560
+ 2065 0380 97EE827A 		vfnms.f32	s14, s15, s4
+ 2066              	.LVL137:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2067              		.loc 8 65 20 view .LVU561
+ 2068              	.LBE424:
+ 2069              	.LBE519:
+ 2070              	.LBB520:
+ 2071              	.LBB486:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2072              		.loc 8 65 29 view .LVU562
+ 2073 0384 66EEA76A 		vmul.f32	s13, s13, s15
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2074              		.loc 8 65 33 view .LVU563
+ 2075 0388 E8EE866A 		vfma.f32	s13, s17, s12
+ 2076              	.LBE486:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 56
+
+
+ 2077              	.LBE520:
+ 2078              	.LBB521:
+ 2079              	.LBB425:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2080              		.loc 8 65 29 view .LVU564
+ 2081 038c 27EE877A 		vmul.f32	s14, s15, s14
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2082              		.loc 8 65 33 view .LVU565
+ 2083 0390 A8EE067A 		vfma.f32	s14, s16, s12
+ 2084              	.LBE425:
+ 2085              	.LBE521:
+ 2086              	.LBB522:
+ 2087              	.LBB487:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2088              		.loc 8 65 44 view .LVU566
+ 2089 0394 E6EEA72A 		vfma.f32	s5, s13, s15
+ 2090              	.LBE487:
+ 2091              	.LBE522:
+ 2092              	.LBB523:
+ 2093              	.LBB426:
+ 2094 0398 F0EE406A 		vmov.f32	s13, s0
+ 2095 039c E7EE876A 		vfma.f32	s13, s15, s14
+ 2096              	.LVL138:
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2097              		.loc 8 65 44 view .LVU567
+ 2098              	.LBE426:
+ 2099              	.LBE523:
+ 128:mi/plaits/dsp/engine/waveshaping_engine.cpp ****         lut_fold_2 + 1, index, 512.0f);
+ 2100              		.loc 2 128 5 is_stmt 1 view .LVU568
+ 2101              	.LBB524:
+ 2102              	.LBI473:
+  52:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 2103              		.loc 8 52 14 view .LVU569
+ 2104              	.LBB488:
+  53:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 2105              		.loc 8 53 3 view .LVU570
+  54:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 2106              		.loc 8 54 3 view .LVU571
+  54:mi/stmlib/dsp/dsp.h ****   const float xm1 = table[index_integral - 1];
+ 2107              		.loc 8 54 3 view .LVU572
+  55:mi/stmlib/dsp/dsp.h ****   const float x0 = table[index_integral + 0];
+ 2108              		.loc 8 55 3 view .LVU573
+  56:mi/stmlib/dsp/dsp.h ****   const float x1 = table[index_integral + 1];
+ 2109              		.loc 8 56 3 view .LVU574
+  57:mi/stmlib/dsp/dsp.h ****   const float x2 = table[index_integral + 2];
+ 2110              		.loc 8 57 3 view .LVU575
+  58:mi/stmlib/dsp/dsp.h ****   const float c = (x1 - xm1) * 0.5f;
+ 2111              		.loc 8 58 3 view .LVU576
+  59:mi/stmlib/dsp/dsp.h ****   const float v = x0 - x1;
+ 2112              		.loc 8 59 3 view .LVU577
+  60:mi/stmlib/dsp/dsp.h ****   const float w = c + v;
+ 2113              		.loc 8 60 3 view .LVU578
+  61:mi/stmlib/dsp/dsp.h ****   const float a = w + v + (x2 - x0) * 0.5f;
+ 2114              		.loc 8 61 3 view .LVU579
+  62:mi/stmlib/dsp/dsp.h ****   const float b_neg = w + a;
+ 2115              		.loc 8 62 3 view .LVU580
+  63:mi/stmlib/dsp/dsp.h ****   const float f = index_fractional;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 57
+
+
+ 2116              		.loc 8 63 3 view .LVU581
+  64:mi/stmlib/dsp/dsp.h ****   return (((a * f) - b_neg) * f + c) * f + x0;
+ 2117              		.loc 8 64 3 view .LVU582
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2118              		.loc 8 65 3 view .LVU583
+  65:mi/stmlib/dsp/dsp.h **** }
+ 2119              		.loc 8 65 3 is_stmt 0 view .LVU584
+ 2120              	.LBE488:
+ 2121              	.LBE524:
+ 2122              		.loc 2 131 5 is_stmt 1 view .LVU585
+ 2123              	.LBB525:
+ 2124              	.LBI431:
+ 2125              		.file 9 "mi/plaits/dsp/oscillator/sine_oscillator.h"
+   1:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+   3:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+   5:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/oscillator/sine_oscillator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/oscillator/sine_oscillator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/oscillator/sine_oscillator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/oscillator/sine_oscillator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/oscillator/sine_oscillator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/oscillator/sine_oscillator.h **** // 
+  12:mi/plaits/dsp/oscillator/sine_oscillator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/oscillator/sine_oscillator.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/oscillator/sine_oscillator.h **** // 
+  15:mi/plaits/dsp/oscillator/sine_oscillator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/oscillator/sine_oscillator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/oscillator/sine_oscillator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/oscillator/sine_oscillator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/oscillator/sine_oscillator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/oscillator/sine_oscillator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/oscillator/sine_oscillator.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/oscillator/sine_oscillator.h **** // 
+  23:mi/plaits/dsp/oscillator/sine_oscillator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+  25:mi/plaits/dsp/oscillator/sine_oscillator.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+  27:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Simple sine oscillator (wavetable) + fast sine oscillator (magic circle).
+  28:mi/plaits/dsp/oscillator/sine_oscillator.h **** //
+  29:mi/plaits/dsp/oscillator/sine_oscillator.h **** // The fast implementation might glitch a bit under heavy modulations of the
+  30:mi/plaits/dsp/oscillator/sine_oscillator.h **** // frequency.
+  31:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  32:mi/plaits/dsp/oscillator/sine_oscillator.h **** #ifndef PLAITS_DSP_OSCILLATOR_SINE_OSCILLATOR_H_
+  33:mi/plaits/dsp/oscillator/sine_oscillator.h **** #define PLAITS_DSP_OSCILLATOR_SINE_OSCILLATOR_H_
+  34:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  35:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "stmlib/dsp/dsp.h"
+  36:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "stmlib/dsp/parameter_interpolator.h"
+  37:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "stmlib/dsp/rsqrt.h"
+  38:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  39:mi/plaits/dsp/oscillator/sine_oscillator.h **** #include "plaits/resources.h"
+  40:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  41:mi/plaits/dsp/oscillator/sine_oscillator.h **** namespace plaits {
+  42:mi/plaits/dsp/oscillator/sine_oscillator.h ****   
+  43:mi/plaits/dsp/oscillator/sine_oscillator.h **** const float kSineLUTSize = 512.0f;
+  44:mi/plaits/dsp/oscillator/sine_oscillator.h **** const size_t kSineLUTQuadrature = 128;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 58
+
+
+  45:mi/plaits/dsp/oscillator/sine_oscillator.h **** const size_t kSineLUTBits = 9;
+  46:mi/plaits/dsp/oscillator/sine_oscillator.h **** 
+  47:mi/plaits/dsp/oscillator/sine_oscillator.h **** // Safe for phase >= 0.0f, will wrap.
+  48:mi/plaits/dsp/oscillator/sine_oscillator.h **** inline float Sine(float phase) {
+ 2126              		.loc 9 48 14 view .LVU586
+ 2127              	.LBB467:
+  49:mi/plaits/dsp/oscillator/sine_oscillator.h ****   return stmlib::InterpolateWrap(lut_sine, phase, kSineLUTSize);
+ 2128              		.loc 9 49 3 view .LVU587
+ 2129              	.LBB456:
+ 2130              	.LBI433:
+  68:mi/stmlib/dsp/dsp.h ****   index -= static_cast<float>(static_cast<int32_t>(index));
+ 2131              		.loc 8 68 14 view .LVU588
+ 2132              	.LBB445:
+  69:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 2133              		.loc 8 69 3 view .LVU589
+  70:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 2134              		.loc 8 70 3 view .LVU590
+  71:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 2135              		.loc 8 71 3 view .LVU591
+  71:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 2136              		.loc 8 71 3 view .LVU592
+  72:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 2137              		.loc 8 72 3 view .LVU593
+  73:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 2138              		.loc 8 73 3 view .LVU594
+ 2139              		.loc 8 74 3 view .LVU595
+ 2140              		.loc 8 74 3 is_stmt 0 view .LVU596
+ 2141              	.LBE445:
+ 2142              	.LBE456:
+ 2143              	.LBE467:
+ 2144              	.LBE525:
+ 132:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     out[i] = fold;
+ 2145              		.loc 2 132 5 is_stmt 1 view .LVU597
+ 129:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     
+ 2146              		.loc 2 129 38 is_stmt 0 view .LVU598
+ 2147 03a0 F1EE622A 		vneg.f32	s5, s5
+ 2148              	.LVL139:
+ 133:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     aux[i] = sine + (fold_2 - sine) * overtone_gain_modulation.Next();
+ 2149              		.loc 2 133 19 view .LVU599
+ 2150 03a4 F0EE617A 		vmov.f32	s15, s3
+ 2151              	.LVL140:
+ 2152              		.loc 2 133 29 view .LVU600
+ 2153 03a8 72EEE12A 		vsub.f32	s5, s5, s3
+ 2154              	.LVL141:
+ 132:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     out[i] = fold;
+ 2155              		.loc 2 132 12 view .LVU601
+ 2156 03ac E2EC016A 		vstmia.32	r2!, {s13}
+ 2157              	.LVL142:
+ 2158              		.loc 2 133 5 is_stmt 1 view .LVU602
+ 2159              	.LBB526:
+ 2160              	.LBI427:
+  59:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 2161              		.loc 4 59 16 view .LVU603
+ 2162              	.LBB429:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 2163              		.loc 4 60 5 view .LVU604
+ 2164              		.loc 4 61 5 view .LVU605
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 59
+
+
+ 2165              		.loc 4 61 5 is_stmt 0 view .LVU606
+ 2166              	.LBE429:
+ 2167              	.LBE526:
+ 2168              	.LBE402:
+ 105:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float shape = shape_modulation.Next() * 3.9999f;
+ 2169              		.loc 2 105 24 view .LVU607
+ 2170 03b0 9342     		cmp	r3, r2
+ 2171              	.LBB527:
+ 2172              		.loc 2 133 19 view .LVU608
+ 2173 03b2 E2EEA47A 		vfma.f32	s15, s5, s9
+ 2174              		.loc 2 133 12 view .LVU609
+ 2175 03b6 ECEC017A 		vstmia.32	ip!, {s15}
+ 2176              	.LBE527:
+ 105:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float shape = shape_modulation.Next() * 3.9999f;
+ 2177              		.loc 2 105 3 is_stmt 1 view .LVU610
+ 105:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float shape = shape_modulation.Next() * 3.9999f;
+ 2178              		.loc 2 105 24 view .LVU611
+ 2179 03ba 7FF401AF 		bne	.L47
+ 2180 03be 019D     		ldr	r5, [sp, #4]
+ 2181              	.LVL143:
+ 2182              	.L46:
+ 105:mi/plaits/dsp/engine/waveshaping_engine.cpp ****     float shape = shape_modulation.Next() * 3.9999f;
+ 2183              		.loc 2 105 24 is_stmt 0 view .LVU612
+ 2184              	.LBE401:
+ 2185              	.LBB528:
+ 2186              	.LBI528:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 2187              		.loc 4 49 3 is_stmt 1 view .LVU613
+ 2188              	.LBB529:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2189              		.loc 4 50 5 view .LVU614
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2190              		.loc 4 50 13 is_stmt 0 view .LVU615
+ 2191 03c0 C5ED144A 		vstr.32	s9, [r5, #80]
+ 2192              	.LVL144:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2193              		.loc 4 50 13 view .LVU616
+ 2194              	.LBE529:
+ 2195              	.LBE528:
+ 2196              	.LBB530:
+ 2197              	.LBI530:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 2198              		.loc 4 49 3 is_stmt 1 view .LVU617
+ 2199              	.LBB531:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2200              		.loc 4 50 5 view .LVU618
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2201              		.loc 4 50 13 is_stmt 0 view .LVU619
+ 2202 03c4 85ED135A 		vstr.32	s10, [r5, #76]
+ 2203              	.LVL145:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2204              		.loc 4 50 13 view .LVU620
+ 2205              	.LBE531:
+ 2206              	.LBE530:
+ 2207              	.LBB532:
+ 2208              	.LBI532:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 60
+
+
+ 2209              		.loc 4 49 3 is_stmt 1 view .LVU621
+ 2210              	.LBB533:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2211              		.loc 4 50 5 view .LVU622
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2212              		.loc 4 50 13 is_stmt 0 view .LVU623
+ 2213 03c8 C5ED125A 		vstr.32	s11, [r5, #72]
+ 2214              	.LVL146:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 2215              		.loc 4 50 13 view .LVU624
+ 2216              	.LBE533:
+ 2217              	.LBE532:
+ 134:mi/plaits/dsp/engine/waveshaping_engine.cpp ****   }
+ 135:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2218              		.loc 2 135 1 view .LVU625
+ 2219 03cc 03B0     		add	sp, sp, #12
+ 2220              		.cfi_remember_state
+ 2221              		.cfi_def_cfa_offset 60
+ 2222              		@ sp needed
+ 2223 03ce BDEC068B 		vldm	sp!, {d8-d10}
+ 2224              		.cfi_restore 84
+ 2225              		.cfi_restore 85
+ 2226              		.cfi_restore 82
+ 2227              		.cfi_restore 83
+ 2228              		.cfi_restore 80
+ 2229              		.cfi_restore 81
+ 2230              		.cfi_def_cfa_offset 36
+ 2231 03d2 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 2232              	.LVL147:
+ 2233              	.L64:
+ 2234              		.loc 2 135 1 view .LVU626
+ 2235 03d6 00BF     		.align	2
+ 2236              	.L63:
+ 2237 03d8 000000C3 		.word	-1023410176
+ 2238 03dc 0000FE42 		.word	1123942400
+ 2239 03e0 00000000 		.word	_ZN6stmlib20lut_pitch_ratio_highE
+ 2240 03e4 6666E63E 		.word	1055286886
+ 2241 03e8 51969639 		.word	966170193
+ 2242 03ec 00000000 		.word	_ZN6stmlib19lut_pitch_ratio_lowE
+ 2243 03f0 000000BD 		.word	-1124073472
+ 2244 03f4 ABAA2ABD 		.word	-1121277269
+ 2245 03f8 ABAAEA3E 		.word	1055566507
+ 2246 03fc 1F85EB3E 		.word	1055622431
+ 2247 0400 8FC2F53C 		.word	1022739087
+ 2248 0404 00000000 		.word	_ZN6plaits8lut_sineE
+ 2249 0408 00000000 		.word	_ZN6plaits22lookup_table_i16_tableE
+ 2250 040c 04000000 		.word	_ZN6plaits8lut_foldE+4
+ 2251 0410 04000000 		.word	_ZN6plaits10lut_fold_2E+4
+ 2252 0414 5DFE7F40 		.word	1082130013
+ 2253 0418 00000038 		.word	939524096
+ 2254 041c 00000044 		.word	1140850688
+ 2255 0420 00000043 		.word	1124073472
+ 2256 0424 00000000 		.word	0
+ 2257              	.LVL148:
+ 2258              	.L59:
+ 2259              		.cfi_restore_state
+ 2260              	.LBB534:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 61
+
+
+ 2261              	.LBB311:
+ 2262              	.LBB300:
+ 2263              	.LBB293:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 2264              		.loc 7 41 9 view .LVU627
+ 2265 0428 1FED037A 		vldr.32	s14, .L63+72
+ 2266 042c 77EE877A 		vadd.f32	s15, s15, s14
+ 2267              	.LVL149:
+  42:mi/stmlib/dsp/units.h **** 
+ 2268              		.loc 7 42 3 view .LVU628
+ 2269 0430 BDEEE77A 		vcvt.s32.f32	s14, s15
+ 2270 0434 17EE102A 		vmov	r2, s14	@ int
+ 2271              	.LVL150:
+  42:mi/stmlib/dsp/units.h **** 
+ 2272              		.loc 7 42 3 view .LVU629
+ 2273 0438 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 2274 043c 77EEC77A 		vsub.f32	s15, s15, s14
+ 2275              		.loc 7 45 27 view .LVU630
+ 2276 0440 B0EE677A 		vmov.f32	s14, s15
+ 2277 0444 BEEECC7A 		vcvt.s32.f32	s14, s14, #8
+ 2278 0448 17EE100A 		vmov	r0, s14	@ int
+ 2279              	.LVL151:
+ 2280              		.loc 7 45 27 view .LVU631
+ 2281 044c FCE5     		b	.L41
+ 2282              	.LVL152:
+ 2283              	.L62:
+ 2284              		.loc 7 45 27 view .LVU632
+ 2285              	.LBE293:
+ 2286              	.LBE300:
+ 2287              	.LBE311:
+ 2288              	.LBE534:
+ 2289              	.LBB535:
+ 2290              	.LBB354:
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2291              		.loc 2 61 21 view .LVU633
+ 2292 044e 67EEA76A 		vmul.f32	s13, s15, s15
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2293              		.loc 2 61 36 view .LVU634
+ 2294 0452 66EEA76A 		vmul.f32	s13, s13, s15
+ 2295 0456 79E6     		b	.L45
+ 2296              	.LVL153:
+ 2297              	.L61:
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2298              		.loc 2 61 36 view .LVU635
+ 2299              	.LBE354:
+ 2300              	.LBE535:
+ 2301              	.LBB536:
+ 2302              	.LBB344:
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2303              		.loc 2 61 21 view .LVU636
+ 2304 0458 67EE076A 		vmul.f32	s13, s14, s14
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2305              		.loc 2 61 36 view .LVU637
+ 2306 045c 26EE877A 		vmul.f32	s14, s13, s14
+ 2307              	.LVL154:
+  61:mi/plaits/dsp/engine/waveshaping_engine.cpp **** }
+ 2308              		.loc 2 61 36 view .LVU638
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 62
+
+
+ 2309              	.LBE344:
+ 2310              	.LBE536:
+  87:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       12.0f);
+ 2311              		.loc 2 87 36 view .LVU639
+ 2312 0460 67EE877A 		vmul.f32	s15, s15, s14
+ 2313              	.LVL155:
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 2314              		.loc 2 93 44 view .LVU640
+ 2315 0464 60EE870A 		vmul.f32	s1, s1, s14
+ 2316              	.LVL156:
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 2317              		.loc 2 93 44 view .LVU641
+ 2318 0468 4CE6     		b	.L44
+ 2319              	.LVL157:
+ 2320              	.L50:
+ 2321              	.LBB537:
+ 2322              	.LBB355:
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 2323              		.loc 2 93 44 view .LVU642
+ 2324 046a 5FED126A 		vldr.32	s13, .L63+76
+ 2325 046e 6DE6     		b	.L45
+ 2326              	.LVL158:
+ 2327              	.L60:
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 2328              		.loc 2 93 44 view .LVU643
+ 2329              	.LBE355:
+ 2330              	.LBE537:
+  87:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       12.0f);
+ 2331              		.loc 2 87 36 view .LVU644
+ 2332 0470 67EE847A 		vmul.f32	s15, s15, s8
+ 2333              	.LVL159:
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 2334              		.loc 2 93 44 view .LVU645
+ 2335 0474 60EE840A 		vmul.f32	s1, s1, s8
+ 2336              	.LVL160:
+  93:mi/plaits/dsp/engine/waveshaping_engine.cpp ****       size);
+ 2337              		.loc 2 93 44 view .LVU646
+ 2338 0478 44E6     		b	.L44
+ 2339              		.cfi_endproc
+ 2340              	.LFE1525:
+ 2342              		.global	_ZTVN6plaits17WaveshapingEngineE
+ 2343 047a 00BF     		.section	.rodata._ZTVN6plaits17WaveshapingEngineE,"a"
+ 2344              		.align	2
+ 2347              	_ZTVN6plaits17WaveshapingEngineE:
+ 2348 0000 00000000 		.word	0
+ 2349 0004 00000000 		.word	0
+ 2350 0008 00000000 		.word	_ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE
+ 2351 000c 00000000 		.word	_ZN6plaits17WaveshapingEngine5ResetEv
+ 2352 0010 00000000 		.word	_ZN6plaits17WaveshapingEngine12LoadUserDataEPKh
+ 2353 0014 00000000 		.word	_ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 2354              		.text
+ 2355              	.Letext0:
+ 2356              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 2357              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 2358              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 2359              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 2360              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 63
+
+
+ 2361              		.file 15 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/type_traits"
+ 2362              		.file 16 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/debug/debug.h"
+ 2363              		.file 17 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cstdlib"
+ 2364              		.file 18 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v
+ 2365              		.file 19 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/algorithmfwd.h"
+ 2366              		.file 20 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_pair.h"
+ 2367              		.file 21 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/exception_ptr.h"
+ 2368              		.file 22 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/predefined_ops.h
+ 2369              		.file 23 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 2370              		.file 24 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdlib.h"
+ 2371              		.file 25 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 2372              		.file 26 "mi/stmlib/stmlib.h"
+ 2373              		.file 27 "mi/stmlib/utils/buffer_allocator.h"
+ 2374              		.file 28 "mi/plaits/dsp/dsp.h"
+ 2375              		.file 29 "mi/plaits/resources.h"
+ 2376              		.file 30 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s 			page 64
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 waveshaping_engine.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:19     .text._ZN6plaits17WaveshapingEngine12LoadUserDataEPKh:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:26     .text._ZN6plaits17WaveshapingEngine12LoadUserDataEPKh:0000000000000000 _ZN6plaits17WaveshapingEngine12LoadUserDataEPKh
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:41     .text._ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:48     .text._ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 _ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:171    .text._ZN6plaits17WaveshapingEngine4InitEPN6stmlib15BufferAllocatorE:000000000000003c $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:176    .text._ZN6plaits17WaveshapingEngine5ResetEv:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:183    .text._ZN6plaits17WaveshapingEngine5ResetEv:0000000000000000 _ZN6plaits17WaveshapingEngine5ResetEv
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:197    .text._ZN6plaits4TameEfff:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:204    .text._ZN6plaits4TameEfff:0000000000000000 _ZN6plaits4TameEfff
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:263    .text._ZN6plaits4TameEfff:000000000000004c $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:268    .text._ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:275    .text._ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj:0000000000000000 _ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:926    .text._ZN6plaits10Oscillator6RenderILNS_15OscillatorShapeE3ELb0ELb0EEEvffPKfPfj:00000000000001cc $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:933    .text._ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:940    .text._ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 _ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:2237   .text._ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb:00000000000003d8 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:2265   .text._ZN6plaits17WaveshapingEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000428 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:2347   .rodata._ZTVN6plaits17WaveshapingEngineE:0000000000000000 _ZTVN6plaits17WaveshapingEngineE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccfaB1BX.s:2344   .rodata._ZTVN6plaits17WaveshapingEngineE:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+_ZN6stmlib20lut_pitch_ratio_highE
+_ZN6stmlib19lut_pitch_ratio_lowE
+_ZN6plaits8lut_sineE
+_ZN6plaits22lookup_table_i16_tableE
+_ZN6plaits8lut_foldE
+_ZN6plaits10lut_fold_2E

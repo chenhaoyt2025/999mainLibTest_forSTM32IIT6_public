@@ -1,0 +1,1613 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"speech_engine.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text._ZN6plaits12SpeechEngine12LoadUserDataEPKh,"axG",%progbits,_ZN6plaits12SpeechEngine
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.weak	_ZN6plaits12SpeechEngine12LoadUserDataEPKh
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	_ZN6plaits12SpeechEngine12LoadUserDataEPKh:
+  27              	.LVL0:
+  28              	.LFB1627:
+  29              		.file 1 "mi/plaits/dsp/engine/speech_engine.h"
+   1:mi/plaits/dsp/engine/speech_engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/speech_engine.h **** //
+   3:mi/plaits/dsp/engine/speech_engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/speech_engine.h **** //
+   5:mi/plaits/dsp/engine/speech_engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/speech_engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/speech_engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/speech_engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/speech_engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/speech_engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/speech_engine.h **** // 
+  12:mi/plaits/dsp/engine/speech_engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/speech_engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/speech_engine.h **** // 
+  15:mi/plaits/dsp/engine/speech_engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/speech_engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/speech_engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/speech_engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/speech_engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/speech_engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/speech_engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/speech_engine.h **** // 
+  23:mi/plaits/dsp/engine/speech_engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/speech_engine.h **** //
+  25:mi/plaits/dsp/engine/speech_engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/speech_engine.h **** //
+  27:mi/plaits/dsp/engine/speech_engine.h **** // Various flavours of speech synthesis.
+  28:mi/plaits/dsp/engine/speech_engine.h **** 
+  29:mi/plaits/dsp/engine/speech_engine.h **** #ifndef PLAITS_DSP_ENGINE_SPEECH_ENGINE_H_
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 2
+
+
+  30:mi/plaits/dsp/engine/speech_engine.h **** #define PLAITS_DSP_ENGINE_SPEECH_ENGINE_H_
+  31:mi/plaits/dsp/engine/speech_engine.h **** 
+  32:mi/plaits/dsp/engine/speech_engine.h **** #include "stmlib/dsp/hysteresis_quantizer.h"
+  33:mi/plaits/dsp/engine/speech_engine.h **** 
+  34:mi/plaits/dsp/engine/speech_engine.h **** #include "plaits/dsp/engine/engine.h"
+  35:mi/plaits/dsp/engine/speech_engine.h **** #include "plaits/dsp/speech/lpc_speech_synth_controller.h"
+  36:mi/plaits/dsp/engine/speech_engine.h **** #include "plaits/dsp/speech/naive_speech_synth.h"
+  37:mi/plaits/dsp/engine/speech_engine.h **** #include "plaits/dsp/speech/sam_speech_synth.h"
+  38:mi/plaits/dsp/engine/speech_engine.h **** 
+  39:mi/plaits/dsp/engine/speech_engine.h **** namespace plaits {
+  40:mi/plaits/dsp/engine/speech_engine.h **** 
+  41:mi/plaits/dsp/engine/speech_engine.h **** class SpeechEngine : public Engine {
+  42:mi/plaits/dsp/engine/speech_engine.h ****  public:
+  43:mi/plaits/dsp/engine/speech_engine.h ****   SpeechEngine() { }
+  44:mi/plaits/dsp/engine/speech_engine.h ****   ~SpeechEngine() { }
+  45:mi/plaits/dsp/engine/speech_engine.h ****   
+  46:mi/plaits/dsp/engine/speech_engine.h ****   virtual void Init(stmlib::BufferAllocator* allocator);
+  47:mi/plaits/dsp/engine/speech_engine.h ****   virtual void Reset();
+  48:mi/plaits/dsp/engine/speech_engine.h ****   virtual void LoadUserData(const uint8_t* user_data) { }
+  30              		.loc 1 48 16 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35              		.loc 1 48 57 is_stmt 0 view .LVU1
+  36 0000 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE1627:
+  40 0002 00BF     		.section	.text._ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE,"ax",%progbits
+  41              		.align	1
+  42              		.p2align 2,,3
+  43              		.global	_ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  48              	_ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE:
+  49              	.LVL1:
+  50              	.LFB1630:
+  51              		.file 2 "mi/plaits/dsp/engine/speech_engine.cpp"
+   1:mi/plaits/dsp/engine/speech_engine.cpp **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/speech_engine.cpp **** //
+   3:mi/plaits/dsp/engine/speech_engine.cpp **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/speech_engine.cpp **** //
+   5:mi/plaits/dsp/engine/speech_engine.cpp **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/speech_engine.cpp **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/speech_engine.cpp **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/speech_engine.cpp **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/speech_engine.cpp **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/speech_engine.cpp **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/speech_engine.cpp **** // 
+  12:mi/plaits/dsp/engine/speech_engine.cpp **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/speech_engine.cpp **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/speech_engine.cpp **** // 
+  15:mi/plaits/dsp/engine/speech_engine.cpp **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/speech_engine.cpp **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/speech_engine.cpp **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/speech_engine.cpp **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 3
+
+
+  19:mi/plaits/dsp/engine/speech_engine.cpp **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/speech_engine.cpp **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/speech_engine.cpp **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/speech_engine.cpp **** // 
+  23:mi/plaits/dsp/engine/speech_engine.cpp **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/speech_engine.cpp **** //
+  25:mi/plaits/dsp/engine/speech_engine.cpp **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/speech_engine.cpp **** //
+  27:mi/plaits/dsp/engine/speech_engine.cpp **** // Various flavours of speech synthesis.
+  28:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  29:mi/plaits/dsp/engine/speech_engine.cpp **** #include "plaits/dsp/engine/speech_engine.h"
+  30:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  31:mi/plaits/dsp/engine/speech_engine.cpp **** #include "plaits/dsp/speech/lpc_speech_synth_words.h"
+  32:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  33:mi/plaits/dsp/engine/speech_engine.cpp **** namespace plaits {
+  34:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  35:mi/plaits/dsp/engine/speech_engine.cpp **** using namespace std;
+  36:mi/plaits/dsp/engine/speech_engine.cpp **** using namespace stmlib;
+  37:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  38:mi/plaits/dsp/engine/speech_engine.cpp **** void SpeechEngine::Init(BufferAllocator* allocator) {
+  52              		.loc 2 38 53 is_stmt 1 view -0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		.loc 2 38 53 is_stmt 0 view .LVU3
+  57 0000 70B5     		push	{r4, r5, r6, lr}
+  58              		.cfi_def_cfa_offset 16
+  59              		.cfi_offset 4, -16
+  60              		.cfi_offset 5, -12
+  61              		.cfi_offset 6, -8
+  62              		.cfi_offset 14, -4
+  63              		.loc 2 38 53 view .LVU4
+  64 0002 0446     		mov	r4, r0
+  39:mi/plaits/dsp/engine/speech_engine.cpp ****   sam_speech_synth_.Init();
+  65              		.loc 2 39 3 is_stmt 1 view .LVU5
+  38:mi/plaits/dsp/engine/speech_engine.cpp ****   sam_speech_synth_.Init();
+  66              		.loc 2 38 53 is_stmt 0 view .LVU6
+  67 0004 0D46     		mov	r5, r1
+  68              		.loc 2 39 25 view .LVU7
+  69 0006 C030     		adds	r0, r0, #192
+  70              	.LVL2:
+  40:mi/plaits/dsp/engine/speech_engine.cpp ****   naive_speech_synth_.Init();
+  41:mi/plaits/dsp/engine/speech_engine.cpp ****   lpc_speech_synth_word_bank_.Init(
+  71              		.loc 2 41 35 view .LVU8
+  72 0008 04F5BC76 		add	r6, r4, #376
+  39:mi/plaits/dsp/engine/speech_engine.cpp ****   naive_speech_synth_.Init();
+  73              		.loc 2 39 25 view .LVU9
+  74 000c FFF7FEFF 		bl	_ZN6plaits14SAMSpeechSynth4InitEv
+  75              	.LVL3:
+  40:mi/plaits/dsp/engine/speech_engine.cpp ****   naive_speech_synth_.Init();
+  76              		.loc 2 40 3 is_stmt 1 view .LVU10
+  40:mi/plaits/dsp/engine/speech_engine.cpp ****   naive_speech_synth_.Init();
+  77              		.loc 2 40 27 is_stmt 0 view .LVU11
+  78 0010 04F12400 		add	r0, r4, #36
+  79 0014 FFF7FEFF 		bl	_ZN6plaits16NaiveSpeechSynth4InitEv
+  80              	.LVL4:
+  81              		.loc 2 41 3 is_stmt 1 view .LVU12
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 4
+
+
+  82              		.loc 2 41 35 is_stmt 0 view .LVU13
+  83 0018 2B46     		mov	r3, r5
+  84 001a 0522     		movs	r2, #5
+  85 001c 3046     		mov	r0, r6
+  86 001e 1949     		ldr	r1, .L9
+  87 0020 FFF7FEFF 		bl	_ZN6plaits22LPCSpeechSynthWordBank4InitEPKNS_26LPCSpeechSynthWordBankDataEiPN6stmlib15BufferAll
+  88              	.LVL5:
+  42:mi/plaits/dsp/engine/speech_engine.cpp ****       word_banks_,
+  43:mi/plaits/dsp/engine/speech_engine.cpp ****       LPC_SPEECH_SYNTH_NUM_WORD_BANKS,
+  44:mi/plaits/dsp/engine/speech_engine.cpp ****       allocator);
+  45:mi/plaits/dsp/engine/speech_engine.cpp ****   lpc_speech_synth_controller_.Init(&lpc_speech_synth_word_bank_);
+  89              		.loc 2 45 3 is_stmt 1 view .LVU14
+  90              		.loc 2 45 36 is_stmt 0 view .LVU15
+  91 0024 3146     		mov	r1, r6
+  92 0026 04F1E400 		add	r0, r4, #228
+  93 002a FFF7FEFF 		bl	_ZN6plaits24LPCSpeechSynthController4InitEPNS_22LPCSpeechSynthWordBankE
+  94              	.LVL6:
+  46:mi/plaits/dsp/engine/speech_engine.cpp ****   word_bank_quantizer_.Init(LPC_SPEECH_SYNTH_NUM_WORD_BANKS + 1, 0.1f, false);
+  95              		.loc 2 46 3 is_stmt 1 view .LVU16
+  96              	.LBB18:
+  97              	.LBI18:
+  98              		.file 3 "mi/stmlib/dsp/hysteresis_quantizer.h"
+   1:mi/stmlib/dsp/hysteresis_quantizer.h **** // Copyright 2015 Emilie Gillet.
+   2:mi/stmlib/dsp/hysteresis_quantizer.h **** //
+   3:mi/stmlib/dsp/hysteresis_quantizer.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/hysteresis_quantizer.h **** //
+   5:mi/stmlib/dsp/hysteresis_quantizer.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/hysteresis_quantizer.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/hysteresis_quantizer.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/hysteresis_quantizer.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/hysteresis_quantizer.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/hysteresis_quantizer.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/hysteresis_quantizer.h **** // 
+  12:mi/stmlib/dsp/hysteresis_quantizer.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/hysteresis_quantizer.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/hysteresis_quantizer.h **** // 
+  15:mi/stmlib/dsp/hysteresis_quantizer.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/hysteresis_quantizer.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/hysteresis_quantizer.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/hysteresis_quantizer.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/hysteresis_quantizer.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/hysteresis_quantizer.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/hysteresis_quantizer.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/hysteresis_quantizer.h **** // 
+  23:mi/stmlib/dsp/hysteresis_quantizer.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/hysteresis_quantizer.h **** //
+  25:mi/stmlib/dsp/hysteresis_quantizer.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/hysteresis_quantizer.h **** //
+  27:mi/stmlib/dsp/hysteresis_quantizer.h **** // Quantize a float in [0, 1] to an integer in [0, num_steps[. Apply hysteresis
+  28:mi/stmlib/dsp/hysteresis_quantizer.h **** // to prevent jumps near the decision boundary.
+  29:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  30:mi/stmlib/dsp/hysteresis_quantizer.h **** #ifndef STMLIB_DSP_HYSTERESIS_QUANTIZER_H_
+  31:mi/stmlib/dsp/hysteresis_quantizer.h **** #define STMLIB_DSP_HYSTERESIS_QUANTIZER_H_
+  32:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  33:mi/stmlib/dsp/hysteresis_quantizer.h **** #include "stmlib/stmlib.h"
+  34:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  35:mi/stmlib/dsp/hysteresis_quantizer.h **** namespace stmlib {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 5
+
+
+  36:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  37:mi/stmlib/dsp/hysteresis_quantizer.h **** class HysteresisQuantizer {
+  38:mi/stmlib/dsp/hysteresis_quantizer.h ****  public:
+  39:mi/stmlib/dsp/hysteresis_quantizer.h ****   HysteresisQuantizer() { }
+  40:mi/stmlib/dsp/hysteresis_quantizer.h ****   ~HysteresisQuantizer() { }
+  41:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  42:mi/stmlib/dsp/hysteresis_quantizer.h ****   void Init() {
+  43:mi/stmlib/dsp/hysteresis_quantizer.h ****     quantized_value_ = 0;
+  44:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+  45:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  46:mi/stmlib/dsp/hysteresis_quantizer.h ****   inline int Process(float value, int num_steps) {
+  47:mi/stmlib/dsp/hysteresis_quantizer.h ****     return Process(value, num_steps, 0.25f);
+  48:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+  49:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  50:mi/stmlib/dsp/hysteresis_quantizer.h ****   inline int Process(float value, int num_steps, float hysteresis) {
+  51:mi/stmlib/dsp/hysteresis_quantizer.h ****     return Process(0, value, num_steps, hysteresis);
+  52:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+  53:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  54:mi/stmlib/dsp/hysteresis_quantizer.h ****   inline int Process(int base, float value, int num_steps, float hysteresis) {
+  55:mi/stmlib/dsp/hysteresis_quantizer.h ****     value *= static_cast<float>(num_steps - 1);
+  56:mi/stmlib/dsp/hysteresis_quantizer.h ****     value += static_cast<float>(base);
+  57:mi/stmlib/dsp/hysteresis_quantizer.h ****     float hysteresis_feedback = value > static_cast<float>(quantized_value_)
+  58:mi/stmlib/dsp/hysteresis_quantizer.h ****         ? -hysteresis
+  59:mi/stmlib/dsp/hysteresis_quantizer.h ****         : hysteresis;
+  60:mi/stmlib/dsp/hysteresis_quantizer.h ****     int q = static_cast<int>(value + hysteresis_feedback + 0.5f);
+  61:mi/stmlib/dsp/hysteresis_quantizer.h ****     CONSTRAIN(q, 0, num_steps - 1);
+  62:mi/stmlib/dsp/hysteresis_quantizer.h ****     quantized_value_ = q;
+  63:mi/stmlib/dsp/hysteresis_quantizer.h ****     return q;
+  64:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+  65:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  66:mi/stmlib/dsp/hysteresis_quantizer.h ****   template<typename T>
+  67:mi/stmlib/dsp/hysteresis_quantizer.h ****   const T& Lookup(const T* array, float value, int num_steps) {
+  68:mi/stmlib/dsp/hysteresis_quantizer.h ****     return array[Process(value, num_steps)];
+  69:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+  70:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  71:mi/stmlib/dsp/hysteresis_quantizer.h ****  private:
+  72:mi/stmlib/dsp/hysteresis_quantizer.h ****   int quantized_value_;
+  73:mi/stmlib/dsp/hysteresis_quantizer.h ****   
+  74:mi/stmlib/dsp/hysteresis_quantizer.h ****   DISALLOW_COPY_AND_ASSIGN(HysteresisQuantizer);
+  75:mi/stmlib/dsp/hysteresis_quantizer.h **** };
+  76:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  77:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  78:mi/stmlib/dsp/hysteresis_quantizer.h **** // Note: currently refactoring this aspect of all Mutable Instruments modules.
+  79:mi/stmlib/dsp/hysteresis_quantizer.h **** // The codebase will progressively use only this class, at which point the other
+  80:mi/stmlib/dsp/hysteresis_quantizer.h **** // version will be deprecated
+  81:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  82:mi/stmlib/dsp/hysteresis_quantizer.h **** class HysteresisQuantizer2 {
+  83:mi/stmlib/dsp/hysteresis_quantizer.h ****  public:
+  84:mi/stmlib/dsp/hysteresis_quantizer.h ****   HysteresisQuantizer2() { }
+  85:mi/stmlib/dsp/hysteresis_quantizer.h ****   ~HysteresisQuantizer2() { }
+  86:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  87:mi/stmlib/dsp/hysteresis_quantizer.h ****   void Init(int num_steps, float hysteresis, bool symmetric) {
+  99              		.loc 3 87 8 view .LVU17
+ 100              	.LBB19:
+  88:mi/stmlib/dsp/hysteresis_quantizer.h ****     num_steps_ = num_steps;
+ 101              		.loc 3 88 5 view .LVU18
+ 102              		.loc 3 88 16 is_stmt 0 view .LVU19
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 6
+
+
+ 103 002e 0623     		movs	r3, #6
+  89:mi/stmlib/dsp/hysteresis_quantizer.h ****     hysteresis_ = hysteresis;
+  90:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  91:mi/stmlib/dsp/hysteresis_quantizer.h ****     scale_ = static_cast<float>(symmetric ? num_steps - 1 : num_steps);
+ 104              		.loc 3 91 12 view .LVU20
+ 105 0030 1549     		ldr	r1, .L9+4
+  92:mi/stmlib/dsp/hysteresis_quantizer.h ****     offset_ = symmetric ? 0.0f : -0.5f;
+ 106              		.loc 3 92 13 view .LVU21
+ 107 0032 4FF03F42 		mov	r2, #-1090519040
+  88:mi/stmlib/dsp/hysteresis_quantizer.h ****     num_steps_ = num_steps;
+ 108              		.loc 3 88 16 view .LVU22
+ 109 0036 2361     		str	r3, [r4, #16]
+  89:mi/stmlib/dsp/hysteresis_quantizer.h ****     hysteresis_ = hysteresis;
+ 110              		.loc 3 89 5 is_stmt 1 view .LVU23
+  93:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  94:mi/stmlib/dsp/hysteresis_quantizer.h ****     quantized_value_ = 0;
+ 111              		.loc 3 94 22 is_stmt 0 view .LVU24
+ 112 0038 0020     		movs	r0, #0
+  89:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 113              		.loc 3 89 17 view .LVU25
+ 114 003a 144B     		ldr	r3, .L9+8
+  91:mi/stmlib/dsp/hysteresis_quantizer.h ****     offset_ = symmetric ? 0.0f : -0.5f;
+ 115              		.loc 3 91 12 view .LVU26
+ 116 003c A161     		str	r1, [r4, #24]	@ float
+  89:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 117              		.loc 3 89 17 view .LVU27
+ 118 003e 6361     		str	r3, [r4, #20]	@ float
+  91:mi/stmlib/dsp/hysteresis_quantizer.h ****     offset_ = symmetric ? 0.0f : -0.5f;
+ 119              		.loc 3 91 5 is_stmt 1 view .LVU28
+  92:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 120              		.loc 3 92 5 view .LVU29
+ 121              		.loc 3 94 5 view .LVU30
+ 122              	.LVL7:
+ 123              		.loc 3 94 5 is_stmt 0 view .LVU31
+ 124              	.LBE19:
+ 125              	.LBE18:
+  47:mi/plaits/dsp/engine/speech_engine.cpp ****   
+  48:mi/plaits/dsp/engine/speech_engine.cpp ****   temp_buffer_[0] = allocator->Allocate<float>(kMaxBlockSize);
+ 126              		.loc 2 48 3 is_stmt 1 view .LVU32
+ 127              	.LBB22:
+ 128              	.LBI22:
+ 129              		.file 4 "mi/stmlib/utils/buffer_allocator.h"
+   1:mi/stmlib/utils/buffer_allocator.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/utils/buffer_allocator.h **** //
+   3:mi/stmlib/utils/buffer_allocator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/utils/buffer_allocator.h **** //
+   5:mi/stmlib/utils/buffer_allocator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/utils/buffer_allocator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/utils/buffer_allocator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/utils/buffer_allocator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/utils/buffer_allocator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/utils/buffer_allocator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/utils/buffer_allocator.h **** // 
+  12:mi/stmlib/utils/buffer_allocator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/utils/buffer_allocator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/utils/buffer_allocator.h **** // 
+  15:mi/stmlib/utils/buffer_allocator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 7
+
+
+  16:mi/stmlib/utils/buffer_allocator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/utils/buffer_allocator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/utils/buffer_allocator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/utils/buffer_allocator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/utils/buffer_allocator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/utils/buffer_allocator.h **** // THE SOFTWARE.
+  22:mi/stmlib/utils/buffer_allocator.h **** // 
+  23:mi/stmlib/utils/buffer_allocator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/utils/buffer_allocator.h **** //
+  25:mi/stmlib/utils/buffer_allocator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/utils/buffer_allocator.h **** //
+  27:mi/stmlib/utils/buffer_allocator.h **** // Stream buffer for serialization.
+  28:mi/stmlib/utils/buffer_allocator.h **** 
+  29:mi/stmlib/utils/buffer_allocator.h **** #ifndef STMLIB_UTILS_BUFFER_ALLOCATOR_H_
+  30:mi/stmlib/utils/buffer_allocator.h **** #define STMLIB_UTILS_BUFFER_ALLOCATOR_H_
+  31:mi/stmlib/utils/buffer_allocator.h **** 
+  32:mi/stmlib/utils/buffer_allocator.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/utils/buffer_allocator.h **** 
+  34:mi/stmlib/utils/buffer_allocator.h **** namespace stmlib {
+  35:mi/stmlib/utils/buffer_allocator.h **** 
+  36:mi/stmlib/utils/buffer_allocator.h **** class BufferAllocator {
+  37:mi/stmlib/utils/buffer_allocator.h ****  public:
+  38:mi/stmlib/utils/buffer_allocator.h ****   BufferAllocator() { }
+  39:mi/stmlib/utils/buffer_allocator.h ****   ~BufferAllocator() { }
+  40:mi/stmlib/utils/buffer_allocator.h ****   
+  41:mi/stmlib/utils/buffer_allocator.h ****   BufferAllocator(void* buffer, size_t size) {
+  42:mi/stmlib/utils/buffer_allocator.h ****     Init(buffer, size);
+  43:mi/stmlib/utils/buffer_allocator.h ****   }
+  44:mi/stmlib/utils/buffer_allocator.h ****   
+  45:mi/stmlib/utils/buffer_allocator.h ****   inline void Init(void* buffer, size_t size) {
+  46:mi/stmlib/utils/buffer_allocator.h ****     buffer_ = static_cast<uint8_t*>(buffer);
+  47:mi/stmlib/utils/buffer_allocator.h ****     size_ = size;
+  48:mi/stmlib/utils/buffer_allocator.h ****     Free();
+  49:mi/stmlib/utils/buffer_allocator.h ****   }
+  50:mi/stmlib/utils/buffer_allocator.h **** 
+  51:mi/stmlib/utils/buffer_allocator.h ****   template<typename T>
+  52:mi/stmlib/utils/buffer_allocator.h ****   inline T* Allocate() {
+  53:mi/stmlib/utils/buffer_allocator.h ****     return Allocate<T>(1);
+  54:mi/stmlib/utils/buffer_allocator.h ****   }
+  55:mi/stmlib/utils/buffer_allocator.h ****   
+  56:mi/stmlib/utils/buffer_allocator.h ****   template<typename T>
+  57:mi/stmlib/utils/buffer_allocator.h ****   inline T* Allocate(size_t size) {
+ 130              		.loc 4 57 13 view .LVU33
+ 131              	.LBB23:
+ 132              	.LBB24:
+  58:mi/stmlib/utils/buffer_allocator.h ****     size_t size_bytes = sizeof(T) * size;
+  59:mi/stmlib/utils/buffer_allocator.h ****     if (size_bytes <= free_) {
+ 133              		.loc 4 59 23 is_stmt 0 view .LVU34
+ 134 0040 AB68     		ldr	r3, [r5, #8]
+ 135              	.LBE24:
+ 136              	.LBE23:
+ 137              	.LBE22:
+ 138              	.LBB33:
+ 139              	.LBB20:
+  92:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 140              		.loc 3 92 13 view .LVU35
+ 141 0042 E261     		str	r2, [r4, #28]	@ float
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 8
+
+
+ 142              	.LBE20:
+ 143              	.LBE33:
+ 144              	.LBB34:
+ 145              	.LBB30:
+ 146              	.LBB27:
+ 147              		.loc 4 59 5 view .LVU36
+ 148 0044 5F2B     		cmp	r3, #95
+ 149              	.LBE27:
+ 150              	.LBE30:
+ 151              	.LBE34:
+ 152              	.LBB35:
+ 153              	.LBB21:
+ 154              		.loc 3 94 22 view .LVU37
+ 155 0046 2062     		str	r0, [r4, #32]
+ 156              	.LBE21:
+ 157              	.LBE35:
+ 158              	.LBB36:
+ 159              	.LBB31:
+ 160              	.LBB28:
+ 161              		.loc 4 59 5 view .LVU38
+ 162 0048 16D9     		bls	.L4
+ 163              	.LBB25:
+  60:mi/stmlib/utils/buffer_allocator.h ****       T* start = static_cast<T*>(static_cast<void*>(next_));
+ 164              		.loc 4 60 10 view .LVU39
+ 165 004a 2A68     		ldr	r2, [r5]
+ 166              	.LVL8:
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+  62:mi/stmlib/utils/buffer_allocator.h ****       free_ -= size_bytes;
+ 167              		.loc 4 62 13 view .LVU40
+ 168 004c A3F16006 		sub	r6, r3, #96
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+ 169              		.loc 4 61 13 view .LVU41
+ 170 0050 02F16001 		add	r1, r2, #96
+ 171              	.LBE25:
+ 172              	.LBE28:
+ 173              	.LBE31:
+ 174              	.LBE36:
+ 175              	.LBB37:
+ 176              	.LBB38:
+ 177              	.LBB39:
+  59:mi/stmlib/utils/buffer_allocator.h ****       T* start = static_cast<T*>(static_cast<void*>(next_));
+ 178              		.loc 4 59 5 view .LVU42
+ 179 0054 5F2E     		cmp	r6, #95
+ 180              	.LBE39:
+ 181              	.LBE38:
+ 182              	.LBE37:
+ 183              	.LBB47:
+ 184              	.LBB32:
+ 185              	.LBB29:
+ 186              	.LBB26:
+ 187              		.loc 4 62 13 view .LVU43
+ 188 0056 AE60     		str	r6, [r5, #8]
+ 189              	.LVL9:
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+ 190              		.loc 4 61 13 view .LVU44
+ 191 0058 2960     		str	r1, [r5]
+ 192              	.LBE26:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 9
+
+
+ 193              	.LBE29:
+ 194              	.LBE32:
+ 195              	.LBE47:
+ 196              		.loc 2 48 19 view .LVU45
+ 197 005a C4F89421 		str	r2, [r4, #404]
+  49:mi/plaits/dsp/engine/speech_engine.cpp ****   temp_buffer_[1] = allocator->Allocate<float>(kMaxBlockSize);
+ 198              		.loc 2 49 3 is_stmt 1 view .LVU46
+ 199              	.LVL10:
+ 200              	.LBB48:
+ 201              	.LBI37:
+  57:mi/stmlib/utils/buffer_allocator.h ****     size_t size_bytes = sizeof(T) * size;
+ 202              		.loc 4 57 13 view .LVU47
+ 203              	.LBB44:
+ 204              	.LBB41:
+  59:mi/stmlib/utils/buffer_allocator.h ****       T* start = static_cast<T*>(static_cast<void*>(next_));
+ 205              		.loc 4 59 5 is_stmt 0 view .LVU48
+ 206 005e 0FD9     		bls	.L6
+ 207              	.LBB40:
+  61:mi/stmlib/utils/buffer_allocator.h ****       free_ -= size_bytes;
+ 208              		.loc 4 61 13 view .LVU49
+ 209 0060 C032     		adds	r2, r2, #192
+ 210              		.loc 4 62 13 view .LVU50
+ 211 0062 C03B     		subs	r3, r3, #192
+ 212              	.LVL11:
+  61:mi/stmlib/utils/buffer_allocator.h ****       free_ -= size_bytes;
+ 213              		.loc 4 61 13 view .LVU51
+ 214 0064 2A60     		str	r2, [r5]
+ 215              		.loc 4 62 13 view .LVU52
+ 216 0066 AB60     		str	r3, [r5, #8]
+ 217              	.LVL12:
+ 218              	.L5:
+ 219              		.loc 4 62 13 view .LVU53
+ 220              	.LBE40:
+ 221              	.LBE41:
+ 222              	.LBE44:
+ 223              	.LBE48:
+  50:mi/plaits/dsp/engine/speech_engine.cpp ****   
+  51:mi/plaits/dsp/engine/speech_engine.cpp ****   prosody_amount_ = 0.0f;
+ 224              		.loc 2 51 19 view .LVU54
+ 225 0068 0023     		movs	r3, #0
+  49:mi/plaits/dsp/engine/speech_engine.cpp ****   
+ 226              		.loc 2 49 19 view .LVU55
+ 227 006a C4F89811 		str	r1, [r4, #408]
+ 228              		.loc 2 51 3 is_stmt 1 view .LVU56
+ 229              		.loc 2 51 19 is_stmt 0 view .LVU57
+ 230 006e C4F89C31 		str	r3, [r4, #412]	@ float
+  52:mi/plaits/dsp/engine/speech_engine.cpp ****   speed_ = 0.0f;
+ 231              		.loc 2 52 3 is_stmt 1 view .LVU58
+ 232              		.loc 2 52 10 is_stmt 0 view .LVU59
+ 233 0072 C4F8A031 		str	r3, [r4, #416]	@ float
+  53:mi/plaits/dsp/engine/speech_engine.cpp **** }
+ 234              		.loc 2 53 1 view .LVU60
+ 235 0076 70BD     		pop	{r4, r5, r6, pc}
+ 236              	.LVL13:
+ 237              	.L4:
+ 238              	.LBB49:
+ 239              	.LBB45:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 10
+
+
+ 240              	.LBB42:
+  63:mi/stmlib/utils/buffer_allocator.h ****       return start;
+  64:mi/stmlib/utils/buffer_allocator.h ****     } else {
+  65:mi/stmlib/utils/buffer_allocator.h ****       return NULL;
+ 241              		.loc 4 65 14 view .LVU61
+ 242 0078 0146     		mov	r1, r0
+ 243              	.LBE42:
+ 244              	.LBE45:
+ 245              	.LBE49:
+  48:mi/plaits/dsp/engine/speech_engine.cpp ****   temp_buffer_[1] = allocator->Allocate<float>(kMaxBlockSize);
+ 246              		.loc 2 48 19 view .LVU62
+ 247 007a C4F89401 		str	r0, [r4, #404]
+  49:mi/plaits/dsp/engine/speech_engine.cpp ****   
+ 248              		.loc 2 49 3 is_stmt 1 view .LVU63
+ 249              	.LVL14:
+ 250              	.LBB50:
+  57:mi/stmlib/utils/buffer_allocator.h ****     size_t size_bytes = sizeof(T) * size;
+ 251              		.loc 4 57 13 view .LVU64
+  57:mi/stmlib/utils/buffer_allocator.h ****     size_t size_bytes = sizeof(T) * size;
+ 252              		.loc 4 57 13 is_stmt 0 view .LVU65
+ 253 007e F3E7     		b	.L5
+ 254              	.L6:
+ 255              	.LBB46:
+ 256              	.LBB43:
+ 257              		.loc 4 65 14 view .LVU66
+ 258 0080 0146     		mov	r1, r0
+ 259 0082 F1E7     		b	.L5
+ 260              	.L10:
+ 261              		.align	2
+ 262              	.L9:
+ 263 0084 00000000 		.word	_ZN6plaits11word_banks_E
+ 264 0088 0000C040 		.word	1086324736
+ 265 008c CDCCCC3D 		.word	1036831949
+ 266              	.LBE43:
+ 267              	.LBE46:
+ 268              	.LBE50:
+ 269              		.cfi_endproc
+ 270              	.LFE1630:
+ 272              		.section	.text._ZN6plaits12SpeechEngine5ResetEv,"ax",%progbits
+ 273              		.align	1
+ 274              		.p2align 2,,3
+ 275              		.global	_ZN6plaits12SpeechEngine5ResetEv
+ 276              		.syntax unified
+ 277              		.thumb
+ 278              		.thumb_func
+ 280              	_ZN6plaits12SpeechEngine5ResetEv:
+ 281              	.LVL15:
+ 282              	.LFB1631:
+  54:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  55:mi/plaits/dsp/engine/speech_engine.cpp **** void SpeechEngine::Reset() {
+ 283              		.loc 2 55 28 is_stmt 1 view -0
+ 284              		.cfi_startproc
+ 285              		@ args = 0, pretend = 0, frame = 0
+ 286              		@ frame_needed = 0, uses_anonymous_args = 0
+ 287              		@ link register save eliminated.
+  56:mi/plaits/dsp/engine/speech_engine.cpp ****   lpc_speech_synth_word_bank_.Reset();
+ 288              		.loc 2 56 3 view .LVU68
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 11
+
+
+ 289              		.loc 2 56 36 is_stmt 0 view .LVU69
+ 290 0000 00F5BC70 		add	r0, r0, #376
+ 291              	.LVL16:
+ 292              		.loc 2 56 36 view .LVU70
+ 293 0004 FFF7FEBF 		b	_ZN6plaits22LPCSpeechSynthWordBank5ResetEv
+ 294              	.LVL17:
+ 295              		.loc 2 56 36 view .LVU71
+ 296              		.cfi_endproc
+ 297              	.LFE1631:
+ 299              		.section	.text._ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb,"ax",%progbits
+ 300              		.align	1
+ 301              		.p2align 2,,3
+ 302              		.global	_ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 303              		.syntax unified
+ 304              		.thumb
+ 305              		.thumb_func
+ 307              	_ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb:
+ 308              	.LVL18:
+ 309              	.LFB1632:
+  57:mi/plaits/dsp/engine/speech_engine.cpp **** }
+  58:mi/plaits/dsp/engine/speech_engine.cpp **** 
+  59:mi/plaits/dsp/engine/speech_engine.cpp **** void SpeechEngine::Render(
+  60:mi/plaits/dsp/engine/speech_engine.cpp ****     const EngineParameters& parameters,
+  61:mi/plaits/dsp/engine/speech_engine.cpp ****     float* out,
+  62:mi/plaits/dsp/engine/speech_engine.cpp ****     float* aux,
+  63:mi/plaits/dsp/engine/speech_engine.cpp ****     size_t size,
+  64:mi/plaits/dsp/engine/speech_engine.cpp ****     bool* already_enveloped) {
+ 310              		.loc 2 64 30 is_stmt 1 view -0
+ 311              		.cfi_startproc
+ 312              		@ args = 8, pretend = 0, frame = 8
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+  65:mi/plaits/dsp/engine/speech_engine.cpp ****   const float f0 = NoteToFrequency(parameters.note);
+ 314              		.loc 2 65 3 view .LVU73
+ 315              	.LBB63:
+ 316              	.LBB64:
+ 317              		.file 5 "mi/plaits/dsp/engine/engine.h"
+   1:mi/plaits/dsp/engine/engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/engine.h **** //
+   3:mi/plaits/dsp/engine/engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/engine.h **** //
+   5:mi/plaits/dsp/engine/engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/engine.h **** // 
+  12:mi/plaits/dsp/engine/engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/engine.h **** // 
+  15:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE.
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 12
+
+
+  22:mi/plaits/dsp/engine/engine.h **** // 
+  23:mi/plaits/dsp/engine/engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/engine.h **** //
+  25:mi/plaits/dsp/engine/engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/engine.h **** //
+  27:mi/plaits/dsp/engine/engine.h **** // Base class for all engines.
+  28:mi/plaits/dsp/engine/engine.h **** 
+  29:mi/plaits/dsp/engine/engine.h **** #ifndef PLAITS_DSP_ENGINE_ENGINE_H_
+  30:mi/plaits/dsp/engine/engine.h **** #define PLAITS_DSP_ENGINE_ENGINE_H_
+  31:mi/plaits/dsp/engine/engine.h **** 
+  32:mi/plaits/dsp/engine/engine.h **** #include "plaits/dsp/dsp.h"
+  33:mi/plaits/dsp/engine/engine.h **** 
+  34:mi/plaits/dsp/engine/engine.h **** #include "stmlib/dsp/units.h"
+  35:mi/plaits/dsp/engine/engine.h **** #include "stmlib/utils/buffer_allocator.h"
+  36:mi/plaits/dsp/engine/engine.h **** 
+  37:mi/plaits/dsp/engine/engine.h **** namespace plaits {
+  38:mi/plaits/dsp/engine/engine.h **** 
+  39:mi/plaits/dsp/engine/engine.h **** inline float NoteToFrequency(float midi_note) {
+  40:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 318              		.loc 5 40 13 is_stmt 0 view .LVU74
+ 319 0000 F2EE026A 		vmov.f32	s13, #9.0e+0
+ 320 0004 D1ED017A 		vldr.32	s15, [r1, #4]
+  41:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 321              		.loc 5 41 3 view .LVU75
+ 322 0008 9FEDA67A 		vldr.32	s14, .L42
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 323              		.loc 5 40 13 view .LVU76
+ 324 000c 77EEE67A 		vsub.f32	s15, s15, s13
+ 325              	.LBE64:
+ 326              	.LBE63:
+  64:mi/plaits/dsp/engine/speech_engine.cpp ****   const float f0 = NoteToFrequency(parameters.note);
+ 327              		.loc 2 64 30 view .LVU77
+ 328 0010 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 329              		.cfi_def_cfa_offset 24
+ 330              		.cfi_offset 4, -24
+ 331              		.cfi_offset 5, -20
+ 332              		.cfi_offset 6, -16
+ 333              		.cfi_offset 7, -12
+ 334              		.cfi_offset 8, -8
+ 335              		.cfi_offset 14, -4
+ 336              	.LBB86:
+ 337              	.LBB77:
+ 338              		.loc 5 41 3 view .LVU78
+ 339 0014 F4EEC77A 		vcmpe.f32	s15, s14
+ 340              	.LBE77:
+ 341              	.LBE86:
+  64:mi/plaits/dsp/engine/speech_engine.cpp ****   const float f0 = NoteToFrequency(parameters.note);
+ 342              		.loc 2 64 30 view .LVU79
+ 343 0018 8846     		mov	r8, r1
+ 344              	.LVL19:
+ 345              	.LBB87:
+ 346              	.LBI63:
+  39:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 347              		.loc 5 39 14 is_stmt 1 view .LVU80
+ 348              	.LBB78:
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 349              		.loc 5 40 3 view .LVU81
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 13
+
+
+ 350              		.loc 5 41 3 view .LVU82
+ 351              	.LBE78:
+ 352              	.LBE87:
+  64:mi/plaits/dsp/engine/speech_engine.cpp ****   const float f0 = NoteToFrequency(parameters.note);
+ 353              		.loc 2 64 30 is_stmt 0 view .LVU83
+ 354 001a 0646     		mov	r6, r0
+ 355 001c 1546     		mov	r5, r2
+ 356 001e 1C46     		mov	r4, r3
+ 357              	.LBB88:
+ 358              	.LBB79:
+ 359              		.loc 5 41 3 view .LVU84
+ 360 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 361              	.LBE79:
+ 362              	.LBE88:
+  64:mi/plaits/dsp/engine/speech_engine.cpp ****   const float f0 = NoteToFrequency(parameters.note);
+ 363              		.loc 2 64 30 view .LVU85
+ 364 0024 2DED028B 		vpush.64	{d8}
+ 365              		.cfi_def_cfa_offset 32
+ 366              		.cfi_offset 80, -32
+ 367              		.cfi_offset 81, -28
+ 368 0028 86B0     		sub	sp, sp, #24
+ 369              		.cfi_def_cfa_offset 56
+  64:mi/plaits/dsp/engine/speech_engine.cpp ****   const float f0 = NoteToFrequency(parameters.note);
+ 370              		.loc 2 64 30 view .LVU86
+ 371 002a 0E9F     		ldr	r7, [sp, #56]
+ 372              	.LBB89:
+ 373              	.LBB80:
+ 374              		.loc 5 41 3 view .LVU87
+ 375 002c 0AD4     		bmi	.L30
+ 376              		.loc 5 41 3 is_stmt 1 view .LVU88
+ 377 002e 9FED9E7A 		vldr.32	s14, .L42+4
+ 378 0032 F4EEC77A 		vcmpe.f32	s15, s14
+ 379 0036 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 380 003a 40F3AB80 		ble	.L40
+ 381 003e 0023     		movs	r3, #0
+ 382              	.LVL20:
+ 383              		.loc 5 41 3 is_stmt 0 view .LVU89
+ 384 0040 FF21     		movs	r1, #255
+ 385              	.LVL21:
+ 386              		.loc 5 41 3 view .LVU90
+ 387 0042 01E0     		b	.L13
+ 388              	.LVL22:
+ 389              	.L30:
+ 390              		.loc 5 41 3 view .LVU91
+ 391 0044 0023     		movs	r3, #0
+ 392              	.LVL23:
+ 393              		.loc 5 41 3 view .LVU92
+ 394 0046 1946     		mov	r1, r3
+ 395              	.LVL24:
+ 396              	.L13:
+ 397              		.loc 5 41 40 is_stmt 1 view .LVU93
+  42:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 398              		.loc 5 42 3 view .LVU94
+ 399              	.LBB65:
+ 400              	.LBI65:
+ 401              		.file 6 "mi/stmlib/dsp/units.h"
+   1:mi/stmlib/dsp/units.h **** // Copyright 2014 Emilie Gillet.
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 14
+
+
+   2:mi/stmlib/dsp/units.h **** //
+   3:mi/stmlib/dsp/units.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/units.h **** //
+   5:mi/stmlib/dsp/units.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/units.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/units.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/units.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/units.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/units.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/units.h **** // 
+  12:mi/stmlib/dsp/units.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/units.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/units.h **** // 
+  15:mi/stmlib/dsp/units.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/units.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/units.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/units.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/units.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/units.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/units.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/units.h **** // 
+  23:mi/stmlib/dsp/units.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/units.h **** //
+  25:mi/stmlib/dsp/units.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/units.h **** //
+  27:mi/stmlib/dsp/units.h **** // Conversion from semitones to frequency ratio.
+  28:mi/stmlib/dsp/units.h **** 
+  29:mi/stmlib/dsp/units.h **** #ifndef STMLIB_DSP_UNITS_H_
+  30:mi/stmlib/dsp/units.h **** #define STMLIB_DSP_UNITS_H_
+  31:mi/stmlib/dsp/units.h **** 
+  32:mi/stmlib/dsp/units.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/units.h **** #include "stmlib/dsp/dsp.h"
+  34:mi/stmlib/dsp/units.h **** 
+  35:mi/stmlib/dsp/units.h **** namespace stmlib {
+  36:mi/stmlib/dsp/units.h **** 
+  37:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_high[257];
+  38:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_low[257];
+  39:mi/stmlib/dsp/units.h **** 
+  40:mi/stmlib/dsp/units.h **** inline float SemitonesToRatio(float semitones) {
+ 402              		.loc 6 40 14 view .LVU95
+ 403              	.LBB66:
+  41:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+ 404              		.loc 6 41 3 view .LVU96
+  42:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 405              		.loc 6 42 3 view .LVU97
+ 406              		.loc 6 42 3 view .LVU98
+  43:mi/stmlib/dsp/units.h **** 
+  44:mi/stmlib/dsp/units.h ****   return lut_pitch_ratio_high[pitch_integral] * \
+ 407              		.loc 6 44 3 view .LVU99
+ 408              		.loc 6 44 45 is_stmt 0 view .LVU100
+ 409 0048 984A     		ldr	r2, .L42+8
+ 410              	.LVL25:
+ 411              		.loc 6 44 45 view .LVU101
+ 412              	.LBE66:
+ 413              	.LBE65:
+ 414              	.LBE80:
+ 415              	.LBE89:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 15
+
+
+  66:mi/plaits/dsp/engine/speech_engine.cpp ****   
+  67:mi/plaits/dsp/engine/speech_engine.cpp ****   const float group = parameters.harmonics * 6.0f;
+ 416              		.loc 2 67 15 view .LVU102
+ 417 004a F1EE086A 		vmov.f32	s13, #6.0e+0
+ 418 004e 98ED048A 		vldr.32	s16, [r8, #16]
+ 419              	.LBB90:
+  68:mi/plaits/dsp/engine/speech_engine.cpp ****   
+  69:mi/plaits/dsp/engine/speech_engine.cpp ****   // Interpolates between the 3 models: naive, SAM, LPC.
+  70:mi/plaits/dsp/engine/speech_engine.cpp ****   if (group <= 2.0f) {
+ 420              		.loc 2 70 3 view .LVU103
+ 421 0052 F0EE008A 		vmov.f32	s17, #2.0e+0
+ 422              	.LBE90:
+ 423              	.LBB120:
+ 424              	.LBB81:
+ 425              	.LBB72:
+ 426              	.LBB67:
+ 427              		.loc 6 44 45 view .LVU104
+ 428 0056 02EB8102 		add	r2, r2, r1, lsl #2
+ 429              	.LBE67:
+ 430              	.LBE72:
+ 431              		.loc 5 42 57 view .LVU105
+ 432 005a DFED957A 		vldr.32	s15, .L42+12
+ 433              	.LBE81:
+ 434              	.LBE120:
+  67:mi/plaits/dsp/engine/speech_engine.cpp ****   
+ 435              		.loc 2 67 15 view .LVU106
+ 436 005e 28EE268A 		vmul.f32	s16, s16, s13
+ 437              	.LBB121:
+ 438              	.LBB82:
+ 439              	.LBB73:
+ 440              	.LBB68:
+  45:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 441              		.loc 6 45 74 view .LVU107
+ 442 0062 92ED000A 		vldr.32	s0, [r2]
+ 443 0066 934A     		ldr	r2, .L42+16
+ 444              	.LBE68:
+ 445              	.LBE73:
+ 446              	.LBE82:
+ 447              	.LBE121:
+ 448              	.LBB122:
+ 449              		.loc 2 70 3 view .LVU108
+ 450 0068 B4EEE88A 		vcmpe.f32	s16, s17
+ 451              	.LBE122:
+ 452              	.LBB123:
+ 453              	.LBB83:
+ 454              	.LBB74:
+ 455              	.LBB69:
+ 456              		.loc 6 45 74 view .LVU109
+ 457 006c 02EB8303 		add	r3, r2, r3, lsl #2
+ 458 0070 93ED007A 		vldr.32	s14, [r3]
+ 459              	.LBE69:
+ 460              	.LBE74:
+ 461              	.LBE83:
+ 462              	.LBE123:
+ 463              	.LBB124:
+ 464              		.loc 2 70 3 view .LVU110
+ 465 0074 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 16
+
+
+ 466              	.LBE124:
+ 467              	.LBB125:
+ 468              	.LBB84:
+ 469              	.LBB75:
+ 470              	.LBB70:
+ 471              		.loc 6 45 74 view .LVU111
+ 472 0078 20EE070A 		vmul.f32	s0, s0, s14
+ 473              	.LBE70:
+ 474              	.LBE75:
+ 475              		.loc 5 42 57 view .LVU112
+ 476 007c 20EE270A 		vmul.f32	s0, s0, s15
+ 477              	.LVL26:
+ 478              		.loc 5 42 57 view .LVU113
+ 479              	.LBE84:
+ 480              	.LBE125:
+  67:mi/plaits/dsp/engine/speech_engine.cpp ****   
+ 481              		.loc 2 67 3 is_stmt 1 view .LVU114
+ 482              		.loc 2 70 3 view .LVU115
+ 483              	.LBB126:
+ 484 0080 00F29B80 		bhi	.L36
+ 485              	.LBB91:
+  71:mi/plaits/dsp/engine/speech_engine.cpp ****     *already_enveloped = false;
+ 486              		.loc 2 71 5 view .LVU116
+  72:mi/plaits/dsp/engine/speech_engine.cpp ****     
+  73:mi/plaits/dsp/engine/speech_engine.cpp ****     float blend = group;
+  74:mi/plaits/dsp/engine/speech_engine.cpp ****     if (group <= 1.0f) {
+ 487              		.loc 2 74 5 is_stmt 0 view .LVU117
+ 488 0084 F7EE002A 		vmov.f32	s5, #1.0e+0
+  71:mi/plaits/dsp/engine/speech_engine.cpp ****     *already_enveloped = false;
+ 489              		.loc 2 71 24 view .LVU118
+ 490 0088 0023     		movs	r3, #0
+ 491 008a 0F9A     		ldr	r2, [sp, #60]
+ 492              		.loc 2 74 5 view .LVU119
+ 493 008c B4EEE28A 		vcmpe.f32	s16, s5
+  71:mi/plaits/dsp/engine/speech_engine.cpp ****     *already_enveloped = false;
+ 494              		.loc 2 71 24 view .LVU120
+ 495 0090 1370     		strb	r3, [r2]
+  73:mi/plaits/dsp/engine/speech_engine.cpp ****     if (group <= 1.0f) {
+ 496              		.loc 2 73 5 is_stmt 1 view .LVU121
+ 497              	.LVL27:
+ 498              		.loc 2 74 5 view .LVU122
+ 499 0092 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 500 0096 64D9     		bls	.L41
+  75:mi/plaits/dsp/engine/speech_engine.cpp ****       naive_speech_synth_.Render(
+  76:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger == TRIGGER_RISING_EDGE,
+  77:mi/plaits/dsp/engine/speech_engine.cpp ****           f0,
+  78:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.morph,
+  79:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.timbre,
+  80:mi/plaits/dsp/engine/speech_engine.cpp ****           temp_buffer_[0],
+  81:mi/plaits/dsp/engine/speech_engine.cpp ****           aux,
+  82:mi/plaits/dsp/engine/speech_engine.cpp ****           out,
+  83:mi/plaits/dsp/engine/speech_engine.cpp ****           size);
+  84:mi/plaits/dsp/engine/speech_engine.cpp ****     } else {
+  85:mi/plaits/dsp/engine/speech_engine.cpp ****       lpc_speech_synth_controller_.Render(
+ 501              		.loc 2 85 7 view .LVU123
+ 502              		.loc 2 85 42 is_stmt 0 view .LVU124
+ 503 0098 98ED022A 		vldr.32	s4, [r8, #8]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 17
+
+
+ 504 009c 4FF0FF33 		mov	r3, #-1
+ 505 00a0 D8ED031A 		vldr.32	s3, [r8, #12]
+ 506 00a4 06F1E400 		add	r0, r6, #228
+ 507              	.LVL28:
+ 508              		.loc 2 85 42 view .LVU125
+ 509 00a8 9FED831A 		vldr.32	s2, .L42+20
+ 510 00ac 0094     		str	r4, [sp]
+ 511 00ae F0EE410A 		vmov.f32	s1, s2
+ 512 00b2 8DED050A 		vstr.32	s0, [sp, #20]	@ int
+ 513 00b6 CDE90157 		strd	r5, r7, [sp, #4]
+  86:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger & TRIGGER_UNPATCHED,
+ 514              		.loc 2 86 22 view .LVU126
+ 515 00ba D8F80010 		ldr	r1, [r8]
+  85:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger & TRIGGER_UNPATCHED,
+ 516              		.loc 2 85 42 view .LVU127
+ 517 00be 01F00102 		and	r2, r1, #1
+ 518 00c2 C1F34001 		ubfx	r1, r1, #1, #1
+ 519 00c6 FFF7FEFF 		bl	_ZN6plaits24LPCSpeechSynthController6RenderEbbiffffffPfS1_j
+ 520              	.LVL29:
+  87:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger & TRIGGER_RISING_EDGE,
+  88:mi/plaits/dsp/engine/speech_engine.cpp ****           -1,
+  89:mi/plaits/dsp/engine/speech_engine.cpp ****           f0,
+  90:mi/plaits/dsp/engine/speech_engine.cpp ****           0.0f,
+  91:mi/plaits/dsp/engine/speech_engine.cpp ****           0.0f,
+  92:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.morph,
+  93:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.timbre,
+  94:mi/plaits/dsp/engine/speech_engine.cpp ****           1.0f,
+  95:mi/plaits/dsp/engine/speech_engine.cpp ****           aux,
+  96:mi/plaits/dsp/engine/speech_engine.cpp ****           out,
+  97:mi/plaits/dsp/engine/speech_engine.cpp ****           size);
+  98:mi/plaits/dsp/engine/speech_engine.cpp ****       blend = 2.0f - blend;
+ 521              		.loc 2 98 7 is_stmt 1 view .LVU128
+ 522              		.loc 2 98 13 is_stmt 0 view .LVU129
+ 523 00ca 38EEC88A 		vsub.f32	s16, s17, s16
+ 524              	.LVL30:
+ 525              		.loc 2 98 13 view .LVU130
+ 526 00ce 9DED050A 		vldr.32	s0, [sp, #20]	@ int
+ 527              	.LVL31:
+ 528              	.L18:
+  99:mi/plaits/dsp/engine/speech_engine.cpp ****     }
+ 100:mi/plaits/dsp/engine/speech_engine.cpp ****   
+ 101:mi/plaits/dsp/engine/speech_engine.cpp ****     sam_speech_synth_.Render(
+ 529              		.loc 2 101 5 is_stmt 1 view .LVU131
+ 530              		.loc 2 101 29 is_stmt 0 view .LVU132
+ 531 00d2 D8F80010 		ldr	r1, [r8]
+ 532 00d6 06F1C000 		add	r0, r6, #192
+ 533 00da 98ED021A 		vldr.32	s2, [r8, #8]
+ 534 00de A1F10101 		sub	r1, #1
+ 535 00e2 D8ED030A 		vldr.32	s1, [r8, #12]
+ 536 00e6 0097     		str	r7, [sp]
+ 537 00e8 B1FA81F1 		clz	r1, r1
+ 538 00ec D6E96523 		ldrd	r2, r3, [r6, #404]
+ 539 00f0 4909     		lsrs	r1, r1, #5
+ 540 00f2 FFF7FEFF 		bl	_ZN6plaits14SAMSpeechSynth6RenderEbfffPfS1_j
+ 541              	.LVL32:
+ 102:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger == TRIGGER_RISING_EDGE,
+ 103:mi/plaits/dsp/engine/speech_engine.cpp ****         f0,
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 18
+
+
+ 104:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.morph,
+ 105:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.timbre,
+ 106:mi/plaits/dsp/engine/speech_engine.cpp ****         temp_buffer_[0],
+ 107:mi/plaits/dsp/engine/speech_engine.cpp ****         temp_buffer_[1],
+ 108:mi/plaits/dsp/engine/speech_engine.cpp ****         size);
+ 109:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 110:mi/plaits/dsp/engine/speech_engine.cpp ****     blend *= blend * (3.0f - 2.0f * blend);
+ 542              		.loc 2 110 5 is_stmt 1 view .LVU133
+ 543              		.loc 2 110 28 is_stmt 0 view .LVU134
+ 544 00f6 F0EE087A 		vmov.f32	s15, #3.0e+0
+ 545 00fa B0EE007A 		vmov.f32	s14, #2.0e+0
+ 546 00fe F0EE676A 		vmov.f32	s13, s15
+ 547 0102 E8EE476A 		vfms.f32	s13, s16, s14
+ 548              		.loc 2 110 20 view .LVU135
+ 549 0106 66EE886A 		vmul.f32	s13, s13, s16
+ 550              		.loc 2 110 11 view .LVU136
+ 551 010a 26EE888A 		vmul.f32	s16, s13, s16
+ 552              	.LVL33:
+ 111:mi/plaits/dsp/engine/speech_engine.cpp ****     blend *= blend * (3.0f - 2.0f * blend);
+ 553              		.loc 2 111 5 is_stmt 1 view .LVU137
+ 554              		.loc 2 111 28 is_stmt 0 view .LVU138
+ 555 010e E8EE477A 		vfms.f32	s15, s16, s14
+ 556              		.loc 2 111 20 view .LVU139
+ 557 0112 67EE886A 		vmul.f32	s13, s15, s16
+ 558              		.loc 2 111 11 view .LVU140
+ 559 0116 66EE886A 		vmul.f32	s13, s13, s16
+ 560              	.LVL34:
+ 112:mi/plaits/dsp/engine/speech_engine.cpp ****     for (size_t i = 0; i < size; ++i) {
+ 561              		.loc 2 112 5 is_stmt 1 view .LVU141
+ 562              	.LBB92:
+ 563              		.loc 2 112 26 view .LVU142
+ 564 011a EFB1     		cbz	r7, .L12
+ 565 011c 2346     		mov	r3, r4
+ 566 011e 2A46     		mov	r2, r5
+ 567 0120 D6F89441 		ldr	r4, [r6, #404]
+ 568              	.LVL35:
+ 569              		.loc 2 112 26 is_stmt 0 view .LVU143
+ 570 0124 D6F89811 		ldr	r1, [r6, #408]
+ 571 0128 03EB8707 		add	r7, r3, r7, lsl #2
+ 572              	.LVL36:
+ 573              	.L22:
+ 113:mi/plaits/dsp/engine/speech_engine.cpp ****       aux[i] += (temp_buffer_[0][i] - aux[i]) * blend;
+ 574              		.loc 2 113 7 is_stmt 1 discriminator 2 view .LVU144
+ 575              		.loc 2 113 14 is_stmt 0 discriminator 2 view .LVU145
+ 576 012c D3ED007A 		vldr.32	s15, [r3]
+ 577              		.loc 2 113 35 discriminator 2 view .LVU146
+ 578 0130 B4EC017A 		vldmia.32	r4!, {s14}
+ 579              		.loc 2 113 37 discriminator 2 view .LVU147
+ 580 0134 37EE677A 		vsub.f32	s14, s14, s15
+ 581              		.loc 2 113 14 discriminator 2 view .LVU148
+ 582 0138 E7EE267A 		vfma.f32	s15, s14, s13
+ 583 013c E3EC017A 		vstmia.32	r3!, {s15}
+ 114:mi/plaits/dsp/engine/speech_engine.cpp ****       out[i] += (temp_buffer_[1][i] - out[i]) * blend;
+ 584              		.loc 2 114 7 is_stmt 1 discriminator 2 view .LVU149
+ 112:mi/plaits/dsp/engine/speech_engine.cpp ****     for (size_t i = 0; i < size; ++i) {
+ 585              		.loc 2 112 26 is_stmt 0 discriminator 2 view .LVU150
+ 586 0140 9F42     		cmp	r7, r3
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 19
+
+
+ 587              		.loc 2 114 14 discriminator 2 view .LVU151
+ 588 0142 D2ED007A 		vldr.32	s15, [r2]
+ 589              		.loc 2 114 35 discriminator 2 view .LVU152
+ 590 0146 B1EC017A 		vldmia.32	r1!, {s14}
+ 591              		.loc 2 114 37 discriminator 2 view .LVU153
+ 592 014a 37EE677A 		vsub.f32	s14, s14, s15
+ 593              		.loc 2 114 14 discriminator 2 view .LVU154
+ 594 014e E7EE267A 		vfma.f32	s15, s14, s13
+ 595 0152 E2EC017A 		vstmia.32	r2!, {s15}
+ 112:mi/plaits/dsp/engine/speech_engine.cpp ****     for (size_t i = 0; i < size; ++i) {
+ 596              		.loc 2 112 5 is_stmt 1 discriminator 2 view .LVU155
+ 112:mi/plaits/dsp/engine/speech_engine.cpp ****     for (size_t i = 0; i < size; ++i) {
+ 597              		.loc 2 112 26 discriminator 2 view .LVU156
+ 598 0156 E9D1     		bne	.L22
+ 599              	.L12:
+ 112:mi/plaits/dsp/engine/speech_engine.cpp ****     for (size_t i = 0; i < size; ++i) {
+ 600              		.loc 2 112 26 is_stmt 0 discriminator 2 view .LVU157
+ 601              	.LBE92:
+ 602              	.LBE91:
+ 603              	.LBE126:
+ 115:mi/plaits/dsp/engine/speech_engine.cpp ****     }
+ 116:mi/plaits/dsp/engine/speech_engine.cpp ****   } else {
+ 117:mi/plaits/dsp/engine/speech_engine.cpp ****     // Change phonemes/words for LPC.
+ 118:mi/plaits/dsp/engine/speech_engine.cpp ****     const int word_bank = word_bank_quantizer_.Process(
+ 119:mi/plaits/dsp/engine/speech_engine.cpp ****         (group - 2.0f) * 0.275f) - 1;
+ 120:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****     const bool replay_prosody = word_bank >= 0 && \
+ 122:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 123:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     *already_enveloped = replay_prosody;
+ 125:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****     lpc_speech_synth_controller_.Render(
+ 127:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 128:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_RISING_EDGE,
+ 129:mi/plaits/dsp/engine/speech_engine.cpp ****         word_bank,
+ 130:mi/plaits/dsp/engine/speech_engine.cpp ****         f0,
+ 131:mi/plaits/dsp/engine/speech_engine.cpp ****         prosody_amount_,
+ 132:mi/plaits/dsp/engine/speech_engine.cpp ****         speed_,
+ 133:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.morph,
+ 134:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.timbre,
+ 135:mi/plaits/dsp/engine/speech_engine.cpp ****         replay_prosody ? parameters.accent : 1.0f,
+ 136:mi/plaits/dsp/engine/speech_engine.cpp ****         aux,
+ 137:mi/plaits/dsp/engine/speech_engine.cpp ****         out,
+ 138:mi/plaits/dsp/engine/speech_engine.cpp ****         size);
+ 139:mi/plaits/dsp/engine/speech_engine.cpp ****   }
+ 140:mi/plaits/dsp/engine/speech_engine.cpp **** }
+ 604              		.loc 2 140 1 view .LVU158
+ 605 0158 06B0     		add	sp, sp, #24
+ 606              		.cfi_remember_state
+ 607              		.cfi_def_cfa_offset 32
+ 608              		@ sp needed
+ 609 015a BDEC028B 		vldm	sp!, {d8}
+ 610              		.cfi_restore 80
+ 611              		.cfi_restore 81
+ 612              		.cfi_def_cfa_offset 24
+ 613 015e BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 614              	.LVL37:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 20
+
+
+ 615              	.L41:
+ 616              		.cfi_restore_state
+ 617              	.LBB127:
+ 618              	.LBB93:
+  75:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger == TRIGGER_RISING_EDGE,
+ 619              		.loc 2 75 7 is_stmt 1 view .LVU159
+  75:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger == TRIGGER_RISING_EDGE,
+ 620              		.loc 2 75 33 is_stmt 0 view .LVU160
+ 621 0162 98ED021A 		vldr.32	s2, [r8, #8]
+ 622 0166 2346     		mov	r3, r4
+ 623 0168 D8ED030A 		vldr.32	s1, [r8, #12]
+ 624 016c 06F12400 		add	r0, r6, #36
+ 625              	.LVL38:
+  75:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger == TRIGGER_RISING_EDGE,
+ 626              		.loc 2 75 33 view .LVU161
+ 627 0170 8DED050A 		vstr.32	s0, [sp, #20]	@ int
+ 628 0174 CDE90057 		strd	r5, r7, [sp]
+ 629 0178 D8F80010 		ldr	r1, [r8]
+ 630 017c D6F89421 		ldr	r2, [r6, #404]
+ 631 0180 A1F10101 		sub	r1, #1
+ 632 0184 B1FA81F1 		clz	r1, r1
+ 633 0188 4909     		lsrs	r1, r1, #5
+ 634 018a FFF7FEFF 		bl	_ZN6plaits16NaiveSpeechSynth6RenderEbfffPfS1_S1_j
+ 635              	.LVL39:
+  75:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger == TRIGGER_RISING_EDGE,
+ 636              		.loc 2 75 33 view .LVU162
+ 637 018e 9DED050A 		vldr.32	s0, [sp, #20]	@ int
+ 638 0192 9EE7     		b	.L18
+ 639              	.LVL40:
+ 640              	.L40:
+  75:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger == TRIGGER_RISING_EDGE,
+ 641              		.loc 2 75 33 view .LVU163
+ 642              	.LBE93:
+ 643              	.LBE127:
+ 644              	.LBB128:
+ 645              	.LBB85:
+ 646              	.LBB76:
+ 647              	.LBB71:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 648              		.loc 6 41 9 view .LVU164
+ 649 0194 9FED497A 		vldr.32	s14, .L42+24
+ 650 0198 77EE877A 		vadd.f32	s15, s15, s14
+ 651              	.LVL41:
+  42:mi/stmlib/dsp/units.h **** 
+ 652              		.loc 6 42 3 view .LVU165
+ 653 019c BDEEE77A 		vcvt.s32.f32	s14, s15
+ 654 01a0 17EE101A 		vmov	r1, s14	@ int
+ 655              	.LVL42:
+  42:mi/stmlib/dsp/units.h **** 
+ 656              		.loc 6 42 3 view .LVU166
+ 657 01a4 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 658 01a8 77EEC77A 		vsub.f32	s15, s15, s14
+ 659              		.loc 6 45 27 view .LVU167
+ 660 01ac B0EE677A 		vmov.f32	s14, s15
+ 661 01b0 BEEECC7A 		vcvt.s32.f32	s14, s14, #8
+ 662 01b4 17EE103A 		vmov	r3, s14	@ int
+ 663              	.LVL43:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 21
+
+
+ 664              		.loc 6 45 27 view .LVU168
+ 665 01b8 46E7     		b	.L13
+ 666              	.LVL44:
+ 667              	.L36:
+ 668              		.loc 6 45 27 view .LVU169
+ 669              	.LBE71:
+ 670              	.LBE76:
+ 671              	.LBE85:
+ 672              	.LBE128:
+ 673              	.LBB129:
+ 674              	.LBB94:
+ 118:mi/plaits/dsp/engine/speech_engine.cpp ****         (group - 2.0f) * 0.275f) - 1;
+ 675              		.loc 2 118 5 is_stmt 1 view .LVU170
+ 676              	.LBB95:
+ 677              	.LBI95:
+  95:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+  96:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+  97:mi/stmlib/dsp/hysteresis_quantizer.h ****   inline int Process(float value) {
+ 678              		.loc 3 97 14 view .LVU171
+ 679              	.LBE95:
+ 680              	.LBE94:
+ 681              	.LBE129:
+  98:mi/stmlib/dsp/hysteresis_quantizer.h ****     return Process(0, value);
+ 682              		.loc 3 98 5 view .LVU172
+ 683              	.LBB130:
+ 684              	.LBB114:
+ 685              	.LBB108:
+ 686              	.LBB96:
+ 687              	.LBI96:
+  99:mi/stmlib/dsp/hysteresis_quantizer.h ****   }
+ 100:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 101:mi/stmlib/dsp/hysteresis_quantizer.h ****   inline int Process(int base, float value) {
+ 688              		.loc 3 101 14 view .LVU173
+ 689              	.LBB97:
+ 102:mi/stmlib/dsp/hysteresis_quantizer.h ****     value *= scale_;
+ 690              		.loc 3 102 5 view .LVU174
+ 103:mi/stmlib/dsp/hysteresis_quantizer.h ****     value += offset_;
+ 691              		.loc 3 103 5 view .LVU175
+ 692              	.LBE97:
+ 693              	.LBE96:
+ 694              	.LBE108:
+ 119:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 695              		.loc 2 119 16 is_stmt 0 view .LVU176
+ 696 01ba 38EE688A 		vsub.f32	s16, s16, s17
+ 697              	.LVL45:
+ 118:mi/plaits/dsp/engine/speech_engine.cpp ****         (group - 2.0f) * 0.275f) - 1;
+ 698              		.loc 2 118 55 view .LVU177
+ 699 01be 9FED406A 		vldr.32	s12, .L42+28
+ 700              	.LBB109:
+ 701              	.LBB103:
+ 702              	.LBB98:
+ 703              		.loc 3 103 11 view .LVU178
+ 704 01c2 D6ED064A 		vldr.32	s9, [r6, #24]
+ 104:mi/stmlib/dsp/hysteresis_quantizer.h ****     value += static_cast<float>(base);
+ 105:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 106:mi/stmlib/dsp/hysteresis_quantizer.h ****     float hysteresis_sign = value > static_cast<float>(quantized_value_)
+ 107:mi/stmlib/dsp/hysteresis_quantizer.h ****         ? -1.0f
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 22
+
+
+ 705              		.loc 3 107 9 view .LVU179
+ 706 01c6 BFEE007A 		vmov.f32	s14, #-1.0e+0
+ 103:mi/stmlib/dsp/hysteresis_quantizer.h ****     value += static_cast<float>(base);
+ 707              		.loc 3 103 11 view .LVU180
+ 708 01ca D6ED077A 		vldr.32	s15, [r6, #28]
+ 709              		.loc 3 107 9 view .LVU181
+ 710 01ce B7EE005A 		vmov.f32	s10, #1.0e+0
+ 711              	.LBE98:
+ 712              	.LBE103:
+ 713              	.LBE109:
+ 118:mi/plaits/dsp/engine/speech_engine.cpp ****         (group - 2.0f) * 0.275f) - 1;
+ 714              		.loc 2 118 55 view .LVU182
+ 715 01d2 28EE068A 		vmul.f32	s16, s16, s12
+ 716              	.LBB110:
+ 717              	.LBB104:
+ 718              	.LBB99:
+ 104:mi/stmlib/dsp/hysteresis_quantizer.h ****     value += static_cast<float>(base);
+ 719              		.loc 3 104 11 view .LVU183
+ 720 01d6 DFED386A 		vldr.32	s13, .L42+20
+ 721              	.LVL46:
+ 108:mi/stmlib/dsp/hysteresis_quantizer.h ****         : +1.0f;
+ 109:mi/stmlib/dsp/hysteresis_quantizer.h ****     int q = static_cast<int>(value + hysteresis_sign * hysteresis_ + 0.5f);
+ 722              		.loc 3 109 36 view .LVU184
+ 723 01da D6ED055A 		vldr.32	s11, [r6, #20]
+ 724              		.loc 3 109 68 view .LVU185
+ 725 01de B6EE006A 		vmov.f32	s12, #5.0e-1
+ 103:mi/stmlib/dsp/hysteresis_quantizer.h ****     value += static_cast<float>(base);
+ 726              		.loc 3 103 11 view .LVU186
+ 727 01e2 E8EE247A 		vfma.f32	s15, s16, s9
+ 728              	.LVL47:
+ 104:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 729              		.loc 3 104 5 is_stmt 1 view .LVU187
+ 104:mi/stmlib/dsp/hysteresis_quantizer.h **** 
+ 730              		.loc 3 104 11 is_stmt 0 view .LVU188
+ 731 01e6 77EEA67A 		vadd.f32	s15, s15, s13
+ 732              	.LVL48:
+ 106:mi/stmlib/dsp/hysteresis_quantizer.h ****         ? -1.0f
+ 733              		.loc 3 106 5 is_stmt 1 view .LVU189
+ 106:mi/stmlib/dsp/hysteresis_quantizer.h ****         ? -1.0f
+ 734              		.loc 3 106 37 is_stmt 0 view .LVU190
+ 735 01ea D6ED086A 		vldr.32	s13, [r6, #32]	@ int
+ 736 01ee F8EEE66A 		vcvt.f32.s32	s13, s13
+ 107:mi/stmlib/dsp/hysteresis_quantizer.h ****         : +1.0f;
+ 737              		.loc 3 107 9 view .LVU191
+ 738 01f2 F4EEE67A 		vcmpe.f32	s15, s13
+ 739 01f6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 740 01fa 37FE057A 		vselgt.f32	s14, s14, s10
+ 741              	.LVL49:
+ 742              		.loc 3 109 5 is_stmt 1 view .LVU192
+ 743              		.loc 3 109 36 is_stmt 0 view .LVU193
+ 744 01fe E5EE877A 		vfma.f32	s15, s11, s14
+ 745              	.LVL50:
+ 746              		.loc 3 109 68 view .LVU194
+ 747 0202 77EE867A 		vadd.f32	s15, s15, s12
+ 748              		.loc 3 109 9 view .LVU195
+ 749 0206 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 750 020a 17EE903A 		vmov	r3, s15	@ int
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 23
+
+
+ 751              	.LVL51:
+ 110:mi/stmlib/dsp/hysteresis_quantizer.h ****     CONSTRAIN(q, 0, num_steps_ - 1);
+ 752              		.loc 3 110 5 is_stmt 1 view .LVU196
+ 753 020e 002B     		cmp	r3, #0
+ 754 0210 29DB     		blt	.L24
+ 755              		.loc 3 110 5 view .LVU197
+ 756 0212 3269     		ldr	r2, [r6, #16]
+ 757 0214 9342     		cmp	r3, r2
+ 758              		.loc 3 110 5 view .LVU198
+ 759 0216 A8BF     		it	ge
+ 760 0218 02F1FF33 		addge	r3, r2, #-1
+ 761              	.LVL52:
+ 762              		.loc 3 110 36 view .LVU199
+ 111:mi/stmlib/dsp/hysteresis_quantizer.h ****     quantized_value_ = q;
+ 763              		.loc 3 111 5 view .LVU200
+ 764              	.LBE99:
+ 765              	.LBE104:
+ 766              	.LBE110:
+ 122:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 767              		.loc 2 122 22 is_stmt 0 view .LVU201
+ 768 021c D8F80020 		ldr	r2, [r8]
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 769              		.loc 2 121 48 view .LVU202
+ 770 0220 B3F1010C 		subs	ip, r3, #1
+ 771              	.LBB111:
+ 772              	.LBB105:
+ 773              	.LBB100:
+ 774              		.loc 3 111 22 view .LVU203
+ 775 0224 3362     		str	r3, [r6, #32]
+ 112:mi/stmlib/dsp/hysteresis_quantizer.h ****     return q;
+ 776              		.loc 3 112 5 is_stmt 1 view .LVU204
+ 777              	.LVL53:
+ 778              		.loc 3 112 5 is_stmt 0 view .LVU205
+ 779              	.LBE100:
+ 780              	.LBE105:
+ 781              	.LBE111:
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 782              		.loc 2 121 5 is_stmt 1 view .LVU206
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 783              		.loc 2 121 48 is_stmt 0 view .LVU207
+ 784 0226 24D4     		bmi	.L39
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 785              		.loc 2 121 48 discriminator 1 view .LVU208
+ 786 0228 12F00201 		ands	r1, r2, #2
+ 787 022c 23D1     		bne	.L27
+ 788              	.LVL54:
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 789              		.loc 2 124 5 is_stmt 1 view .LVU209
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 790              		.loc 2 126 40 is_stmt 0 view .LVU210
+ 791 022e D6ED670A 		vldr.32	s1, [r6, #412]
+ 792 0232 06F1E400 		add	r0, r6, #228
+ 793              	.LVL55:
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 794              		.loc 2 126 40 view .LVU211
+ 795 0236 96ED681A 		vldr.32	s2, [r6, #416]
+ 796 023a 02F00102 		and	r2, r2, #1
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 24
+
+
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 797              		.loc 2 124 24 view .LVU212
+ 798 023e 0126     		movs	r6, #1
+ 799              	.LVL56:
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 800              		.loc 2 124 24 view .LVU213
+ 801 0240 0F9B     		ldr	r3, [sp, #60]
+ 133:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.timbre,
+ 802              		.loc 2 133 20 view .LVU214
+ 803 0242 D8ED031A 		vldr.32	s3, [r8, #12]
+ 134:mi/plaits/dsp/engine/speech_engine.cpp ****         replay_prosody ? parameters.accent : 1.0f,
+ 804              		.loc 2 134 20 view .LVU215
+ 805 0246 98ED022A 		vldr.32	s4, [r8, #8]
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 806              		.loc 2 126 40 view .LVU216
+ 807 024a D8ED052A 		vldr.32	s5, [r8, #20]
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 808              		.loc 2 124 24 view .LVU217
+ 809 024e 1E70     		strb	r6, [r3]
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 810              		.loc 2 126 5 is_stmt 1 view .LVU218
+ 811              	.LVL57:
+ 812              	.L29:
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 813              		.loc 2 126 40 is_stmt 0 discriminator 4 view .LVU219
+ 814 0250 6346     		mov	r3, ip
+ 815 0252 0094     		str	r4, [sp]
+ 816              	.LVL58:
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 817              		.loc 2 126 40 discriminator 4 view .LVU220
+ 818 0254 CDE90157 		strd	r5, r7, [sp, #4]
+ 819 0258 FFF7FEFF 		bl	_ZN6plaits24LPCSpeechSynthController6RenderEbbiffffffPfS1_j
+ 820              	.LVL59:
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 821              		.loc 2 126 40 discriminator 4 view .LVU221
+ 822              	.LBE114:
+ 823              	.LBE130:
+ 824              		.loc 2 140 1 discriminator 4 view .LVU222
+ 825 025c 06B0     		add	sp, sp, #24
+ 826              		.cfi_remember_state
+ 827              		.cfi_def_cfa_offset 32
+ 828              		@ sp needed
+ 829 025e BDEC028B 		vldm	sp!, {d8}
+ 830              		.cfi_restore 80
+ 831              		.cfi_restore 81
+ 832              		.cfi_def_cfa_offset 24
+ 833              		.loc 2 140 1 discriminator 4 view .LVU223
+ 834 0262 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 835              	.LVL60:
+ 836              	.L24:
+ 837              		.cfi_restore_state
+ 838              	.LBB131:
+ 839              	.LBB115:
+ 840              	.LBB112:
+ 841              	.LBB106:
+ 842              	.LBB101:
+ 110:mi/stmlib/dsp/hysteresis_quantizer.h ****     quantized_value_ = q;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 25
+
+
+ 843              		.loc 3 110 36 is_stmt 1 view .LVU224
+ 111:mi/stmlib/dsp/hysteresis_quantizer.h ****     return q;
+ 844              		.loc 3 111 5 view .LVU225
+ 111:mi/stmlib/dsp/hysteresis_quantizer.h ****     return q;
+ 845              		.loc 3 111 22 is_stmt 0 view .LVU226
+ 846 0266 0023     		movs	r3, #0
+ 847              	.LBE101:
+ 848              	.LBE106:
+ 849              	.LBE112:
+ 850              	.LBE115:
+ 851              	.LBB116:
+  76:mi/plaits/dsp/engine/speech_engine.cpp ****           f0,
+ 852              		.loc 2 76 22 view .LVU227
+ 853 0268 D8F80020 		ldr	r2, [r8]
+ 854              	.LBE116:
+ 855              	.LBB117:
+ 119:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 856              		.loc 2 119 36 view .LVU228
+ 857 026c 4FF0FF3C 		mov	ip, #-1
+ 858              	.LBB113:
+ 859              	.LBB107:
+ 860              	.LBB102:
+ 111:mi/stmlib/dsp/hysteresis_quantizer.h ****     return q;
+ 861              		.loc 3 111 22 view .LVU229
+ 862 0270 3362     		str	r3, [r6, #32]
+ 863              		.loc 3 112 5 is_stmt 1 view .LVU230
+ 864              	.LVL61:
+ 865              		.loc 3 112 5 is_stmt 0 view .LVU231
+ 866              	.LBE102:
+ 867              	.LBE107:
+ 868              	.LBE113:
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 869              		.loc 2 121 5 is_stmt 1 view .LVU232
+ 870              	.L39:
+ 121:mi/plaits/dsp/engine/speech_engine.cpp ****         !(parameters.trigger & TRIGGER_UNPATCHED);
+ 871              		.loc 2 121 5 is_stmt 0 view .LVU233
+ 872              	.LBE117:
+ 873              	.LBB118:
+  86:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger & TRIGGER_RISING_EDGE,
+ 874              		.loc 2 86 30 view .LVU234
+ 875 0272 02F00201 		and	r1, r2, #2
+ 876              	.L27:
+ 877              	.LVL62:
+  86:mi/plaits/dsp/engine/speech_engine.cpp ****           parameters.trigger & TRIGGER_RISING_EDGE,
+ 878              		.loc 2 86 30 view .LVU235
+ 879              	.LBE118:
+ 880              	.LBB119:
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 881              		.loc 2 124 5 is_stmt 1 discriminator 4 view .LVU236
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 882              		.loc 2 126 40 is_stmt 0 discriminator 4 view .LVU237
+ 883 0276 D6ED670A 		vldr.32	s1, [r6, #412]
+ 884 027a 0039     		subs	r1, r1, #0
+ 885 027c 96ED681A 		vldr.32	s2, [r6, #416]
+ 886 0280 06F1E400 		add	r0, r6, #228
+ 887              	.LVL63:
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 26
+
+
+ 888              		.loc 2 124 24 discriminator 4 view .LVU238
+ 889 0284 0F9B     		ldr	r3, [sp, #60]
+ 890 0286 4FF00006 		mov	r6, #0
+ 891              	.LVL64:
+ 133:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.timbre,
+ 892              		.loc 2 133 20 discriminator 4 view .LVU239
+ 893 028a D8ED031A 		vldr.32	s3, [r8, #12]
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 894              		.loc 2 126 40 discriminator 4 view .LVU240
+ 895 028e F7EE002A 		vmov.f32	s5, #1.0e+0
+ 134:mi/plaits/dsp/engine/speech_engine.cpp ****         replay_prosody ? parameters.accent : 1.0f,
+ 896              		.loc 2 134 20 discriminator 4 view .LVU241
+ 897 0292 98ED022A 		vldr.32	s4, [r8, #8]
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 898              		.loc 2 126 40 discriminator 4 view .LVU242
+ 899 0296 18BF     		it	ne
+ 900 0298 0121     		movne	r1, #1
+ 901 029a 02F00102 		and	r2, r2, #1
+ 124:mi/plaits/dsp/engine/speech_engine.cpp ****     
+ 902              		.loc 2 124 24 discriminator 4 view .LVU243
+ 903 029e 1E70     		strb	r6, [r3]
+ 126:mi/plaits/dsp/engine/speech_engine.cpp ****         parameters.trigger & TRIGGER_UNPATCHED,
+ 904              		.loc 2 126 5 is_stmt 1 discriminator 4 view .LVU244
+ 905 02a0 D6E7     		b	.L29
+ 906              	.L43:
+ 907 02a2 00BF     		.align	2
+ 908              	.L42:
+ 909 02a4 000000C3 		.word	-1023410176
+ 910 02a8 0000FE42 		.word	1123942400
+ 911 02ac 00000000 		.word	_ZN6stmlib20lut_pitch_ratio_highE
+ 912 02b0 51969639 		.word	966170193
+ 913 02b4 00000000 		.word	_ZN6stmlib19lut_pitch_ratio_lowE
+ 914 02b8 00000000 		.word	0
+ 915 02bc 00000043 		.word	1124073472
+ 916 02c0 CDCC8C3E 		.word	1049414861
+ 917              	.LBE119:
+ 918              	.LBE131:
+ 919              		.cfi_endproc
+ 920              	.LFE1632:
+ 922              		.global	_ZTVN6plaits12SpeechEngineE
+ 923              		.section	.rodata._ZTVN6plaits12SpeechEngineE,"a"
+ 924              		.align	2
+ 927              	_ZTVN6plaits12SpeechEngineE:
+ 928 0000 00000000 		.word	0
+ 929 0004 00000000 		.word	0
+ 930 0008 00000000 		.word	_ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE
+ 931 000c 00000000 		.word	_ZN6plaits12SpeechEngine5ResetEv
+ 932 0010 00000000 		.word	_ZN6plaits12SpeechEngine12LoadUserDataEPKh
+ 933 0014 00000000 		.word	_ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 934              		.text
+ 935              	.Letext0:
+ 936              		.file 7 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 937              		.file 8 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 938              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 939              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 940              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 941              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/type_traits"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 27
+
+
+ 942              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/debug/debug.h"
+ 943              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cstdlib"
+ 944              		.file 15 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v
+ 945              		.file 16 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/algorithmfwd.h"
+ 946              		.file 17 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_pair.h"
+ 947              		.file 18 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/exception_ptr.h"
+ 948              		.file 19 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/predefined_ops.h
+ 949              		.file 20 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 950              		.file 21 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdlib.h"
+ 951              		.file 22 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 952              		.file 23 "mi/stmlib/stmlib.h"
+ 953              		.file 24 "mi/stmlib/dsp/filter.h"
+ 954              		.file 25 "mi/plaits/dsp/dsp.h"
+ 955              		.file 26 "mi/plaits/dsp/speech/lpc_speech_synth.h"
+ 956              		.file 27 "mi/plaits/dsp/speech/lpc_speech_synth_controller.h"
+ 957              		.file 28 "mi/plaits/dsp/oscillator/oscillator.h"
+ 958              		.file 29 "mi/plaits/dsp/speech/naive_speech_synth.h"
+ 959              		.file 30 "mi/plaits/dsp/speech/sam_speech_synth.h"
+ 960              		.file 31 "mi/plaits/dsp/speech/lpc_speech_synth_words.h"
+ 961              		.file 32 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 speech_engine.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:19     .text._ZN6plaits12SpeechEngine12LoadUserDataEPKh:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:26     .text._ZN6plaits12SpeechEngine12LoadUserDataEPKh:0000000000000000 _ZN6plaits12SpeechEngine12LoadUserDataEPKh
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:41     .text._ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:48     .text._ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 _ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:263    .text._ZN6plaits12SpeechEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000084 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:273    .text._ZN6plaits12SpeechEngine5ResetEv:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:280    .text._ZN6plaits12SpeechEngine5ResetEv:0000000000000000 _ZN6plaits12SpeechEngine5ResetEv
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:300    .text._ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:307    .text._ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 _ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:909    .text._ZN6plaits12SpeechEngine6RenderERKNS_16EngineParametersEPfS4_jPb:00000000000002a4 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:927    .rodata._ZTVN6plaits12SpeechEngineE:0000000000000000 _ZTVN6plaits12SpeechEngineE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccOb8x3j.s:924    .rodata._ZTVN6plaits12SpeechEngineE:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+_ZN6plaits14SAMSpeechSynth4InitEv
+_ZN6plaits16NaiveSpeechSynth4InitEv
+_ZN6plaits22LPCSpeechSynthWordBank4InitEPKNS_26LPCSpeechSynthWordBankDataEiPN6stmlib15BufferAllocatorE
+_ZN6plaits24LPCSpeechSynthController4InitEPNS_22LPCSpeechSynthWordBankE
+_ZN6plaits11word_banks_E
+_ZN6plaits22LPCSpeechSynthWordBank5ResetEv
+_ZN6plaits24LPCSpeechSynthController6RenderEbbiffffffPfS1_j
+_ZN6plaits14SAMSpeechSynth6RenderEbfffPfS1_j
+_ZN6plaits16NaiveSpeechSynth6RenderEbfffPfS1_S1_j
+_ZN6stmlib20lut_pitch_ratio_highE
+_ZN6stmlib19lut_pitch_ratio_lowE

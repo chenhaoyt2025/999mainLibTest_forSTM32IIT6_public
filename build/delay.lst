@@ -1,0 +1,563 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"delay.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.delay_init,"ax",%progbits
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.global	delay_init
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	delay_init:
+  27              	.LVL0:
+  28              	.LFB337:
+  29              		.file 1 "SYSTEM/delay/delay.c"
+   1:SYSTEM/delay/delay.c **** /**
+   2:SYSTEM/delay/delay.c ****  **************************************************************************************************
+   3:SYSTEM/delay/delay.c ****  * @file        delay.c
+   4:SYSTEM/delay/delay.c ****  * @version     V1.1
+   5:SYSTEM/delay/delay.c ****  * @brief       使用SysTick的普通计数模式对延迟进行管理(支持ucosii)
+   6:SYSTEM/delay/delay.c ****  *              提供delay_init初始化函数，delay_us和delay_ms等延时函数 
+   7:SYSTEM/delay/delay.c ****  **************************************************************************************************
+   8:SYSTEM/delay/delay.c ****  *
+   9:SYSTEM/delay/delay.c ****  * V1.1
+  10:SYSTEM/delay/delay.c ****  * 修改SYS_SUPPORT_OS部分代码, 默认仅支持UCOSII 2.93.01版本, 其他OS请参考实现
+  11:SYSTEM/delay/delay.c ****  * 修改delay_init使用系统时钟
+  12:SYSTEM/delay/delay.c ****  * 修改delay_us使用时钟摘取法延时, 兼容OS
+  13:SYSTEM/delay/delay.c ****  * 修改delay_ms直接使用delay_us延时实现.
+  14:SYSTEM/delay/delay.c ****  *
+  15:SYSTEM/delay/delay.c ****  **************************************************************************************************
+  16:SYSTEM/delay/delay.c ****  */ 
+  17:SYSTEM/delay/delay.c **** 
+  18:SYSTEM/delay/delay.c **** #include "./SYSTEM/sys/sys.h"
+  19:SYSTEM/delay/delay.c **** #include "./SYSTEM/delay/delay.h"
+  20:SYSTEM/delay/delay.c **** 
+  21:SYSTEM/delay/delay.c **** 
+  22:SYSTEM/delay/delay.c **** static uint32_t g_fac_us = 0;       /* us延时倍乘数 */
+  23:SYSTEM/delay/delay.c **** 
+  24:SYSTEM/delay/delay.c **** /* 如果SYS_SUPPORT_OS定义了,说明要支持OS了(不限于UCOS) */
+  25:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS
+  26:SYSTEM/delay/delay.c **** 
+  27:SYSTEM/delay/delay.c **** /* 添加公共头文件 ( ucos需要用到) */
+  28:SYSTEM/delay/delay.c **** #include "os.h"
+  29:SYSTEM/delay/delay.c **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 2
+
+
+  30:SYSTEM/delay/delay.c **** /* 定义g_fac_ms变量, 表示ms延时的倍乘数, 代表每个节拍的ms数, (仅在使能os的
+  31:SYSTEM/delay/delay.c **** static uint16_t g_fac_ms = 0;
+  32:SYSTEM/delay/delay.c **** 
+  33:SYSTEM/delay/delay.c **** /*
+  34:SYSTEM/delay/delay.c ****  *  当delay_us/delay_ms需要支持OS的时候需要三个与OS相关的宏定义和函数来支�
+  35:SYSTEM/delay/delay.c ****  *  首先是3个宏定义:
+  36:SYSTEM/delay/delay.c ****  *      delay_osrunning    :用于表示OS当前是否正在运行,以决定是否可以使用相�
+  37:SYSTEM/delay/delay.c ****  *      delay_ostickspersec:用于表示OS设定的时钟节拍,delay_init将根据这个参数来�
+  38:SYSTEM/delay/delay.c ****  *      delay_osintnesting :用于表示OS中断嵌套级别,因为中断里面不可以调度,dela
+  39:SYSTEM/delay/delay.c ****  *  然后是3个函数:
+  40:SYSTEM/delay/delay.c ****  *      delay_osschedlock  :用于锁定OS任务调度,禁止调度
+  41:SYSTEM/delay/delay.c ****  *      delay_osschedunlock:用于解锁OS任务调度,重新开启调度
+  42:SYSTEM/delay/delay.c ****  *      delay_ostimedly    :用于OS延时,可以引起任务调度.
+  43:SYSTEM/delay/delay.c ****  *
+  44:SYSTEM/delay/delay.c ****  *  本例程仅作UCOSII的支持,其他OS,请自行参考移植
+  45:SYSTEM/delay/delay.c ****  */
+  46:SYSTEM/delay/delay.c **** 
+  47:SYSTEM/delay/delay.c **** /* 支持UCOSII */
+  48:SYSTEM/delay/delay.c **** #define delay_osrunning     OSRunning           /* OS是否运行标记,0,不运行;1,在运行 */
+  49:SYSTEM/delay/delay.c **** #define delay_ostickspersec OS_TICKS_PER_SEC    /* OS时钟节拍,即每秒调度次数 */
+  50:SYSTEM/delay/delay.c **** #define delay_osintnesting  OSIntNesting        /* 中断嵌套级别,即中断嵌套次数 */
+  51:SYSTEM/delay/delay.c **** 
+  52:SYSTEM/delay/delay.c **** 
+  53:SYSTEM/delay/delay.c **** /**
+  54:SYSTEM/delay/delay.c ****  * @brief     us级延时时,关闭任务调度(防止打断us级延迟)
+  55:SYSTEM/delay/delay.c ****  * @param     无
+  56:SYSTEM/delay/delay.c ****  * @retval    无
+  57:SYSTEM/delay/delay.c ****  */
+  58:SYSTEM/delay/delay.c **** void delay_osschedlock(void)
+  59:SYSTEM/delay/delay.c **** {
+  60:SYSTEM/delay/delay.c ****     OSSchedLock();                      /* UCOSII的方式,禁止调度，防止打断us延时 */
+  61:SYSTEM/delay/delay.c **** }
+  62:SYSTEM/delay/delay.c **** 
+  63:SYSTEM/delay/delay.c **** /**
+  64:SYSTEM/delay/delay.c ****  * @brief     us级延时时,恢复任务调度
+  65:SYSTEM/delay/delay.c ****  * @param     无
+  66:SYSTEM/delay/delay.c ****  * @retval    无
+  67:SYSTEM/delay/delay.c ****  */
+  68:SYSTEM/delay/delay.c **** void delay_osschedunlock(void)
+  69:SYSTEM/delay/delay.c **** {
+  70:SYSTEM/delay/delay.c ****     OSSchedUnlock();                    /* UCOSII的方式,恢复调度 */
+  71:SYSTEM/delay/delay.c **** }
+  72:SYSTEM/delay/delay.c **** 
+  73:SYSTEM/delay/delay.c **** /**
+  74:SYSTEM/delay/delay.c ****  * @brief     os延时,可以进行任务调度
+  75:SYSTEM/delay/delay.c ****  * @param     ticks: 延时的节拍数
+  76:SYSTEM/delay/delay.c ****  * @retval    无
+  77:SYSTEM/delay/delay.c ****  */
+  78:SYSTEM/delay/delay.c **** void delay_ostimedly(uint32_t ticks)
+  79:SYSTEM/delay/delay.c **** {
+  80:SYSTEM/delay/delay.c ****     OSTimeDly(ticks);                   /* UCOSII延时 */
+  81:SYSTEM/delay/delay.c **** }
+  82:SYSTEM/delay/delay.c **** 
+  83:SYSTEM/delay/delay.c **** /**
+  84:SYSTEM/delay/delay.c ****  * @brief     systick中断服务函数,使用OS时用到
+  85:SYSTEM/delay/delay.c ****  * @param     无
+  86:SYSTEM/delay/delay.c ****  * @retval    无
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 3
+
+
+  87:SYSTEM/delay/delay.c ****  */
+  88:SYSTEM/delay/delay.c **** void SysTick_Handler(void)
+  89:SYSTEM/delay/delay.c **** {
+  90:SYSTEM/delay/delay.c ****     if (delay_osrunning == OS_TRUE)     /* OS开始跑了,才执行正常的调度处理 */
+  91:SYSTEM/delay/delay.c ****     {
+  92:SYSTEM/delay/delay.c ****         OS_CPU_SysTickHandler();        /* 调用 uC/OS-II 的 SysTick 中断服务函数 */
+  93:SYSTEM/delay/delay.c ****     }
+  94:SYSTEM/delay/delay.c **** }
+  95:SYSTEM/delay/delay.c **** 
+  96:SYSTEM/delay/delay.c **** #endif
+  97:SYSTEM/delay/delay.c **** 
+  98:SYSTEM/delay/delay.c **** /**
+  99:SYSTEM/delay/delay.c ****  * @brief     初始化延迟函数
+ 100:SYSTEM/delay/delay.c ****  * @param     sysclk: 系统时钟频率, 即CPU频率(HCLK), 单位 Mhz
+ 101:SYSTEM/delay/delay.c ****  * @retval    无
+ 102:SYSTEM/delay/delay.c ****  */
+ 103:SYSTEM/delay/delay.c **** void delay_init(uint16_t sysclk)
+ 104:SYSTEM/delay/delay.c **** {
+  30              		.loc 1 104 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+ 105:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                             /* 如果需要支持OS. */
+ 106:SYSTEM/delay/delay.c ****     uint32_t reload;
+ 107:SYSTEM/delay/delay.c **** #endif
+ 108:SYSTEM/delay/delay.c ****     SysTick->CTRL |= (1 << 2);                 /* SYSTICK使用系统时钟源,频率为HCLK */
+  35              		.loc 1 108 5 view .LVU1
+  36              		.loc 1 108 19 is_stmt 0 view .LVU2
+  37 0000 4FF0E023 		mov	r3, #-536813568
+ 109:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+ 110:SYSTEM/delay/delay.c ****     SysTick->CTRL |= 1 << 0;                   /* 使能SysTick */
+ 111:SYSTEM/delay/delay.c ****     SysTick->LOAD = 0XFFFFFF;                  /* 注意SysTick计数器为24位，所以这里设�
+  38              		.loc 1 111 19 view .LVU3
+  39 0004 6FF07F41 		mvn	r1, #-16777216
+ 108:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+  40              		.loc 1 108 19 view .LVU4
+  41 0008 1A69     		ldr	r2, [r3, #16]
+ 104:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                             /* 如果需要支持OS. */
+  42              		.loc 1 104 1 view .LVU5
+  43 000a 10B4     		push	{r4}
+  44              		.cfi_def_cfa_offset 4
+  45              		.cfi_offset 4, -4
+ 108:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+  46              		.loc 1 108 19 view .LVU6
+  47 000c 42F00402 		orr	r2, r2, #4
+ 109:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+  48              		.loc 1 109 14 view .LVU7
+  49 0010 054C     		ldr	r4, .L4
+ 108:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+  50              		.loc 1 108 19 view .LVU8
+  51 0012 1A61     		str	r2, [r3, #16]
+ 109:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+  52              		.loc 1 109 5 is_stmt 1 view .LVU9
+ 109:SYSTEM/delay/delay.c ****     g_fac_us = sysclk;                         /* 不论是否使用OS,g_fac_us都需要使用,作�
+  53              		.loc 1 109 14 is_stmt 0 view .LVU10
+  54 0014 2060     		str	r0, [r4]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 4
+
+
+ 110:SYSTEM/delay/delay.c ****     SysTick->LOAD = 0XFFFFFF;                  /* 注意SysTick计数器为24位，所以这里设�
+  55              		.loc 1 110 5 is_stmt 1 view .LVU11
+ 110:SYSTEM/delay/delay.c ****     SysTick->LOAD = 0XFFFFFF;                  /* 注意SysTick计数器为24位，所以这里设�
+  56              		.loc 1 110 19 is_stmt 0 view .LVU12
+  57 0016 1A69     		ldr	r2, [r3, #16]
+ 112:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                             /* 如果需要支持OS */
+ 113:SYSTEM/delay/delay.c ****     reload = sysclk;                           /* 每秒钟的计数次数 单位为M */
+ 114:SYSTEM/delay/delay.c ****     reload *= 1000000 / delay_ostickspersec;   /* 根据delay_ostickspersec设定溢出时间
+ 115:SYSTEM/delay/delay.c ****                                                 * reload为24位寄存器,最大值:16777216
+ 116:SYSTEM/delay/delay.c ****                                                 */
+ 117:SYSTEM/delay/delay.c ****     g_fac_ms = 1000 / delay_ostickspersec;     /* 代表OS可以延时的最少单位 */
+ 118:SYSTEM/delay/delay.c ****     SysTick->CTRL |= 1 << 1;                   /* 开启SYSTICK中断 */
+ 119:SYSTEM/delay/delay.c ****     SysTick->LOAD = reload;                    /* 每1/delay_ostickspersec秒中断一次 */
+ 120:SYSTEM/delay/delay.c **** #endif
+ 121:SYSTEM/delay/delay.c **** }
+  58              		.loc 1 121 1 view .LVU13
+  59 0018 5DF8044B 		ldr	r4, [sp], #4
+  60              		.cfi_restore 4
+  61              		.cfi_def_cfa_offset 0
+ 110:SYSTEM/delay/delay.c ****     SysTick->LOAD = 0XFFFFFF;                  /* 注意SysTick计数器为24位，所以这里设�
+  62              		.loc 1 110 19 view .LVU14
+  63 001c 42F00102 		orr	r2, r2, #1
+  64 0020 1A61     		str	r2, [r3, #16]
+ 111:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                             /* 如果需要支持OS */
+  65              		.loc 1 111 5 is_stmt 1 view .LVU15
+ 111:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                             /* 如果需要支持OS */
+  66              		.loc 1 111 19 is_stmt 0 view .LVU16
+  67 0022 5961     		str	r1, [r3, #20]
+  68              		.loc 1 121 1 view .LVU17
+  69 0024 7047     		bx	lr
+  70              	.L5:
+  71 0026 00BF     		.align	2
+  72              	.L4:
+  73 0028 00000000 		.word	.LANCHOR0
+  74              		.cfi_endproc
+  75              	.LFE337:
+  77              		.section	.text.delay_us,"ax",%progbits
+  78              		.align	1
+  79              		.p2align 2,,3
+  80              		.global	delay_us
+  81              		.syntax unified
+  82              		.thumb
+  83              		.thumb_func
+  85              	delay_us:
+  86              	.LVL1:
+  87              	.LFB338:
+ 122:SYSTEM/delay/delay.c **** 
+ 123:SYSTEM/delay/delay.c **** /**
+ 124:SYSTEM/delay/delay.c ****  * @brief     延时nus
+ 125:SYSTEM/delay/delay.c ****  * @note      无论是否使用OS, 都是用时钟摘取法来做us延时
+ 126:SYSTEM/delay/delay.c ****  * @param     nus: 要延时的us数
+ 127:SYSTEM/delay/delay.c ****  * @note      nus取值范围: 0 ~ (2^32 / g_fac_us) (g_fac_us一般等于系统主频, 自行套�
+ 128:SYSTEM/delay/delay.c ****  * @retval    无
+ 129:SYSTEM/delay/delay.c ****  */
+ 130:SYSTEM/delay/delay.c **** void delay_us(uint32_t nus)
+ 131:SYSTEM/delay/delay.c **** {
+  88              		.loc 1 131 1 is_stmt 1 view -0
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 5
+
+
+  89              		.cfi_startproc
+  90              		@ args = 0, pretend = 0, frame = 0
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132:SYSTEM/delay/delay.c ****     uint32_t ticks;
+  92              		.loc 1 132 5 view .LVU19
+ 133:SYSTEM/delay/delay.c ****     uint32_t told, tnow, tcnt = 0;
+  93              		.loc 1 133 5 view .LVU20
+ 134:SYSTEM/delay/delay.c ****     uint32_t reload = SysTick->LOAD;        /* LOAD的值 */
+  94              		.loc 1 134 5 view .LVU21
+ 135:SYSTEM/delay/delay.c ****     ticks = nus * g_fac_us;                 /* 需要的节拍数 */
+  95              		.loc 1 135 17 is_stmt 0 view .LVU22
+  96 0000 0C4B     		ldr	r3, .L15
+ 134:SYSTEM/delay/delay.c ****     uint32_t reload = SysTick->LOAD;        /* LOAD的值 */
+  97              		.loc 1 134 14 view .LVU23
+  98 0002 4FF0E021 		mov	r1, #-536813568
+ 133:SYSTEM/delay/delay.c ****     uint32_t told, tnow, tcnt = 0;
+  99              		.loc 1 133 26 view .LVU24
+ 100 0006 4FF0000C 		mov	ip, #0
+ 101              		.loc 1 135 11 view .LVU25
+ 102 000a 1B68     		ldr	r3, [r3]
+ 131:SYSTEM/delay/delay.c ****     uint32_t ticks;
+ 103              		.loc 1 131 1 view .LVU26
+ 104 000c 10B5     		push	{r4, lr}
+ 105              		.cfi_def_cfa_offset 8
+ 106              		.cfi_offset 4, -8
+ 107              		.cfi_offset 14, -4
+ 108              		.loc 1 135 11 view .LVU27
+ 109 000e 03FB00F0 		mul	r0, r3, r0
+ 110              	.LVL2:
+ 134:SYSTEM/delay/delay.c ****     uint32_t reload = SysTick->LOAD;        /* LOAD的值 */
+ 111              		.loc 1 134 14 view .LVU28
+ 112 0012 4C69     		ldr	r4, [r1, #20]
+ 113              	.LVL3:
+ 114              		.loc 1 135 5 is_stmt 1 view .LVU29
+ 136:SYSTEM/delay/delay.c ****     
+ 137:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                          /* 如果需要支持OS */
+ 138:SYSTEM/delay/delay.c ****     delay_osschedlock();                    /* 锁定 OS 的任务调度器，防止打断us延时 
+ 139:SYSTEM/delay/delay.c **** #endif
+ 140:SYSTEM/delay/delay.c **** 
+ 141:SYSTEM/delay/delay.c ****     told = SysTick->VAL;                    /* 刚进入时的计数器值 */
+ 115              		.loc 1 141 5 view .LVU30
+ 116              		.loc 1 141 10 is_stmt 0 view .LVU31
+ 117 0014 8A69     		ldr	r2, [r1, #24]
+ 118              	.LVL4:
+ 119              	.L7:
+ 142:SYSTEM/delay/delay.c ****   
+ 143:SYSTEM/delay/delay.c ****     while (1)
+ 120              		.loc 1 143 5 is_stmt 1 view .LVU32
+ 144:SYSTEM/delay/delay.c ****     {
+ 145:SYSTEM/delay/delay.c ****         tnow = SysTick->VAL;
+ 121              		.loc 1 145 9 view .LVU33
+ 122              		.loc 1 145 14 is_stmt 0 view .LVU34
+ 123 0016 8B69     		ldr	r3, [r1, #24]
+ 124              	.LVL5:
+ 146:SYSTEM/delay/delay.c ****       
+ 147:SYSTEM/delay/delay.c ****         if (tnow != told)
+ 125              		.loc 1 147 9 is_stmt 1 view .LVU35
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 6
+
+
+ 126              		.loc 1 147 12 is_stmt 0 view .LVU36
+ 127 0018 9A42     		cmp	r2, r3
+ 128 001a FCD0     		beq	.L7
+ 148:SYSTEM/delay/delay.c ****         {
+ 149:SYSTEM/delay/delay.c ****             if (tnow < told)
+ 129              		.loc 1 149 13 is_stmt 1 view .LVU37
+ 150:SYSTEM/delay/delay.c ****             {
+ 151:SYSTEM/delay/delay.c ****                 tcnt += told - tnow;        /* 这里注意一下SYSTICK是一个递减的计数器
+ 130              		.loc 1 151 17 view .LVU38
+ 152:SYSTEM/delay/delay.c ****             }
+ 153:SYSTEM/delay/delay.c ****             else
+ 154:SYSTEM/delay/delay.c ****             {
+ 155:SYSTEM/delay/delay.c ****                 tcnt += reload - tnow + told;
+ 131              		.loc 1 155 17 view .LVU39
+ 132 001c 0CEB020E 		add	lr, ip, r2
+ 133 0020 1A46     		mov	r2, r3
+ 134              	.LVL6:
+ 135              		.loc 1 155 17 is_stmt 0 view .LVU40
+ 136 0022 F446     		mov	ip, lr
+ 137 0024 98BF     		it	ls
+ 138 0026 0EEB040C 		addls	ip, lr, r4
+ 139              		.loc 1 155 22 view .LVU41
+ 140 002a ACEB030C 		sub	ip, ip, r3
+ 141              	.LVL7:
+ 156:SYSTEM/delay/delay.c ****             }
+ 157:SYSTEM/delay/delay.c ****             
+ 158:SYSTEM/delay/delay.c ****             told = tnow;
+ 142              		.loc 1 158 13 is_stmt 1 view .LVU42
+ 159:SYSTEM/delay/delay.c ****             
+ 160:SYSTEM/delay/delay.c ****             if (tcnt >= ticks) 
+ 143              		.loc 1 160 13 view .LVU43
+ 144              		.loc 1 160 16 is_stmt 0 view .LVU44
+ 145 002e 8445     		cmp	ip, r0
+ 146 0030 F1D3     		bcc	.L7
+ 161:SYSTEM/delay/delay.c ****             {
+ 162:SYSTEM/delay/delay.c ****                 break;                      /* 时间超过/等于要延迟的时间,则退出 */
+ 163:SYSTEM/delay/delay.c ****             }
+ 164:SYSTEM/delay/delay.c ****         }
+ 165:SYSTEM/delay/delay.c ****     }
+ 166:SYSTEM/delay/delay.c **** 
+ 167:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS                          /* 如果需要支持OS */
+ 168:SYSTEM/delay/delay.c ****     delay_osschedunlock();                  /* 恢复 OS 的任务调度器 */
+ 169:SYSTEM/delay/delay.c **** #endif 
+ 170:SYSTEM/delay/delay.c **** }
+ 147              		.loc 1 170 1 view .LVU45
+ 148 0032 10BD     		pop	{r4, pc}
+ 149              	.LVL8:
+ 150              	.L16:
+ 151              		.loc 1 170 1 view .LVU46
+ 152              		.align	2
+ 153              	.L15:
+ 154 0034 00000000 		.word	.LANCHOR0
+ 155              		.cfi_endproc
+ 156              	.LFE338:
+ 158              		.section	.text.delay_ms,"ax",%progbits
+ 159              		.align	1
+ 160              		.p2align 2,,3
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 7
+
+
+ 161              		.global	delay_ms
+ 162              		.syntax unified
+ 163              		.thumb
+ 164              		.thumb_func
+ 166              	delay_ms:
+ 167              	.LVL9:
+ 168              	.LFB339:
+ 171:SYSTEM/delay/delay.c **** 
+ 172:SYSTEM/delay/delay.c **** /**
+ 173:SYSTEM/delay/delay.c ****  * @brief     延时nms
+ 174:SYSTEM/delay/delay.c ****  * @param     nms: 要延时的ms数 (0< nms <= (2^32 / g_fac_us / 1000))(g_fac_us一般等于系�
+ 175:SYSTEM/delay/delay.c ****  * @retval    无
+ 176:SYSTEM/delay/delay.c ****  */
+ 177:SYSTEM/delay/delay.c **** void delay_ms(uint16_t nms)
+ 178:SYSTEM/delay/delay.c **** {    
+ 169              		.loc 1 178 1 is_stmt 1 view -0
+ 170              		.cfi_startproc
+ 171              		@ args = 0, pretend = 0, frame = 0
+ 172              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS  /* 如果需要支持OS, 则根据情况调用os延时以释放CPU */
+ 180:SYSTEM/delay/delay.c ****     if (delay_osrunning && delay_osintnesting == 0)     /* 如果OS已经在跑了,并且不是在�
+ 181:SYSTEM/delay/delay.c ****     {
+ 182:SYSTEM/delay/delay.c ****         if (nms >= g_fac_ms)                            /* 延时的时间大于OS的最少时间�
+ 183:SYSTEM/delay/delay.c ****         {
+ 184:SYSTEM/delay/delay.c ****             delay_ostimedly(nms / g_fac_ms);            /* OS延时 */
+ 185:SYSTEM/delay/delay.c ****         }
+ 186:SYSTEM/delay/delay.c **** 
+ 187:SYSTEM/delay/delay.c ****         nms %= g_fac_ms;                                /* OS已经无法提供这么小的延时�
+ 188:SYSTEM/delay/delay.c ****     }
+ 189:SYSTEM/delay/delay.c **** #endif
+ 190:SYSTEM/delay/delay.c **** 
+ 191:SYSTEM/delay/delay.c ****     delay_us((uint32_t)(nms * 1000));                   /* 普通方式延时 */
+ 173              		.loc 1 191 5 view .LVU48
+ 174              	.LBB4:
+ 175              	.LBI4:
+ 130:SYSTEM/delay/delay.c **** {
+ 176              		.loc 1 130 6 view .LVU49
+ 177              	.LBB5:
+ 132:SYSTEM/delay/delay.c ****     uint32_t told, tnow, tcnt = 0;
+ 178              		.loc 1 132 5 view .LVU50
+ 133:SYSTEM/delay/delay.c ****     uint32_t reload = SysTick->LOAD;        /* LOAD的值 */
+ 179              		.loc 1 133 5 view .LVU51
+ 134:SYSTEM/delay/delay.c ****     ticks = nus * g_fac_us;                 /* 需要的节拍数 */
+ 180              		.loc 1 134 5 view .LVU52
+ 181              	.LBE5:
+ 182              	.LBE4:
+ 178:SYSTEM/delay/delay.c **** #if SYS_SUPPORT_OS  /* 如果需要支持OS, 则根据情况调用os延时以释放CPU */
+ 183              		.loc 1 178 1 is_stmt 0 view .LVU53
+ 184 0000 10B5     		push	{r4, lr}
+ 185              		.cfi_def_cfa_offset 8
+ 186              		.cfi_offset 4, -8
+ 187              		.cfi_offset 14, -4
+ 188              	.LBB10:
+ 189              	.LBB6:
+ 135:SYSTEM/delay/delay.c ****     
+ 190              		.loc 1 135 17 view .LVU54
+ 191 0002 0F4B     		ldr	r3, .L25
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 8
+
+
+ 192              	.LBE6:
+ 193              	.LBE10:
+ 194              		.loc 1 191 29 view .LVU55
+ 195 0004 4FF47A7E 		mov	lr, #1000
+ 196              	.LBB11:
+ 197              	.LBB7:
+ 134:SYSTEM/delay/delay.c ****     ticks = nus * g_fac_us;                 /* 需要的节拍数 */
+ 198              		.loc 1 134 14 view .LVU56
+ 199 0008 4FF0E021 		mov	r1, #-536813568
+ 133:SYSTEM/delay/delay.c ****     uint32_t reload = SysTick->LOAD;        /* LOAD的值 */
+ 200              		.loc 1 133 26 view .LVU57
+ 201 000c 4FF0000C 		mov	ip, #0
+ 202              	.LBE7:
+ 203              	.LBE11:
+ 204              		.loc 1 191 29 view .LVU58
+ 205 0010 0EFB00F0 		mul	r0, lr, r0
+ 206              	.LVL10:
+ 207              	.LBB12:
+ 208              	.LBB8:
+ 135:SYSTEM/delay/delay.c ****     
+ 209              		.loc 1 135 11 view .LVU59
+ 210 0014 1B68     		ldr	r3, [r3]
+ 134:SYSTEM/delay/delay.c ****     ticks = nus * g_fac_us;                 /* 需要的节拍数 */
+ 211              		.loc 1 134 14 view .LVU60
+ 212 0016 4C69     		ldr	r4, [r1, #20]
+ 213              	.LVL11:
+ 135:SYSTEM/delay/delay.c ****     
+ 214              		.loc 1 135 5 is_stmt 1 view .LVU61
+ 135:SYSTEM/delay/delay.c ****     
+ 215              		.loc 1 135 11 is_stmt 0 view .LVU62
+ 216 0018 03FB00FE 		mul	lr, r3, r0
+ 217              	.LVL12:
+ 141:SYSTEM/delay/delay.c ****   
+ 218              		.loc 1 141 5 is_stmt 1 view .LVU63
+ 141:SYSTEM/delay/delay.c ****   
+ 219              		.loc 1 141 10 is_stmt 0 view .LVU64
+ 220 001c 8A69     		ldr	r2, [r1, #24]
+ 221              	.LVL13:
+ 222              	.L18:
+ 143:SYSTEM/delay/delay.c ****     {
+ 223              		.loc 1 143 5 is_stmt 1 view .LVU65
+ 145:SYSTEM/delay/delay.c ****       
+ 224              		.loc 1 145 9 view .LVU66
+ 145:SYSTEM/delay/delay.c ****       
+ 225              		.loc 1 145 14 is_stmt 0 view .LVU67
+ 226 001e 8B69     		ldr	r3, [r1, #24]
+ 227              	.LVL14:
+ 147:SYSTEM/delay/delay.c ****         {
+ 228              		.loc 1 147 9 is_stmt 1 view .LVU68
+ 147:SYSTEM/delay/delay.c ****         {
+ 229              		.loc 1 147 12 is_stmt 0 view .LVU69
+ 230 0020 9342     		cmp	r3, r2
+ 231 0022 FCD0     		beq	.L18
+ 149:SYSTEM/delay/delay.c ****             {
+ 232              		.loc 1 149 13 is_stmt 1 view .LVU70
+ 151:SYSTEM/delay/delay.c ****             }
+ 233              		.loc 1 151 17 view .LVU71
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 9
+
+
+ 155:SYSTEM/delay/delay.c ****             }
+ 234              		.loc 1 155 17 view .LVU72
+ 235 0024 02EB0C00 		add	r0, r2, ip
+ 149:SYSTEM/delay/delay.c ****             {
+ 236              		.loc 1 149 16 is_stmt 0 view .LVU73
+ 237 0028 05D2     		bcs	.L19
+ 151:SYSTEM/delay/delay.c ****             }
+ 238              		.loc 1 151 22 view .LVU74
+ 239 002a A0EB030C 		sub	ip, r0, r3
+ 240              	.LVL15:
+ 241              	.L20:
+ 158:SYSTEM/delay/delay.c ****             
+ 242              		.loc 1 158 13 is_stmt 1 view .LVU75
+ 160:SYSTEM/delay/delay.c ****             {
+ 243              		.loc 1 160 13 view .LVU76
+ 160:SYSTEM/delay/delay.c ****             {
+ 244              		.loc 1 160 16 is_stmt 0 view .LVU77
+ 245 002e E645     		cmp	lr, ip
+ 246 0030 1A46     		mov	r2, r3
+ 247 0032 F4D8     		bhi	.L18
+ 248              	.LVL16:
+ 160:SYSTEM/delay/delay.c ****             {
+ 249              		.loc 1 160 16 view .LVU78
+ 250              	.LBE8:
+ 251              	.LBE12:
+ 192:SYSTEM/delay/delay.c **** }
+ 252              		.loc 1 192 1 view .LVU79
+ 253 0034 10BD     		pop	{r4, pc}
+ 254              	.LVL17:
+ 255              	.L19:
+ 256              		.loc 1 192 1 view .LVU80
+ 257 0036 2044     		add	r0, r0, r4
+ 258              	.LBB13:
+ 259              	.LBB9:
+ 155:SYSTEM/delay/delay.c ****             }
+ 260              		.loc 1 155 22 view .LVU81
+ 261 0038 A0EB030C 		sub	ip, r0, r3
+ 262              	.LVL18:
+ 155:SYSTEM/delay/delay.c ****             }
+ 263              		.loc 1 155 22 view .LVU82
+ 264 003c F7E7     		b	.L20
+ 265              	.L26:
+ 266 003e 00BF     		.align	2
+ 267              	.L25:
+ 268 0040 00000000 		.word	.LANCHOR0
+ 269              	.LBE9:
+ 270              	.LBE13:
+ 271              		.cfi_endproc
+ 272              	.LFE339:
+ 274              		.section	.bss.g_fac_us,"aw",%nobits
+ 275              		.align	2
+ 276              		.set	.LANCHOR0,. + 0
+ 279              	g_fac_us:
+ 280 0000 00000000 		.space	4
+ 281              		.text
+ 282              	.Letext0:
+ 283              		.file 2 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 10
+
+
+ 284              		.file 3 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 285              		.file 4 "../libdaisy_IIT6/libDaisy/Drivers/CMSIS_5/CMSIS/Core/Include/core_cm7.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 delay.c
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:19     .text.delay_init:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:26     .text.delay_init:0000000000000000 delay_init
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:73     .text.delay_init:0000000000000028 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:78     .text.delay_us:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:85     .text.delay_us:0000000000000000 delay_us
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:154    .text.delay_us:0000000000000034 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:159    .text.delay_ms:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:166    .text.delay_ms:0000000000000000 delay_ms
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:268    .text.delay_ms:0000000000000040 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:275    .bss.g_fac_us:0000000000000000 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccAfZeUd.s:279    .bss.g_fac_us:0000000000000000 g_fac_us
+
+NO UNDEFINED SYMBOLS

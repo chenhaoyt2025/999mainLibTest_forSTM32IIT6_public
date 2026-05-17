@@ -1,0 +1,3143 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"touch_iic.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.Touch_IIC_GPIO_Config,"ax",%progbits
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.global	Touch_IIC_GPIO_Config
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	Touch_IIC_GPIO_Config:
+  27              	.LFB337:
+  28              		.file 1 "BSP/LTDC/touch_iic.c"
+   1:BSP/LTDC/touch_iic.c **** /***
+   2:BSP/LTDC/touch_iic.c **** 	**************************************************************************************************
+   3:BSP/LTDC/touch_iic.c **** 	*	@file  	touch_iic.c
+   4:BSP/LTDC/touch_iic.c **** 	*	@version V1.0
+   5:BSP/LTDC/touch_iic.c **** 	*  @date    2021-7-20
+   6:BSP/LTDC/touch_iic.c **** 	*	@author  反客科技
+   7:BSP/LTDC/touch_iic.c **** 	*	@brief   触摸屏IIC接口相关函数
+   8:BSP/LTDC/touch_iic.c ****    ************************************************************************************************
+   9:BSP/LTDC/touch_iic.c ****    *  @description
+  10:BSP/LTDC/touch_iic.c **** 	*
+  11:BSP/LTDC/touch_iic.c **** 	*	实验平台：反客STM32H743IIT6核心板 （型号：FK743M2-IIT6）
+  12:BSP/LTDC/touch_iic.c **** 	*	淘宝地址：https://shop212360197.taobao.com
+  13:BSP/LTDC/touch_iic.c **** 	*	QQ交流群：536665479
+  14:BSP/LTDC/touch_iic.c **** 	*		
+  15:BSP/LTDC/touch_iic.c **** >>>>>	文件说明：
+  16:BSP/LTDC/touch_iic.c **** 	*
+  17:BSP/LTDC/touch_iic.c **** 	*  1.触摸屏相关的IIC函数
+  18:BSP/LTDC/touch_iic.c **** 	* 	2.使用模拟IIC
+  19:BSP/LTDC/touch_iic.c **** 	*	3.通信速度默认为100KHz
+  20:BSP/LTDC/touch_iic.c **** 	*
+  21:BSP/LTDC/touch_iic.c **** 	**************************************************************************************************
+  22:BSP/LTDC/touch_iic.c **** ***/
+  23:BSP/LTDC/touch_iic.c **** 
+  24:BSP/LTDC/touch_iic.c **** #include "touch_iic.h"  
+  25:BSP/LTDC/touch_iic.c **** 
+  26:BSP/LTDC/touch_iic.c **** 
+  27:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+  28:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_GPIO_Config
+  29:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+  30:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 2
+
+
+  31:BSP/LTDC/touch_iic.c **** *	函数功能: 初始化IIC的GPIO口,推挽输出
+  32:BSP/LTDC/touch_iic.c **** *	说    明: 由于IIC通信速度不高，这里的IO口速度配置为2M即可
+  33:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+  34:BSP/LTDC/touch_iic.c **** 
+  35:BSP/LTDC/touch_iic.c **** void Touch_IIC_GPIO_Config (void)
+  36:BSP/LTDC/touch_iic.c **** {
+  29              		.loc 1 36 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 40
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  37:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+  33              		.loc 1 37 2 view .LVU1
+  36:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+  34              		.loc 1 36 1 is_stmt 0 view .LVU2
+  35 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+  36              		.cfi_def_cfa_offset 36
+  37              		.cfi_offset 4, -36
+  38              		.cfi_offset 5, -32
+  39              		.cfi_offset 6, -28
+  40              		.cfi_offset 7, -24
+  41              		.cfi_offset 8, -20
+  42              		.cfi_offset 9, -16
+  43              		.cfi_offset 10, -12
+  44              		.cfi_offset 11, -8
+  45              		.cfi_offset 14, -4
+  46              	.LBB2:
+  38:BSP/LTDC/touch_iic.c **** 	
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL_CLK_ENABLE;	//初始化IO口时钟
+  47              		.loc 1 39 2 view .LVU3
+  48 0004 3B4B     		ldr	r3, .L4
+  49              	.LBE2:
+  36:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+  50              		.loc 1 36 1 view .LVU4
+  51 0006 8BB0     		sub	sp, sp, #44
+  52              		.cfi_def_cfa_offset 80
+  37:BSP/LTDC/touch_iic.c **** 	
+  53              		.loc 1 37 19 view .LVU5
+  54 0008 0025     		movs	r5, #0
+  40:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  41:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+  42:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+  43:BSP/LTDC/touch_iic.c **** 	
+  44:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin 			= Touch_IIC_SCL_PIN;				// SCL引脚
+  45:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode 		= GPIO_MODE_OUTPUT_OD;			// 开漏输出
+  46:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull 		= GPIO_NOPULL;						// 不带上下拉
+  47:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Speed 		= GPIO_SPEED_FREQ_LOW;			// 速度等级 
+  48:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_IIC_SCL_PORT, &GPIO_InitStruct);
+  55              		.loc 1 48 2 view .LVU6
+  56 000a 3B4E     		ldr	r6, .L4+4
+  57 000c 05A9     		add	r1, sp, #20
+  49:BSP/LTDC/touch_iic.c **** 
+  50:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin 			= Touch_IIC_SDA_PIN;				// SDA引脚
+  58              		.loc 1 50 25 view .LVU7
+  59 000e 4FF4807B 		mov	fp, #256
+  37:BSP/LTDC/touch_iic.c **** 	
+  60              		.loc 1 37 19 view .LVU8
+  61 0012 0995     		str	r5, [sp, #36]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 3
+
+
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  62              		.loc 1 39 2 is_stmt 1 view .LVU9
+  63              	.LBB3:
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  64              		.loc 1 39 2 view .LVU10
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  65              		.loc 1 39 2 view .LVU11
+  66              	.LBE3:
+  48:BSP/LTDC/touch_iic.c **** 
+  67              		.loc 1 48 2 is_stmt 0 view .LVU12
+  68 0014 3046     		mov	r0, r6
+  51:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_IIC_SDA_PORT, &GPIO_InitStruct);		
+  52:BSP/LTDC/touch_iic.c **** 
+  53:BSP/LTDC/touch_iic.c **** 	
+  54:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;      			// 推挽输出
+  55:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull  = GPIO_PULLUP;		 					// 上拉	
+  56:BSP/LTDC/touch_iic.c **** 	
+  57:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin = Touch_INT_PIN; 							//	INT
+  58:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);				
+  69              		.loc 1 58 2 view .LVU13
+  70 0016 DFF8E890 		ldr	r9, .L4+12
+  54:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull  = GPIO_PULLUP;		 					// 上拉	
+  71              		.loc 1 54 23 view .LVU14
+  72 001a 0124     		movs	r4, #1
+  57:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);				
+  73              		.loc 1 57 22 view .LVU15
+  74 001c 4FF0080A 		mov	r10, #8
+  59:BSP/LTDC/touch_iic.c **** 
+  60:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin = Touch_RST_PIN; 							//	RST
+  61:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_RST_PORT, &GPIO_InitStruct);					   
+  75              		.loc 1 61 2 view .LVU16
+  76 0020 364F     		ldr	r7, .L4+8
+  60:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_RST_PORT, &GPIO_InitStruct);					   
+  77              		.loc 1 60 22 view .LVU17
+  78 0022 4FF01008 		mov	r8, #16
+  37:BSP/LTDC/touch_iic.c **** 	
+  79              		.loc 1 37 19 view .LVU18
+  80 0026 CDE90755 		strd	r5, r5, [sp, #28]
+  81              	.LBB4:
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  82              		.loc 1 39 2 view .LVU19
+  83 002a D3F8E020 		ldr	r2, [r3, #224]
+  84 002e 42F48072 		orr	r2, r2, #256
+  85 0032 C3F8E020 		str	r2, [r3, #224]
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  86              		.loc 1 39 2 is_stmt 1 view .LVU20
+  87 0036 D3F8E020 		ldr	r2, [r3, #224]
+  88 003a 02F48072 		and	r2, r2, #256
+  89 003e 0192     		str	r2, [sp, #4]
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  90              		.loc 1 39 2 view .LVU21
+  91 0040 019A     		ldr	r2, [sp, #4]
+  92              	.LBE4:
+  39:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA_CLK_ENABLE;
+  93              		.loc 1 39 2 view .LVU22
+  40:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+  94              		.loc 1 40 2 view .LVU23
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 4
+
+
+  95              	.LBB5:
+  40:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+  96              		.loc 1 40 2 view .LVU24
+  40:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+  97              		.loc 1 40 2 view .LVU25
+  98 0042 D3F8E020 		ldr	r2, [r3, #224]
+  99 0046 42F48072 		orr	r2, r2, #256
+ 100 004a C3F8E020 		str	r2, [r3, #224]
+  40:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+ 101              		.loc 1 40 2 view .LVU26
+ 102 004e D3F8E020 		ldr	r2, [r3, #224]
+ 103 0052 02F48072 		and	r2, r2, #256
+ 104 0056 0292     		str	r2, [sp, #8]
+  40:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+ 105              		.loc 1 40 2 view .LVU27
+ 106 0058 029A     		ldr	r2, [sp, #8]
+ 107              	.LBE5:
+  40:BSP/LTDC/touch_iic.c **** 	Touch_INT_CLK_ENABLE;	
+ 108              		.loc 1 40 2 view .LVU28
+  41:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+ 109              		.loc 1 41 2 view .LVU29
+ 110              	.LBB6:
+  41:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+ 111              		.loc 1 41 2 view .LVU30
+  41:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+ 112              		.loc 1 41 2 view .LVU31
+ 113 005a D3F8E020 		ldr	r2, [r3, #224]
+ 114 005e 42F04002 		orr	r2, r2, #64
+ 115 0062 C3F8E020 		str	r2, [r3, #224]
+  41:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+ 116              		.loc 1 41 2 view .LVU32
+ 117 0066 D3F8E020 		ldr	r2, [r3, #224]
+ 118 006a 02F04002 		and	r2, r2, #64
+ 119 006e 0392     		str	r2, [sp, #12]
+  41:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+ 120              		.loc 1 41 2 view .LVU33
+ 121 0070 039A     		ldr	r2, [sp, #12]
+ 122              	.LBE6:
+  41:BSP/LTDC/touch_iic.c **** 	Touch_RST_CLK_ENABLE;	
+ 123              		.loc 1 41 2 view .LVU34
+  42:BSP/LTDC/touch_iic.c **** 	
+ 124              		.loc 1 42 2 view .LVU35
+ 125              	.LBB7:
+  42:BSP/LTDC/touch_iic.c **** 	
+ 126              		.loc 1 42 2 view .LVU36
+  42:BSP/LTDC/touch_iic.c **** 	
+ 127              		.loc 1 42 2 view .LVU37
+ 128 0072 D3F8E020 		ldr	r2, [r3, #224]
+ 129 0076 42F08002 		orr	r2, r2, #128
+ 130 007a C3F8E020 		str	r2, [r3, #224]
+  42:BSP/LTDC/touch_iic.c **** 	
+ 131              		.loc 1 42 2 view .LVU38
+ 132 007e D3F8E030 		ldr	r3, [r3, #224]
+ 133 0082 03F08003 		and	r3, r3, #128
+ 134 0086 0493     		str	r3, [sp, #16]
+  42:BSP/LTDC/touch_iic.c **** 	
+ 135              		.loc 1 42 2 view .LVU39
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 5
+
+
+ 136              	.LBE7:
+  44:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode 		= GPIO_MODE_OUTPUT_OD;			// 开漏输出
+ 137              		.loc 1 44 25 is_stmt 0 view .LVU40
+ 138 0088 4FF40063 		mov	r3, #2048
+ 139              	.LBB8:
+  42:BSP/LTDC/touch_iic.c **** 	
+ 140              		.loc 1 42 2 view .LVU41
+ 141 008c 049A     		ldr	r2, [sp, #16]
+ 142              	.LBE8:
+  42:BSP/LTDC/touch_iic.c **** 	
+ 143              		.loc 1 42 2 is_stmt 1 view .LVU42
+  44:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode 		= GPIO_MODE_OUTPUT_OD;			// 开漏输出
+ 144              		.loc 1 44 2 view .LVU43
+  45:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull 		= GPIO_NOPULL;						// 不带上下拉
+ 145              		.loc 1 45 2 view .LVU44
+  45:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull 		= GPIO_NOPULL;						// 不带上下拉
+ 146              		.loc 1 45 25 is_stmt 0 view .LVU45
+ 147 008e 1122     		movs	r2, #17
+  44:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode 		= GPIO_MODE_OUTPUT_OD;			// 开漏输出
+ 148              		.loc 1 44 25 view .LVU46
+ 149 0090 0593     		str	r3, [sp, #20]
+  45:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull 		= GPIO_NOPULL;						// 不带上下拉
+ 150              		.loc 1 45 25 view .LVU47
+ 151 0092 0692     		str	r2, [sp, #24]
+  46:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Speed 		= GPIO_SPEED_FREQ_LOW;			// 速度等级 
+ 152              		.loc 1 46 2 is_stmt 1 view .LVU48
+  47:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_IIC_SCL_PORT, &GPIO_InitStruct);
+ 153              		.loc 1 47 2 view .LVU49
+  48:BSP/LTDC/touch_iic.c **** 
+ 154              		.loc 1 48 2 view .LVU50
+ 155 0094 FFF7FEFF 		bl	HAL_GPIO_Init
+ 156              	.LVL0:
+  50:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_IIC_SDA_PORT, &GPIO_InitStruct);		
+ 157              		.loc 1 50 2 view .LVU51
+  51:BSP/LTDC/touch_iic.c **** 
+ 158              		.loc 1 51 2 is_stmt 0 view .LVU52
+ 159 0098 05A9     		add	r1, sp, #20
+ 160 009a 3046     		mov	r0, r6
+  50:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_IIC_SDA_PORT, &GPIO_InitStruct);		
+ 161              		.loc 1 50 25 view .LVU53
+ 162 009c CDF814B0 		str	fp, [sp, #20]
+  51:BSP/LTDC/touch_iic.c **** 
+ 163              		.loc 1 51 2 is_stmt 1 view .LVU54
+ 164 00a0 FFF7FEFF 		bl	HAL_GPIO_Init
+ 165              	.LVL1:
+  54:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull  = GPIO_PULLUP;		 					// 上拉	
+ 166              		.loc 1 54 2 view .LVU55
+  58:BSP/LTDC/touch_iic.c **** 
+ 167              		.loc 1 58 2 is_stmt 0 view .LVU56
+ 168 00a4 05A9     		add	r1, sp, #20
+ 169 00a6 4846     		mov	r0, r9
+  57:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);				
+ 170              		.loc 1 57 22 view .LVU57
+ 171 00a8 CDF814A0 		str	r10, [sp, #20]
+  55:BSP/LTDC/touch_iic.c **** 	
+ 172              		.loc 1 55 24 view .LVU58
+ 173 00ac CDE90644 		strd	r4, r4, [sp, #24]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 6
+
+
+  57:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);				
+ 174              		.loc 1 57 2 is_stmt 1 view .LVU59
+  58:BSP/LTDC/touch_iic.c **** 
+ 175              		.loc 1 58 2 view .LVU60
+ 176 00b0 FFF7FEFF 		bl	HAL_GPIO_Init
+ 177              	.LVL2:
+  60:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_RST_PORT, &GPIO_InitStruct);					   
+ 178              		.loc 1 60 2 view .LVU61
+ 179              		.loc 1 61 2 is_stmt 0 view .LVU62
+ 180 00b4 05A9     		add	r1, sp, #20
+ 181 00b6 3846     		mov	r0, r7
+  60:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_RST_PORT, &GPIO_InitStruct);					   
+ 182              		.loc 1 60 22 view .LVU63
+ 183 00b8 CDF81480 		str	r8, [sp, #20]
+ 184              		.loc 1 61 2 is_stmt 1 view .LVU64
+ 185 00bc FFF7FEFF 		bl	HAL_GPIO_Init
+ 186              	.LVL3:
+  62:BSP/LTDC/touch_iic.c **** 
+  63:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_WritePin(Touch_IIC_SCL_PORT, Touch_IIC_SCL_PIN, GPIO_PIN_SET);		// SCL输出高电平
+ 187              		.loc 1 63 2 view .LVU65
+ 188 00c0 4FF40063 		mov	r3, #2048
+ 189 00c4 2246     		mov	r2, r4
+ 190 00c6 3046     		mov	r0, r6
+ 191 00c8 1946     		mov	r1, r3
+ 192 00ca FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 193              	.LVL4:
+  64:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_WritePin(Touch_IIC_SDA_PORT, Touch_IIC_SDA_PIN, GPIO_PIN_SET);    // SDA输出高电平
+ 194              		.loc 1 64 2 view .LVU66
+ 195 00ce 2246     		mov	r2, r4
+ 196 00d0 5946     		mov	r1, fp
+ 197 00d2 3046     		mov	r0, r6
+ 198 00d4 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 199              	.LVL5:
+  65:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_WritePin(Touch_INT_PORT, 	  Touch_INT_PIN,     GPIO_PIN_RESET);  // INT输出低电平
+ 200              		.loc 1 65 2 view .LVU67
+ 201 00d8 2A46     		mov	r2, r5
+ 202 00da 5146     		mov	r1, r10
+ 203 00dc 4846     		mov	r0, r9
+ 204 00de FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 205              	.LVL6:
+  66:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_WritePin(Touch_RST_PORT,     Touch_RST_PIN,     GPIO_PIN_SET);    // RST输出高电平
+ 206              		.loc 1 66 2 view .LVU68
+ 207 00e2 2246     		mov	r2, r4
+ 208 00e4 4146     		mov	r1, r8
+ 209 00e6 3846     		mov	r0, r7
+ 210 00e8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 211              	.LVL7:
+  67:BSP/LTDC/touch_iic.c **** 
+  68:BSP/LTDC/touch_iic.c **** }
+ 212              		.loc 1 68 1 is_stmt 0 view .LVU69
+ 213 00ec 0BB0     		add	sp, sp, #44
+ 214              		.cfi_def_cfa_offset 36
+ 215              		@ sp needed
+ 216 00ee BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 217              	.L5:
+ 218 00f2 00BF     		.align	2
+ 219              	.L4:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 7
+
+
+ 220 00f4 00440258 		.word	1476543488
+ 221 00f8 00200258 		.word	1476534272
+ 222 00fc 001C0258 		.word	1476533248
+ 223 0100 00180258 		.word	1476532224
+ 224              		.cfi_endproc
+ 225              	.LFE337:
+ 227              		.section	.text.Touch_IIC_Delay,"ax",%progbits
+ 228              		.align	1
+ 229              		.p2align 2,,3
+ 230              		.global	Touch_IIC_Delay
+ 231              		.syntax unified
+ 232              		.thumb
+ 233              		.thumb_func
+ 235              	Touch_IIC_Delay:
+ 236              	.LVL8:
+ 237              	.LFB338:
+  69:BSP/LTDC/touch_iic.c **** 
+  70:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+  71:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_Delay
+  72:BSP/LTDC/touch_iic.c **** *	入口参数: a - 延时时间
+  73:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+  74:BSP/LTDC/touch_iic.c **** *	函数功能: 简单延时函数
+  75:BSP/LTDC/touch_iic.c **** *	说    明: 为了移植的简便性且对延时精度要求不高，所以不需要使用定时器做延时
+  76:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+  77:BSP/LTDC/touch_iic.c **** 
+  78:BSP/LTDC/touch_iic.c **** void Touch_IIC_Delay(uint32_t a)
+  79:BSP/LTDC/touch_iic.c **** {
+ 238              		.loc 1 79 1 is_stmt 1 view -0
+ 239              		.cfi_startproc
+ 240              		@ args = 0, pretend = 0, frame = 8
+ 241              		@ frame_needed = 0, uses_anonymous_args = 0
+ 242              		@ link register save eliminated.
+  80:BSP/LTDC/touch_iic.c **** 	volatile uint16_t i;
+ 243              		.loc 1 80 2 view .LVU71
+  81:BSP/LTDC/touch_iic.c **** 	while (a --)				
+ 244              		.loc 1 81 2 view .LVU72
+ 245              		.loc 1 81 8 view .LVU73
+ 246              		.loc 1 81 8 is_stmt 0 view .LVU74
+ 247 0000 C0B1     		cbz	r0, .L17
+  79:BSP/LTDC/touch_iic.c **** 	volatile uint16_t i;
+ 248              		.loc 1 79 1 view .LVU75
+ 249 0002 82B0     		sub	sp, sp, #8
+ 250              		.cfi_def_cfa_offset 8
+ 251 0004 421E     		subs	r2, r0, #1
+ 252              	.LVL9:
+  82:BSP/LTDC/touch_iic.c **** 	{
+  83:BSP/LTDC/touch_iic.c **** 		for (i = 0; i < 8; i++);
+ 253              		.loc 1 83 10 view .LVU76
+ 254 0006 0021     		movs	r1, #0
+ 255              	.LVL10:
+ 256              	.L10:
+ 257              		.loc 1 83 3 is_stmt 1 view .LVU77
+ 258              		.loc 1 83 10 is_stmt 0 view .LVU78
+ 259 0008 ADF80610 		strh	r1, [sp, #6]	@ movhi
+ 260              		.loc 1 83 15 is_stmt 1 view .LVU79
+ 261              		.loc 1 83 17 is_stmt 0 view .LVU80
+ 262 000c BDF80630 		ldrh	r3, [sp, #6]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 8
+
+
+ 263 0010 9BB2     		uxth	r3, r3
+ 264              		.loc 1 83 3 view .LVU81
+ 265 0012 072B     		cmp	r3, #7
+ 266 0014 0AD8     		bhi	.L8
+ 267              	.L9:
+ 268              		.loc 1 83 26 is_stmt 1 discriminator 3 view .LVU82
+ 269              		.loc 1 83 22 discriminator 3 view .LVU83
+ 270              		.loc 1 83 23 is_stmt 0 discriminator 3 view .LVU84
+ 271 0016 BDF80630 		ldrh	r3, [sp, #6]
+ 272 001a 0133     		adds	r3, r3, #1
+ 273 001c 9BB2     		uxth	r3, r3
+ 274 001e ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 275              		.loc 1 83 15 is_stmt 1 discriminator 3 view .LVU85
+ 276              		.loc 1 83 17 is_stmt 0 discriminator 3 view .LVU86
+ 277 0022 BDF80630 		ldrh	r3, [sp, #6]
+ 278 0026 9BB2     		uxth	r3, r3
+ 279              		.loc 1 83 3 discriminator 3 view .LVU87
+ 280 0028 072B     		cmp	r3, #7
+ 281 002a F4D9     		bls	.L9
+ 282              	.L8:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 283              		.loc 1 81 8 is_stmt 1 view .LVU88
+ 284 002c 013A     		subs	r2, r2, #1
+ 285              	.LVL11:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 286              		.loc 1 81 8 is_stmt 0 view .LVU89
+ 287 002e EBD2     		bcs	.L10
+  84:BSP/LTDC/touch_iic.c **** 	}
+  85:BSP/LTDC/touch_iic.c **** }
+ 288              		.loc 1 85 1 view .LVU90
+ 289 0030 02B0     		add	sp, sp, #8
+ 290              		.cfi_def_cfa_offset 0
+ 291              		@ sp needed
+ 292 0032 7047     		bx	lr
+ 293              	.LVL12:
+ 294              	.L17:
+ 295              		.loc 1 85 1 view .LVU91
+ 296 0034 7047     		bx	lr
+ 297              		.cfi_endproc
+ 298              	.LFE338:
+ 300 0036 00BF     		.section	.text.Touch_INT_Out,"ax",%progbits
+ 301              		.align	1
+ 302              		.p2align 2,,3
+ 303              		.global	Touch_INT_Out
+ 304              		.syntax unified
+ 305              		.thumb
+ 306              		.thumb_func
+ 308              	Touch_INT_Out:
+ 309              	.LFB339:
+  86:BSP/LTDC/touch_iic.c **** 
+  87:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+  88:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_INT_Out
+  89:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+  90:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+  91:BSP/LTDC/touch_iic.c **** *	函数功能: 配置IIC的INT脚为输出模式
+  92:BSP/LTDC/touch_iic.c **** *	说    明: 无
+  93:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 9
+
+
+  94:BSP/LTDC/touch_iic.c **** 
+  95:BSP/LTDC/touch_iic.c **** void Touch_INT_Out(void)
+  96:BSP/LTDC/touch_iic.c **** {
+ 310              		.loc 1 96 1 is_stmt 1 view -0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 24
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+  97:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 314              		.loc 1 97 2 view .LVU93
+  96:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 315              		.loc 1 96 1 is_stmt 0 view .LVU94
+ 316 0000 10B5     		push	{r4, lr}
+ 317              		.cfi_def_cfa_offset 8
+ 318              		.cfi_offset 4, -8
+ 319              		.cfi_offset 14, -4
+ 320 0002 86B0     		sub	sp, sp, #24
+ 321              		.cfi_def_cfa_offset 32
+ 322              		.loc 1 97 19 view .LVU95
+ 323 0004 0022     		movs	r2, #0
+  98:BSP/LTDC/touch_iic.c **** 	
+  99:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;      	// 输出模式
+ 324              		.loc 1 99 24 view .LVU96
+ 325 0006 0123     		movs	r3, #1
+ 100:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull  = GPIO_PULLUP;		 			// 上拉	
+ 101:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ 102:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin   = Touch_INT_PIN ;  				// 初始化 INT 引脚
+ 326              		.loc 1 102 24 view .LVU97
+ 327 0008 0824     		movs	r4, #8
+ 103:BSP/LTDC/touch_iic.c **** 	
+ 104:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);		
+ 328              		.loc 1 104 2 view .LVU98
+ 329 000a 01A9     		add	r1, sp, #4
+ 330 000c 0448     		ldr	r0, .L22
+ 102:BSP/LTDC/touch_iic.c **** 	
+ 331              		.loc 1 102 24 view .LVU99
+ 332 000e 0194     		str	r4, [sp, #4]
+  97:BSP/LTDC/touch_iic.c **** 	
+ 333              		.loc 1 97 19 view .LVU100
+ 334 0010 CDE90422 		strd	r2, r2, [sp, #16]
+ 100:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ 335              		.loc 1 100 24 view .LVU101
+ 336 0014 CDE90233 		strd	r3, r3, [sp, #8]
+ 101:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin   = Touch_INT_PIN ;  				// 初始化 INT 引脚
+ 337              		.loc 1 101 2 is_stmt 1 view .LVU102
+ 102:BSP/LTDC/touch_iic.c **** 	
+ 338              		.loc 1 102 2 view .LVU103
+ 339              		.loc 1 104 2 view .LVU104
+ 340 0018 FFF7FEFF 		bl	HAL_GPIO_Init
+ 341              	.LVL13:
+ 105:BSP/LTDC/touch_iic.c **** }
+ 342              		.loc 1 105 1 is_stmt 0 view .LVU105
+ 343 001c 06B0     		add	sp, sp, #24
+ 344              		.cfi_def_cfa_offset 8
+ 345              		@ sp needed
+ 346 001e 10BD     		pop	{r4, pc}
+ 347              	.L23:
+ 348              		.align	2
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 10
+
+
+ 349              	.L22:
+ 350 0020 00180258 		.word	1476532224
+ 351              		.cfi_endproc
+ 352              	.LFE339:
+ 354              		.section	.text.Touch_INT_In,"ax",%progbits
+ 355              		.align	1
+ 356              		.p2align 2,,3
+ 357              		.global	Touch_INT_In
+ 358              		.syntax unified
+ 359              		.thumb
+ 360              		.thumb_func
+ 362              	Touch_INT_In:
+ 363              	.LFB340:
+ 106:BSP/LTDC/touch_iic.c **** 
+ 107:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 108:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_INT_In
+ 109:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+ 110:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ 111:BSP/LTDC/touch_iic.c **** *	函数功能: 配置IIC的INT脚为输入模式
+ 112:BSP/LTDC/touch_iic.c **** *	说    明: 无
+ 113:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 114:BSP/LTDC/touch_iic.c **** 
+ 115:BSP/LTDC/touch_iic.c **** void Touch_INT_In(void)
+ 116:BSP/LTDC/touch_iic.c **** {
+ 364              		.loc 1 116 1 is_stmt 1 view -0
+ 365              		.cfi_startproc
+ 366              		@ args = 0, pretend = 0, frame = 24
+ 367              		@ frame_needed = 0, uses_anonymous_args = 0
+ 117:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 368              		.loc 1 117 2 view .LVU107
+ 116:BSP/LTDC/touch_iic.c **** 	GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 369              		.loc 1 116 1 is_stmt 0 view .LVU108
+ 370 0000 00B5     		push	{lr}
+ 371              		.cfi_def_cfa_offset 4
+ 372              		.cfi_offset 14, -4
+ 373 0002 87B0     		sub	sp, sp, #28
+ 374              		.cfi_def_cfa_offset 32
+ 375              		.loc 1 117 19 view .LVU109
+ 376 0004 0023     		movs	r3, #0
+ 118:BSP/LTDC/touch_iic.c **** 	
+ 119:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Mode  = GPIO_MODE_INPUT;      		// 输入模式
+ 120:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull  = GPIO_NOPULL;		 			// 浮空	
+ 121:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ 122:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin   = Touch_INT_PIN ;  				// 初始化 INT 引脚
+ 377              		.loc 1 122 24 view .LVU110
+ 378 0006 0822     		movs	r2, #8
+ 123:BSP/LTDC/touch_iic.c **** 	
+ 124:BSP/LTDC/touch_iic.c **** 	HAL_GPIO_Init(Touch_INT_PORT, &GPIO_InitStruct);		
+ 379              		.loc 1 124 2 view .LVU111
+ 380 0008 0548     		ldr	r0, .L26
+ 381 000a 01A9     		add	r1, sp, #4
+ 117:BSP/LTDC/touch_iic.c **** 	
+ 382              		.loc 1 117 19 view .LVU112
+ 383 000c 0593     		str	r3, [sp, #20]
+ 119:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pull  = GPIO_NOPULL;		 			// 浮空	
+ 384              		.loc 1 119 2 is_stmt 1 view .LVU113
+ 120:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;    	// 速度等级
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 11
+
+
+ 385              		.loc 1 120 2 view .LVU114
+ 121:BSP/LTDC/touch_iic.c **** 	GPIO_InitStruct.Pin   = Touch_INT_PIN ;  				// 初始化 INT 引脚
+ 386              		.loc 1 121 2 view .LVU115
+ 122:BSP/LTDC/touch_iic.c **** 	
+ 387              		.loc 1 122 2 view .LVU116
+ 388              		.loc 1 124 2 view .LVU117
+ 122:BSP/LTDC/touch_iic.c **** 	
+ 389              		.loc 1 122 24 is_stmt 0 view .LVU118
+ 390 000e CDE90123 		strd	r2, r3, [sp, #4]
+ 117:BSP/LTDC/touch_iic.c **** 	
+ 391              		.loc 1 117 19 view .LVU119
+ 392 0012 CDE90333 		strd	r3, r3, [sp, #12]
+ 393              		.loc 1 124 2 view .LVU120
+ 394 0016 FFF7FEFF 		bl	HAL_GPIO_Init
+ 395              	.LVL14:
+ 125:BSP/LTDC/touch_iic.c **** 
+ 126:BSP/LTDC/touch_iic.c **** }
+ 396              		.loc 1 126 1 view .LVU121
+ 397 001a 07B0     		add	sp, sp, #28
+ 398              		.cfi_def_cfa_offset 4
+ 399              		@ sp needed
+ 400 001c 5DF804FB 		ldr	pc, [sp], #4
+ 401              	.L27:
+ 402              		.align	2
+ 403              	.L26:
+ 404 0020 00180258 		.word	1476532224
+ 405              		.cfi_endproc
+ 406              	.LFE340:
+ 408              		.section	.text.Touch_IIC_Start,"ax",%progbits
+ 409              		.align	1
+ 410              		.p2align 2,,3
+ 411              		.global	Touch_IIC_Start
+ 412              		.syntax unified
+ 413              		.thumb
+ 414              		.thumb_func
+ 416              	Touch_IIC_Start:
+ 417              	.LFB341:
+ 127:BSP/LTDC/touch_iic.c **** 
+ 128:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 129:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_Start
+ 130:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+ 131:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ 132:BSP/LTDC/touch_iic.c **** *	函数功能: IIC起始信号
+ 133:BSP/LTDC/touch_iic.c **** *	说    明: 在SCL处于高电平期间，SDA由高到低跳变为起始信号
+ 134:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 135:BSP/LTDC/touch_iic.c **** 
+ 136:BSP/LTDC/touch_iic.c **** void Touch_IIC_Start(void)
+ 137:BSP/LTDC/touch_iic.c **** {
+ 418              		.loc 1 137 1 is_stmt 1 view -0
+ 419              		.cfi_startproc
+ 420              		@ args = 0, pretend = 0, frame = 8
+ 421              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);		
+ 422              		.loc 1 138 2 view .LVU123
+ 423              		.loc 1 138 2 view .LVU124
+ 137:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);		
+ 424              		.loc 1 137 1 is_stmt 0 view .LVU125
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 12
+
+
+ 425 0000 30B5     		push	{r4, r5, lr}
+ 426              		.cfi_def_cfa_offset 12
+ 427              		.cfi_offset 4, -12
+ 428              		.cfi_offset 5, -8
+ 429              		.cfi_offset 14, -4
+ 430              		.loc 1 138 2 view .LVU126
+ 431 0002 0122     		movs	r2, #1
+ 137:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);		
+ 432              		.loc 1 137 1 view .LVU127
+ 433 0004 83B0     		sub	sp, sp, #12
+ 434              		.cfi_def_cfa_offset 24
+ 435              		.loc 1 138 2 view .LVU128
+ 436 0006 4FF48071 		mov	r1, #256
+ 437 000a 2B48     		ldr	r0, .L45
+ 438 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 439              	.LVL15:
+ 139:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(1);
+ 440              		.loc 1 139 2 is_stmt 1 view .LVU129
+ 441              		.loc 1 139 2 view .LVU130
+ 442 0010 0122     		movs	r2, #1
+ 443 0012 4FF40061 		mov	r1, #2048
+ 444 0016 2848     		ldr	r0, .L45
+ 445 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 446              	.LVL16:
+ 140:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 447              		.loc 1 140 2 view .LVU131
+ 448              	.LBB15:
+ 449              	.LBI15:
+  78:BSP/LTDC/touch_iic.c **** {
+ 450              		.loc 1 78 6 view .LVU132
+ 451              	.LBB16:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 452              		.loc 1 81 8 view .LVU133
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 453              		.loc 1 81 8 is_stmt 0 view .LVU134
+ 454              	.LBE16:
+ 455              	.LBE15:
+ 139:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 456              		.loc 1 139 2 view .LVU135
+ 457 001c 1425     		movs	r5, #20
+ 458              	.LBB18:
+ 459              	.LBB17:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 460              		.loc 1 83 10 view .LVU136
+ 461 001e 0022     		movs	r2, #0
+ 462              	.LVL17:
+ 463              	.L31:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 464              		.loc 1 83 3 is_stmt 1 view .LVU137
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 465              		.loc 1 83 10 is_stmt 0 view .LVU138
+ 466 0020 ADF80620 		strh	r2, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 467              		.loc 1 83 15 is_stmt 1 view .LVU139
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 468              		.loc 1 83 17 is_stmt 0 view .LVU140
+ 469 0024 BDF80630 		ldrh	r3, [sp, #6]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 13
+
+
+ 470 0028 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 471              		.loc 1 83 3 view .LVU141
+ 472 002a 072B     		cmp	r3, #7
+ 473 002c 0AD8     		bhi	.L29
+ 474              	.L30:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 475              		.loc 1 83 26 is_stmt 1 view .LVU142
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 476              		.loc 1 83 22 view .LVU143
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 477              		.loc 1 83 23 is_stmt 0 view .LVU144
+ 478 002e BDF80630 		ldrh	r3, [sp, #6]
+ 479 0032 0133     		adds	r3, r3, #1
+ 480 0034 9BB2     		uxth	r3, r3
+ 481 0036 ADF80630 		strh	r3, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 482              		.loc 1 83 15 is_stmt 1 view .LVU145
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 483              		.loc 1 83 17 is_stmt 0 view .LVU146
+ 484 003a BDF80630 		ldrh	r3, [sp, #6]
+ 485 003e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 486              		.loc 1 83 3 view .LVU147
+ 487 0040 072B     		cmp	r3, #7
+ 488 0042 F4D9     		bls	.L30
+ 489              	.L29:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 490              		.loc 1 81 8 is_stmt 1 view .LVU148
+ 491              	.LVL18:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 492              		.loc 1 81 8 is_stmt 0 view .LVU149
+ 493 0044 013D     		subs	r5, r5, #1
+ 494              	.LVL19:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 495              		.loc 1 81 8 view .LVU150
+ 496 0046 EBD1     		bne	.L31
+ 497              	.LVL20:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 498              		.loc 1 81 8 view .LVU151
+ 499              	.LBE17:
+ 500              	.LBE18:
+ 141:BSP/LTDC/touch_iic.c **** 	
+ 142:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(0);
+ 501              		.loc 1 142 2 is_stmt 1 view .LVU152
+ 502              		.loc 1 142 2 view .LVU153
+ 503 0048 2A46     		mov	r2, r5
+ 504 004a 4FF48071 		mov	r1, #256
+ 505 004e 1A48     		ldr	r0, .L45
+ 506 0050 1424     		movs	r4, #20
+ 507 0052 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 508              	.LVL21:
+ 143:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 509              		.loc 1 143 2 view .LVU154
+ 510              	.LBB19:
+ 511              	.LBI19:
+  78:BSP/LTDC/touch_iic.c **** {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 14
+
+
+ 512              		.loc 1 78 6 view .LVU155
+ 513              	.LBB20:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 514              		.loc 1 81 8 view .LVU156
+ 515              	.L34:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 516              		.loc 1 83 3 view .LVU157
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 517              		.loc 1 83 10 is_stmt 0 view .LVU158
+ 518 0056 ADF80450 		strh	r5, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 519              		.loc 1 83 15 is_stmt 1 view .LVU159
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 520              		.loc 1 83 17 is_stmt 0 view .LVU160
+ 521 005a BDF80430 		ldrh	r3, [sp, #4]
+ 522 005e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 523              		.loc 1 83 3 view .LVU161
+ 524 0060 072B     		cmp	r3, #7
+ 525 0062 0AD8     		bhi	.L32
+ 526              	.L33:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 527              		.loc 1 83 26 is_stmt 1 view .LVU162
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 528              		.loc 1 83 22 view .LVU163
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 529              		.loc 1 83 23 is_stmt 0 view .LVU164
+ 530 0064 BDF80430 		ldrh	r3, [sp, #4]
+ 531 0068 0133     		adds	r3, r3, #1
+ 532 006a 9BB2     		uxth	r3, r3
+ 533 006c ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 534              		.loc 1 83 15 is_stmt 1 view .LVU165
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 535              		.loc 1 83 17 is_stmt 0 view .LVU166
+ 536 0070 BDF80430 		ldrh	r3, [sp, #4]
+ 537 0074 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 538              		.loc 1 83 3 view .LVU167
+ 539 0076 072B     		cmp	r3, #7
+ 540 0078 F4D9     		bls	.L33
+ 541              	.L32:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 542              		.loc 1 81 8 is_stmt 1 view .LVU168
+ 543              	.LVL22:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 544              		.loc 1 81 8 is_stmt 0 view .LVU169
+ 545 007a 013C     		subs	r4, r4, #1
+ 546              	.LVL23:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 547              		.loc 1 81 8 view .LVU170
+ 548 007c EBD1     		bne	.L34
+ 549              	.LVL24:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 550              		.loc 1 81 8 view .LVU171
+ 551              	.LBE20:
+ 552              	.LBE19:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 15
+
+
+ 144:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 553              		.loc 1 144 2 is_stmt 1 view .LVU172
+ 554              		.loc 1 144 2 view .LVU173
+ 555 007e 2246     		mov	r2, r4
+ 556 0080 4FF40061 		mov	r1, #2048
+ 557 0084 0C48     		ldr	r0, .L45
+ 558 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 559              	.LVL25:
+ 145:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 560              		.loc 1 145 2 view .LVU174
+ 561              	.LBB21:
+ 562              	.LBI21:
+  78:BSP/LTDC/touch_iic.c **** {
+ 563              		.loc 1 78 6 view .LVU175
+ 564              	.LBB22:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 565              		.loc 1 81 8 view .LVU176
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 566              		.loc 1 81 8 is_stmt 0 view .LVU177
+ 567              	.LBE22:
+ 568              	.LBE21:
+ 144:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 569              		.loc 1 144 2 view .LVU178
+ 570 008a 1422     		movs	r2, #20
+ 571              	.LVL26:
+ 572              	.L37:
+ 573              	.LBB24:
+ 574              	.LBB23:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 575              		.loc 1 83 3 is_stmt 1 view .LVU179
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 576              		.loc 1 83 10 is_stmt 0 view .LVU180
+ 577 008c ADF80240 		strh	r4, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 578              		.loc 1 83 15 is_stmt 1 view .LVU181
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 579              		.loc 1 83 17 is_stmt 0 view .LVU182
+ 580 0090 BDF80230 		ldrh	r3, [sp, #2]
+ 581 0094 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 582              		.loc 1 83 3 view .LVU183
+ 583 0096 072B     		cmp	r3, #7
+ 584 0098 0AD8     		bhi	.L35
+ 585              	.L36:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 586              		.loc 1 83 26 is_stmt 1 view .LVU184
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 587              		.loc 1 83 22 view .LVU185
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 588              		.loc 1 83 23 is_stmt 0 view .LVU186
+ 589 009a BDF80230 		ldrh	r3, [sp, #2]
+ 590 009e 0133     		adds	r3, r3, #1
+ 591 00a0 9BB2     		uxth	r3, r3
+ 592 00a2 ADF80230 		strh	r3, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 593              		.loc 1 83 15 is_stmt 1 view .LVU187
+  83:BSP/LTDC/touch_iic.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 16
+
+
+ 594              		.loc 1 83 17 is_stmt 0 view .LVU188
+ 595 00a6 BDF80230 		ldrh	r3, [sp, #2]
+ 596 00aa 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 597              		.loc 1 83 3 view .LVU189
+ 598 00ac 072B     		cmp	r3, #7
+ 599 00ae F4D9     		bls	.L36
+ 600              	.L35:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 601              		.loc 1 81 8 is_stmt 1 view .LVU190
+ 602              	.LVL27:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 603              		.loc 1 81 8 is_stmt 0 view .LVU191
+ 604 00b0 013A     		subs	r2, r2, #1
+ 605              	.LVL28:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 606              		.loc 1 81 8 view .LVU192
+ 607 00b2 EBD1     		bne	.L37
+ 608              	.LBE23:
+ 609              	.LBE24:
+ 146:BSP/LTDC/touch_iic.c **** }
+ 610              		.loc 1 146 1 view .LVU193
+ 611 00b4 03B0     		add	sp, sp, #12
+ 612              		.cfi_def_cfa_offset 12
+ 613              		@ sp needed
+ 614 00b6 30BD     		pop	{r4, r5, pc}
+ 615              	.L46:
+ 616              		.align	2
+ 617              	.L45:
+ 618 00b8 00200258 		.word	1476534272
+ 619              		.cfi_endproc
+ 620              	.LFE341:
+ 622              		.section	.text.Touch_IIC_Stop,"ax",%progbits
+ 623              		.align	1
+ 624              		.p2align 2,,3
+ 625              		.global	Touch_IIC_Stop
+ 626              		.syntax unified
+ 627              		.thumb
+ 628              		.thumb_func
+ 630              	Touch_IIC_Stop:
+ 631              	.LFB342:
+ 147:BSP/LTDC/touch_iic.c **** 
+ 148:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 149:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_Stop
+ 150:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+ 151:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ 152:BSP/LTDC/touch_iic.c **** *	函数功能: IIC停止信号
+ 153:BSP/LTDC/touch_iic.c **** *	说    明: 在SCL处于高电平期间，SDA由低到高跳变为起始信号
+ 154:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 155:BSP/LTDC/touch_iic.c **** 
+ 156:BSP/LTDC/touch_iic.c **** void Touch_IIC_Stop(void)
+ 157:BSP/LTDC/touch_iic.c **** {
+ 632              		.loc 1 157 1 is_stmt 1 view -0
+ 633              		.cfi_startproc
+ 634              		@ args = 0, pretend = 0, frame = 8
+ 635              		@ frame_needed = 0, uses_anonymous_args = 0
+ 158:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 17
+
+
+ 636              		.loc 1 158 2 view .LVU195
+ 637              		.loc 1 158 2 view .LVU196
+ 157:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 638              		.loc 1 157 1 is_stmt 0 view .LVU197
+ 639 0000 30B5     		push	{r4, r5, lr}
+ 640              		.cfi_def_cfa_offset 12
+ 641              		.cfi_offset 4, -12
+ 642              		.cfi_offset 5, -8
+ 643              		.cfi_offset 14, -4
+ 644              		.loc 1 158 2 view .LVU198
+ 645 0002 0022     		movs	r2, #0
+ 157:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 646              		.loc 1 157 1 view .LVU199
+ 647 0004 83B0     		sub	sp, sp, #12
+ 648              		.cfi_def_cfa_offset 24
+ 649              		.loc 1 158 2 view .LVU200
+ 650 0006 4FF40061 		mov	r1, #2048
+ 651 000a 3648     		ldr	r0, .L69
+ 652 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 653              	.LVL29:
+ 159:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 654              		.loc 1 159 2 is_stmt 1 view .LVU201
+ 655              	.LBB33:
+ 656              	.LBI33:
+  78:BSP/LTDC/touch_iic.c **** {
+ 657              		.loc 1 78 6 view .LVU202
+ 658              	.LBB34:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 659              		.loc 1 81 8 view .LVU203
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 660              		.loc 1 81 8 is_stmt 0 view .LVU204
+ 661              	.LBE34:
+ 662              	.LBE33:
+ 158:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 663              		.loc 1 158 2 view .LVU205
+ 664 0010 1424     		movs	r4, #20
+ 665              	.LBB36:
+ 666              	.LBB35:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 667              		.loc 1 83 10 view .LVU206
+ 668 0012 0022     		movs	r2, #0
+ 669              	.LVL30:
+ 670              	.L50:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 671              		.loc 1 83 3 is_stmt 1 view .LVU207
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 672              		.loc 1 83 10 is_stmt 0 view .LVU208
+ 673 0014 ADF80620 		strh	r2, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 674              		.loc 1 83 15 is_stmt 1 view .LVU209
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 675              		.loc 1 83 17 is_stmt 0 view .LVU210
+ 676 0018 BDF80630 		ldrh	r3, [sp, #6]
+ 677 001c 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 678              		.loc 1 83 3 view .LVU211
+ 679 001e 072B     		cmp	r3, #7
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 18
+
+
+ 680 0020 0AD8     		bhi	.L48
+ 681              	.L49:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 682              		.loc 1 83 26 is_stmt 1 view .LVU212
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 683              		.loc 1 83 22 view .LVU213
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 684              		.loc 1 83 23 is_stmt 0 view .LVU214
+ 685 0022 BDF80630 		ldrh	r3, [sp, #6]
+ 686 0026 0133     		adds	r3, r3, #1
+ 687 0028 9BB2     		uxth	r3, r3
+ 688 002a ADF80630 		strh	r3, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 689              		.loc 1 83 15 is_stmt 1 view .LVU215
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 690              		.loc 1 83 17 is_stmt 0 view .LVU216
+ 691 002e BDF80630 		ldrh	r3, [sp, #6]
+ 692 0032 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 693              		.loc 1 83 3 view .LVU217
+ 694 0034 072B     		cmp	r3, #7
+ 695 0036 F4D9     		bls	.L49
+ 696              	.L48:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 697              		.loc 1 81 8 is_stmt 1 view .LVU218
+ 698              	.LVL31:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 699              		.loc 1 81 8 is_stmt 0 view .LVU219
+ 700 0038 013C     		subs	r4, r4, #1
+ 701              	.LVL32:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 702              		.loc 1 81 8 view .LVU220
+ 703 003a EBD1     		bne	.L50
+ 704              	.LVL33:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 705              		.loc 1 81 8 view .LVU221
+ 706              	.LBE35:
+ 707              	.LBE36:
+ 160:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(0);
+ 708              		.loc 1 160 2 is_stmt 1 view .LVU222
+ 709              		.loc 1 160 2 view .LVU223
+ 710 003c 2246     		mov	r2, r4
+ 711 003e 4FF48071 		mov	r1, #256
+ 712 0042 2848     		ldr	r0, .L69
+ 713 0044 1425     		movs	r5, #20
+ 714 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 715              	.LVL34:
+ 161:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 716              		.loc 1 161 2 view .LVU224
+ 717              	.LBB37:
+ 718              	.LBI37:
+  78:BSP/LTDC/touch_iic.c **** {
+ 719              		.loc 1 78 6 view .LVU225
+ 720              	.LBB38:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 721              		.loc 1 81 8 view .LVU226
+ 722              	.L53:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 19
+
+
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 723              		.loc 1 83 3 view .LVU227
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 724              		.loc 1 83 10 is_stmt 0 view .LVU228
+ 725 004a ADF80440 		strh	r4, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 726              		.loc 1 83 15 is_stmt 1 view .LVU229
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 727              		.loc 1 83 17 is_stmt 0 view .LVU230
+ 728 004e BDF80430 		ldrh	r3, [sp, #4]
+ 729 0052 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 730              		.loc 1 83 3 view .LVU231
+ 731 0054 072B     		cmp	r3, #7
+ 732 0056 0AD8     		bhi	.L51
+ 733              	.L52:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 734              		.loc 1 83 26 is_stmt 1 view .LVU232
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 735              		.loc 1 83 22 view .LVU233
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 736              		.loc 1 83 23 is_stmt 0 view .LVU234
+ 737 0058 BDF80430 		ldrh	r3, [sp, #4]
+ 738 005c 0133     		adds	r3, r3, #1
+ 739 005e 9BB2     		uxth	r3, r3
+ 740 0060 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 741              		.loc 1 83 15 is_stmt 1 view .LVU235
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 742              		.loc 1 83 17 is_stmt 0 view .LVU236
+ 743 0064 BDF80430 		ldrh	r3, [sp, #4]
+ 744 0068 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 745              		.loc 1 83 3 view .LVU237
+ 746 006a 072B     		cmp	r3, #7
+ 747 006c F4D9     		bls	.L52
+ 748              	.L51:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 749              		.loc 1 81 8 is_stmt 1 view .LVU238
+ 750              	.LVL35:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 751              		.loc 1 81 8 is_stmt 0 view .LVU239
+ 752 006e 013D     		subs	r5, r5, #1
+ 753              	.LVL36:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 754              		.loc 1 81 8 view .LVU240
+ 755 0070 EBD1     		bne	.L53
+ 756              	.LVL37:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 757              		.loc 1 81 8 view .LVU241
+ 758              	.LBE38:
+ 759              	.LBE37:
+ 162:BSP/LTDC/touch_iic.c **** 	
+ 163:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(1);
+ 760              		.loc 1 163 2 is_stmt 1 view .LVU242
+ 761              		.loc 1 163 2 view .LVU243
+ 762 0072 0122     		movs	r2, #1
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 20
+
+
+ 763 0074 4FF40061 		mov	r1, #2048
+ 764 0078 1A48     		ldr	r0, .L69
+ 765 007a 1424     		movs	r4, #20
+ 766 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 767              	.LVL38:
+ 164:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 768              		.loc 1 164 2 view .LVU244
+ 769              	.LBB39:
+ 770              	.LBI39:
+  78:BSP/LTDC/touch_iic.c **** {
+ 771              		.loc 1 78 6 view .LVU245
+ 772              	.LBB40:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 773              		.loc 1 81 8 view .LVU246
+ 774              	.L56:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 775              		.loc 1 83 3 view .LVU247
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 776              		.loc 1 83 10 is_stmt 0 view .LVU248
+ 777 0080 ADF80250 		strh	r5, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 778              		.loc 1 83 15 is_stmt 1 view .LVU249
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 779              		.loc 1 83 17 is_stmt 0 view .LVU250
+ 780 0084 BDF80230 		ldrh	r3, [sp, #2]
+ 781 0088 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 782              		.loc 1 83 3 view .LVU251
+ 783 008a 072B     		cmp	r3, #7
+ 784 008c 0AD8     		bhi	.L54
+ 785              	.L55:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 786              		.loc 1 83 26 is_stmt 1 view .LVU252
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 787              		.loc 1 83 22 view .LVU253
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 788              		.loc 1 83 23 is_stmt 0 view .LVU254
+ 789 008e BDF80230 		ldrh	r3, [sp, #2]
+ 790 0092 0133     		adds	r3, r3, #1
+ 791 0094 9BB2     		uxth	r3, r3
+ 792 0096 ADF80230 		strh	r3, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 793              		.loc 1 83 15 is_stmt 1 view .LVU255
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 794              		.loc 1 83 17 is_stmt 0 view .LVU256
+ 795 009a BDF80230 		ldrh	r3, [sp, #2]
+ 796 009e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 797              		.loc 1 83 3 view .LVU257
+ 798 00a0 072B     		cmp	r3, #7
+ 799 00a2 F4D9     		bls	.L55
+ 800              	.L54:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 801              		.loc 1 81 8 is_stmt 1 view .LVU258
+ 802              	.LVL39:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 803              		.loc 1 81 8 is_stmt 0 view .LVU259
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 21
+
+
+ 804 00a4 013C     		subs	r4, r4, #1
+ 805              	.LVL40:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 806              		.loc 1 81 8 view .LVU260
+ 807 00a6 EBD1     		bne	.L56
+ 808              	.LVL41:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 809              		.loc 1 81 8 view .LVU261
+ 810              	.LBE40:
+ 811              	.LBE39:
+ 165:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);
+ 812              		.loc 1 165 2 is_stmt 1 view .LVU262
+ 813              		.loc 1 165 2 view .LVU263
+ 814 00a8 0122     		movs	r2, #1
+ 815 00aa 4FF48071 		mov	r1, #256
+ 816 00ae 0D48     		ldr	r0, .L69
+ 817 00b0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 818              	.LVL42:
+ 166:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 819              		.loc 1 166 2 view .LVU264
+ 820              	.LBB41:
+ 821              	.LBI41:
+  78:BSP/LTDC/touch_iic.c **** {
+ 822              		.loc 1 78 6 view .LVU265
+ 823              	.LBB42:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 824              		.loc 1 81 8 view .LVU266
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 825              		.loc 1 81 8 is_stmt 0 view .LVU267
+ 826              	.LBE42:
+ 827              	.LBE41:
+ 165:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 828              		.loc 1 165 2 view .LVU268
+ 829 00b4 1422     		movs	r2, #20
+ 830              	.LVL43:
+ 831              	.L59:
+ 832              	.LBB44:
+ 833              	.LBB43:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 834              		.loc 1 83 3 is_stmt 1 view .LVU269
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 835              		.loc 1 83 10 is_stmt 0 view .LVU270
+ 836 00b6 ADF80040 		strh	r4, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 837              		.loc 1 83 15 is_stmt 1 view .LVU271
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 838              		.loc 1 83 17 is_stmt 0 view .LVU272
+ 839 00ba BDF80030 		ldrh	r3, [sp]
+ 840 00be 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 841              		.loc 1 83 3 view .LVU273
+ 842 00c0 072B     		cmp	r3, #7
+ 843 00c2 0AD8     		bhi	.L57
+ 844              	.L58:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 845              		.loc 1 83 26 is_stmt 1 view .LVU274
+  83:BSP/LTDC/touch_iic.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 22
+
+
+ 846              		.loc 1 83 22 view .LVU275
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 847              		.loc 1 83 23 is_stmt 0 view .LVU276
+ 848 00c4 BDF80030 		ldrh	r3, [sp]
+ 849 00c8 0133     		adds	r3, r3, #1
+ 850 00ca 9BB2     		uxth	r3, r3
+ 851 00cc ADF80030 		strh	r3, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 852              		.loc 1 83 15 is_stmt 1 view .LVU277
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 853              		.loc 1 83 17 is_stmt 0 view .LVU278
+ 854 00d0 BDF80030 		ldrh	r3, [sp]
+ 855 00d4 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 856              		.loc 1 83 3 view .LVU279
+ 857 00d6 072B     		cmp	r3, #7
+ 858 00d8 F4D9     		bls	.L58
+ 859              	.L57:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 860              		.loc 1 81 8 is_stmt 1 view .LVU280
+ 861              	.LVL44:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 862              		.loc 1 81 8 is_stmt 0 view .LVU281
+ 863 00da 013A     		subs	r2, r2, #1
+ 864              	.LVL45:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 865              		.loc 1 81 8 view .LVU282
+ 866 00dc EBD1     		bne	.L59
+ 867              	.LBE43:
+ 868              	.LBE44:
+ 167:BSP/LTDC/touch_iic.c **** }
+ 869              		.loc 1 167 1 view .LVU283
+ 870 00de 03B0     		add	sp, sp, #12
+ 871              		.cfi_def_cfa_offset 12
+ 872              		@ sp needed
+ 873 00e0 30BD     		pop	{r4, r5, pc}
+ 874              	.L70:
+ 875 00e2 00BF     		.align	2
+ 876              	.L69:
+ 877 00e4 00200258 		.word	1476534272
+ 878              		.cfi_endproc
+ 879              	.LFE342:
+ 881              		.section	.text.Touch_IIC_ACK,"ax",%progbits
+ 882              		.align	1
+ 883              		.p2align 2,,3
+ 884              		.global	Touch_IIC_ACK
+ 885              		.syntax unified
+ 886              		.thumb
+ 887              		.thumb_func
+ 889              	Touch_IIC_ACK:
+ 890              	.LFB343:
+ 168:BSP/LTDC/touch_iic.c **** 
+ 169:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 170:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_ACK
+ 171:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+ 172:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ 173:BSP/LTDC/touch_iic.c **** *	函数功能: IIC应答信号
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 23
+
+
+ 174:BSP/LTDC/touch_iic.c **** *	说    明: 在SCL为高电平期间，SDA引脚输出为低电平，产生应答信号
+ 175:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 176:BSP/LTDC/touch_iic.c **** 
+ 177:BSP/LTDC/touch_iic.c **** void Touch_IIC_ACK(void)
+ 178:BSP/LTDC/touch_iic.c **** {
+ 891              		.loc 1 178 1 is_stmt 1 view -0
+ 892              		.cfi_startproc
+ 893              		@ args = 0, pretend = 0, frame = 8
+ 894              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 895              		.loc 1 179 2 view .LVU285
+ 896              		.loc 1 179 2 view .LVU286
+ 178:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 897              		.loc 1 178 1 is_stmt 0 view .LVU287
+ 898 0000 30B5     		push	{r4, r5, lr}
+ 899              		.cfi_def_cfa_offset 12
+ 900              		.cfi_offset 4, -12
+ 901              		.cfi_offset 5, -8
+ 902              		.cfi_offset 14, -4
+ 903              		.loc 1 179 2 view .LVU288
+ 904 0002 0022     		movs	r2, #0
+ 178:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 905              		.loc 1 178 1 view .LVU289
+ 906 0004 83B0     		sub	sp, sp, #12
+ 907              		.cfi_def_cfa_offset 24
+ 908              		.loc 1 179 2 view .LVU290
+ 909 0006 4FF40061 		mov	r1, #2048
+ 910 000a 3948     		ldr	r0, .L93
+ 911 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 912              	.LVL46:
+ 180:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 913              		.loc 1 180 2 is_stmt 1 view .LVU291
+ 914              	.LBB53:
+ 915              	.LBI53:
+  78:BSP/LTDC/touch_iic.c **** {
+ 916              		.loc 1 78 6 view .LVU292
+ 917              	.LBB54:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 918              		.loc 1 81 8 view .LVU293
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 919              		.loc 1 81 8 is_stmt 0 view .LVU294
+ 920              	.LBE54:
+ 921              	.LBE53:
+ 179:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 922              		.loc 1 179 2 view .LVU295
+ 923 0010 1424     		movs	r4, #20
+ 924              	.LBB56:
+ 925              	.LBB55:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 926              		.loc 1 83 10 view .LVU296
+ 927 0012 0022     		movs	r2, #0
+ 928              	.LVL47:
+ 929              	.L74:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 930              		.loc 1 83 3 is_stmt 1 view .LVU297
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 931              		.loc 1 83 10 is_stmt 0 view .LVU298
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 24
+
+
+ 932 0014 ADF80620 		strh	r2, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 933              		.loc 1 83 15 is_stmt 1 view .LVU299
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 934              		.loc 1 83 17 is_stmt 0 view .LVU300
+ 935 0018 BDF80630 		ldrh	r3, [sp, #6]
+ 936 001c 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 937              		.loc 1 83 3 view .LVU301
+ 938 001e 072B     		cmp	r3, #7
+ 939 0020 0AD8     		bhi	.L72
+ 940              	.L73:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 941              		.loc 1 83 26 is_stmt 1 view .LVU302
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 942              		.loc 1 83 22 view .LVU303
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 943              		.loc 1 83 23 is_stmt 0 view .LVU304
+ 944 0022 BDF80630 		ldrh	r3, [sp, #6]
+ 945 0026 0133     		adds	r3, r3, #1
+ 946 0028 9BB2     		uxth	r3, r3
+ 947 002a ADF80630 		strh	r3, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 948              		.loc 1 83 15 is_stmt 1 view .LVU305
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 949              		.loc 1 83 17 is_stmt 0 view .LVU306
+ 950 002e BDF80630 		ldrh	r3, [sp, #6]
+ 951 0032 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 952              		.loc 1 83 3 view .LVU307
+ 953 0034 072B     		cmp	r3, #7
+ 954 0036 F4D9     		bls	.L73
+ 955              	.L72:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 956              		.loc 1 81 8 is_stmt 1 view .LVU308
+ 957              	.LVL48:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 958              		.loc 1 81 8 is_stmt 0 view .LVU309
+ 959 0038 013C     		subs	r4, r4, #1
+ 960              	.LVL49:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 961              		.loc 1 81 8 view .LVU310
+ 962 003a EBD1     		bne	.L74
+ 963              	.LVL50:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 964              		.loc 1 81 8 view .LVU311
+ 965              	.LBE55:
+ 966              	.LBE56:
+ 181:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(0);
+ 967              		.loc 1 181 2 is_stmt 1 view .LVU312
+ 968              		.loc 1 181 2 view .LVU313
+ 969 003c 2246     		mov	r2, r4
+ 970 003e 4FF48071 		mov	r1, #256
+ 971 0042 2B48     		ldr	r0, .L93
+ 972 0044 1425     		movs	r5, #20
+ 973 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 974              	.LVL51:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 25
+
+
+ 182:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);	
+ 975              		.loc 1 182 2 view .LVU314
+ 976              	.LBB57:
+ 977              	.LBI57:
+  78:BSP/LTDC/touch_iic.c **** {
+ 978              		.loc 1 78 6 view .LVU315
+ 979              	.LBB58:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 980              		.loc 1 81 8 view .LVU316
+ 981              	.L77:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 982              		.loc 1 83 3 view .LVU317
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 983              		.loc 1 83 10 is_stmt 0 view .LVU318
+ 984 004a ADF80440 		strh	r4, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 985              		.loc 1 83 15 is_stmt 1 view .LVU319
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 986              		.loc 1 83 17 is_stmt 0 view .LVU320
+ 987 004e BDF80430 		ldrh	r3, [sp, #4]
+ 988 0052 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 989              		.loc 1 83 3 view .LVU321
+ 990 0054 072B     		cmp	r3, #7
+ 991 0056 0AD8     		bhi	.L75
+ 992              	.L76:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 993              		.loc 1 83 26 is_stmt 1 view .LVU322
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 994              		.loc 1 83 22 view .LVU323
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 995              		.loc 1 83 23 is_stmt 0 view .LVU324
+ 996 0058 BDF80430 		ldrh	r3, [sp, #4]
+ 997 005c 0133     		adds	r3, r3, #1
+ 998 005e 9BB2     		uxth	r3, r3
+ 999 0060 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1000              		.loc 1 83 15 is_stmt 1 view .LVU325
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1001              		.loc 1 83 17 is_stmt 0 view .LVU326
+ 1002 0064 BDF80430 		ldrh	r3, [sp, #4]
+ 1003 0068 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1004              		.loc 1 83 3 view .LVU327
+ 1005 006a 072B     		cmp	r3, #7
+ 1006 006c F4D9     		bls	.L76
+ 1007              	.L75:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1008              		.loc 1 81 8 is_stmt 1 view .LVU328
+ 1009              	.LVL52:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1010              		.loc 1 81 8 is_stmt 0 view .LVU329
+ 1011 006e 013D     		subs	r5, r5, #1
+ 1012              	.LVL53:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1013              		.loc 1 81 8 view .LVU330
+ 1014 0070 EBD1     		bne	.L77
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 26
+
+
+ 1015              	.LVL54:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1016              		.loc 1 81 8 view .LVU331
+ 1017              	.LBE58:
+ 1018              	.LBE57:
+ 183:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(1);
+ 1019              		.loc 1 183 2 is_stmt 1 view .LVU332
+ 1020              		.loc 1 183 2 view .LVU333
+ 1021 0072 0122     		movs	r2, #1
+ 1022 0074 4FF40061 		mov	r1, #2048
+ 1023 0078 1D48     		ldr	r0, .L93
+ 1024 007a 1424     		movs	r4, #20
+ 1025 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1026              	.LVL55:
+ 184:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1027              		.loc 1 184 2 view .LVU334
+ 1028              	.LBB59:
+ 1029              	.LBI59:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1030              		.loc 1 78 6 view .LVU335
+ 1031              	.LBB60:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1032              		.loc 1 81 8 view .LVU336
+ 1033              	.L80:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1034              		.loc 1 83 3 view .LVU337
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1035              		.loc 1 83 10 is_stmt 0 view .LVU338
+ 1036 0080 ADF80250 		strh	r5, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1037              		.loc 1 83 15 is_stmt 1 view .LVU339
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1038              		.loc 1 83 17 is_stmt 0 view .LVU340
+ 1039 0084 BDF80230 		ldrh	r3, [sp, #2]
+ 1040 0088 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1041              		.loc 1 83 3 view .LVU341
+ 1042 008a 072B     		cmp	r3, #7
+ 1043 008c 0AD8     		bhi	.L78
+ 1044              	.L79:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1045              		.loc 1 83 26 is_stmt 1 view .LVU342
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1046              		.loc 1 83 22 view .LVU343
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1047              		.loc 1 83 23 is_stmt 0 view .LVU344
+ 1048 008e BDF80230 		ldrh	r3, [sp, #2]
+ 1049 0092 0133     		adds	r3, r3, #1
+ 1050 0094 9BB2     		uxth	r3, r3
+ 1051 0096 ADF80230 		strh	r3, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1052              		.loc 1 83 15 is_stmt 1 view .LVU345
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1053              		.loc 1 83 17 is_stmt 0 view .LVU346
+ 1054 009a BDF80230 		ldrh	r3, [sp, #2]
+ 1055 009e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 27
+
+
+ 1056              		.loc 1 83 3 view .LVU347
+ 1057 00a0 072B     		cmp	r3, #7
+ 1058 00a2 F4D9     		bls	.L79
+ 1059              	.L78:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1060              		.loc 1 81 8 is_stmt 1 view .LVU348
+ 1061              	.LVL56:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1062              		.loc 1 81 8 is_stmt 0 view .LVU349
+ 1063 00a4 013C     		subs	r4, r4, #1
+ 1064              	.LVL57:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1065              		.loc 1 81 8 view .LVU350
+ 1066 00a6 EBD1     		bne	.L80
+ 1067              	.LVL58:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1068              		.loc 1 81 8 view .LVU351
+ 1069              	.LBE60:
+ 1070              	.LBE59:
+ 185:BSP/LTDC/touch_iic.c **** 	
+ 186:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);		// SCL输出低时，SDA应立即拉高，释放总线
+ 1071              		.loc 1 186 2 is_stmt 1 view .LVU352
+ 1072              		.loc 1 186 2 view .LVU353
+ 1073 00a8 2246     		mov	r2, r4
+ 1074 00aa 4FF40061 		mov	r1, #2048
+ 1075 00ae 1048     		ldr	r0, .L93
+ 1076 00b0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1077              	.LVL59:
+ 187:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);		
+ 1078              		.loc 1 187 2 view .LVU354
+ 1079              		.loc 1 187 2 view .LVU355
+ 1080 00b4 0122     		movs	r2, #1
+ 1081 00b6 4FF48071 		mov	r1, #256
+ 1082 00ba 0D48     		ldr	r0, .L93
+ 1083 00bc FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1084              	.LVL60:
+ 188:BSP/LTDC/touch_iic.c **** 	
+ 189:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1085              		.loc 1 189 2 view .LVU356
+ 1086              	.LBB61:
+ 1087              	.LBI61:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1088              		.loc 1 78 6 view .LVU357
+ 1089              	.LBB62:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1090              		.loc 1 81 8 view .LVU358
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1091              		.loc 1 81 8 is_stmt 0 view .LVU359
+ 1092              	.LBE62:
+ 1093              	.LBE61:
+ 187:BSP/LTDC/touch_iic.c **** 	
+ 1094              		.loc 1 187 2 view .LVU360
+ 1095 00c0 1422     		movs	r2, #20
+ 1096              	.LVL61:
+ 1097              	.L83:
+ 1098              	.LBB64:
+ 1099              	.LBB63:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 28
+
+
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1100              		.loc 1 83 3 is_stmt 1 view .LVU361
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1101              		.loc 1 83 10 is_stmt 0 view .LVU362
+ 1102 00c2 ADF80040 		strh	r4, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1103              		.loc 1 83 15 is_stmt 1 view .LVU363
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1104              		.loc 1 83 17 is_stmt 0 view .LVU364
+ 1105 00c6 BDF80030 		ldrh	r3, [sp]
+ 1106 00ca 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1107              		.loc 1 83 3 view .LVU365
+ 1108 00cc 072B     		cmp	r3, #7
+ 1109 00ce 0AD8     		bhi	.L81
+ 1110              	.L82:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1111              		.loc 1 83 26 is_stmt 1 view .LVU366
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1112              		.loc 1 83 22 view .LVU367
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1113              		.loc 1 83 23 is_stmt 0 view .LVU368
+ 1114 00d0 BDF80030 		ldrh	r3, [sp]
+ 1115 00d4 0133     		adds	r3, r3, #1
+ 1116 00d6 9BB2     		uxth	r3, r3
+ 1117 00d8 ADF80030 		strh	r3, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1118              		.loc 1 83 15 is_stmt 1 view .LVU369
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1119              		.loc 1 83 17 is_stmt 0 view .LVU370
+ 1120 00dc BDF80030 		ldrh	r3, [sp]
+ 1121 00e0 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1122              		.loc 1 83 3 view .LVU371
+ 1123 00e2 072B     		cmp	r3, #7
+ 1124 00e4 F4D9     		bls	.L82
+ 1125              	.L81:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1126              		.loc 1 81 8 is_stmt 1 view .LVU372
+ 1127              	.LVL62:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1128              		.loc 1 81 8 is_stmt 0 view .LVU373
+ 1129 00e6 013A     		subs	r2, r2, #1
+ 1130              	.LVL63:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1131              		.loc 1 81 8 view .LVU374
+ 1132 00e8 EBD1     		bne	.L83
+ 1133              	.LBE63:
+ 1134              	.LBE64:
+ 190:BSP/LTDC/touch_iic.c **** 
+ 191:BSP/LTDC/touch_iic.c **** }
+ 1135              		.loc 1 191 1 view .LVU375
+ 1136 00ea 03B0     		add	sp, sp, #12
+ 1137              		.cfi_def_cfa_offset 12
+ 1138              		@ sp needed
+ 1139 00ec 30BD     		pop	{r4, r5, pc}
+ 1140              	.L94:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 29
+
+
+ 1141 00ee 00BF     		.align	2
+ 1142              	.L93:
+ 1143 00f0 00200258 		.word	1476534272
+ 1144              		.cfi_endproc
+ 1145              	.LFE343:
+ 1147              		.section	.text.Touch_IIC_NoACK,"ax",%progbits
+ 1148              		.align	1
+ 1149              		.p2align 2,,3
+ 1150              		.global	Touch_IIC_NoACK
+ 1151              		.syntax unified
+ 1152              		.thumb
+ 1153              		.thumb_func
+ 1155              	Touch_IIC_NoACK:
+ 1156              	.LFB344:
+ 192:BSP/LTDC/touch_iic.c **** 
+ 193:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 194:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_NoACK
+ 195:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+ 196:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ 197:BSP/LTDC/touch_iic.c **** *	函数功能: IIC非应答信号
+ 198:BSP/LTDC/touch_iic.c **** *	说    明: 在SCL为高电平期间，若SDA引脚为高电平，产生非应答信号
+ 199:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 200:BSP/LTDC/touch_iic.c **** 
+ 201:BSP/LTDC/touch_iic.c **** void Touch_IIC_NoACK(void)
+ 202:BSP/LTDC/touch_iic.c **** {
+ 1157              		.loc 1 202 1 is_stmt 1 view -0
+ 1158              		.cfi_startproc
+ 1159              		@ args = 0, pretend = 0, frame = 8
+ 1160              		@ frame_needed = 0, uses_anonymous_args = 0
+ 203:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);	
+ 1161              		.loc 1 203 2 view .LVU377
+ 1162              		.loc 1 203 2 view .LVU378
+ 202:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);	
+ 1163              		.loc 1 202 1 is_stmt 0 view .LVU379
+ 1164 0000 30B5     		push	{r4, r5, lr}
+ 1165              		.cfi_def_cfa_offset 12
+ 1166              		.cfi_offset 4, -12
+ 1167              		.cfi_offset 5, -8
+ 1168              		.cfi_offset 14, -4
+ 1169              		.loc 1 203 2 view .LVU380
+ 1170 0002 0022     		movs	r2, #0
+ 202:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);	
+ 1171              		.loc 1 202 1 view .LVU381
+ 1172 0004 83B0     		sub	sp, sp, #12
+ 1173              		.cfi_def_cfa_offset 24
+ 1174              		.loc 1 203 2 view .LVU382
+ 1175 0006 4FF40061 		mov	r1, #2048
+ 1176 000a 3648     		ldr	r0, .L117
+ 1177 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1178              	.LVL64:
+ 204:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1179              		.loc 1 204 2 is_stmt 1 view .LVU383
+ 1180              	.LBB73:
+ 1181              	.LBI73:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1182              		.loc 1 78 6 view .LVU384
+ 1183              	.LBB74:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 30
+
+
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1184              		.loc 1 81 8 view .LVU385
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1185              		.loc 1 81 8 is_stmt 0 view .LVU386
+ 1186              	.LBE74:
+ 1187              	.LBE73:
+ 203:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1188              		.loc 1 203 2 view .LVU387
+ 1189 0010 1424     		movs	r4, #20
+ 1190              	.LBB76:
+ 1191              	.LBB75:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1192              		.loc 1 83 10 view .LVU388
+ 1193 0012 0022     		movs	r2, #0
+ 1194              	.LVL65:
+ 1195              	.L98:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1196              		.loc 1 83 3 is_stmt 1 view .LVU389
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1197              		.loc 1 83 10 is_stmt 0 view .LVU390
+ 1198 0014 ADF80620 		strh	r2, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1199              		.loc 1 83 15 is_stmt 1 view .LVU391
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1200              		.loc 1 83 17 is_stmt 0 view .LVU392
+ 1201 0018 BDF80630 		ldrh	r3, [sp, #6]
+ 1202 001c 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1203              		.loc 1 83 3 view .LVU393
+ 1204 001e 072B     		cmp	r3, #7
+ 1205 0020 0AD8     		bhi	.L96
+ 1206              	.L97:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1207              		.loc 1 83 26 is_stmt 1 view .LVU394
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1208              		.loc 1 83 22 view .LVU395
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1209              		.loc 1 83 23 is_stmt 0 view .LVU396
+ 1210 0022 BDF80630 		ldrh	r3, [sp, #6]
+ 1211 0026 0133     		adds	r3, r3, #1
+ 1212 0028 9BB2     		uxth	r3, r3
+ 1213 002a ADF80630 		strh	r3, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1214              		.loc 1 83 15 is_stmt 1 view .LVU397
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1215              		.loc 1 83 17 is_stmt 0 view .LVU398
+ 1216 002e BDF80630 		ldrh	r3, [sp, #6]
+ 1217 0032 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1218              		.loc 1 83 3 view .LVU399
+ 1219 0034 072B     		cmp	r3, #7
+ 1220 0036 F4D9     		bls	.L97
+ 1221              	.L96:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1222              		.loc 1 81 8 is_stmt 1 view .LVU400
+ 1223              	.LVL66:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 31
+
+
+ 1224              		.loc 1 81 8 is_stmt 0 view .LVU401
+ 1225 0038 013C     		subs	r4, r4, #1
+ 1226              	.LVL67:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1227              		.loc 1 81 8 view .LVU402
+ 1228 003a EBD1     		bne	.L98
+ 1229              	.LVL68:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1230              		.loc 1 81 8 view .LVU403
+ 1231              	.LBE75:
+ 1232              	.LBE76:
+ 205:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);
+ 1233              		.loc 1 205 2 is_stmt 1 view .LVU404
+ 1234              		.loc 1 205 2 view .LVU405
+ 1235 003c 0122     		movs	r2, #1
+ 1236 003e 4FF48071 		mov	r1, #256
+ 1237 0042 2848     		ldr	r0, .L117
+ 1238 0044 1425     		movs	r5, #20
+ 1239 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1240              	.LVL69:
+ 206:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1241              		.loc 1 206 2 view .LVU406
+ 1242              	.LBB77:
+ 1243              	.LBI77:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1244              		.loc 1 78 6 view .LVU407
+ 1245              	.LBB78:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1246              		.loc 1 81 8 view .LVU408
+ 1247              	.L101:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1248              		.loc 1 83 3 view .LVU409
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1249              		.loc 1 83 10 is_stmt 0 view .LVU410
+ 1250 004a ADF80440 		strh	r4, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1251              		.loc 1 83 15 is_stmt 1 view .LVU411
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1252              		.loc 1 83 17 is_stmt 0 view .LVU412
+ 1253 004e BDF80430 		ldrh	r3, [sp, #4]
+ 1254 0052 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1255              		.loc 1 83 3 view .LVU413
+ 1256 0054 072B     		cmp	r3, #7
+ 1257 0056 0AD8     		bhi	.L99
+ 1258              	.L100:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1259              		.loc 1 83 26 is_stmt 1 view .LVU414
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1260              		.loc 1 83 22 view .LVU415
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1261              		.loc 1 83 23 is_stmt 0 view .LVU416
+ 1262 0058 BDF80430 		ldrh	r3, [sp, #4]
+ 1263 005c 0133     		adds	r3, r3, #1
+ 1264 005e 9BB2     		uxth	r3, r3
+ 1265 0060 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 32
+
+
+ 1266              		.loc 1 83 15 is_stmt 1 view .LVU417
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1267              		.loc 1 83 17 is_stmt 0 view .LVU418
+ 1268 0064 BDF80430 		ldrh	r3, [sp, #4]
+ 1269 0068 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1270              		.loc 1 83 3 view .LVU419
+ 1271 006a 072B     		cmp	r3, #7
+ 1272 006c F4D9     		bls	.L100
+ 1273              	.L99:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1274              		.loc 1 81 8 is_stmt 1 view .LVU420
+ 1275              	.LVL70:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1276              		.loc 1 81 8 is_stmt 0 view .LVU421
+ 1277 006e 013D     		subs	r5, r5, #1
+ 1278              	.LVL71:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1279              		.loc 1 81 8 view .LVU422
+ 1280 0070 EBD1     		bne	.L101
+ 1281              	.LVL72:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1282              		.loc 1 81 8 view .LVU423
+ 1283              	.LBE78:
+ 1284              	.LBE77:
+ 207:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(1);
+ 1285              		.loc 1 207 2 is_stmt 1 view .LVU424
+ 1286              		.loc 1 207 2 view .LVU425
+ 1287 0072 0122     		movs	r2, #1
+ 1288 0074 4FF40061 		mov	r1, #2048
+ 1289 0078 1A48     		ldr	r0, .L117
+ 1290 007a 1424     		movs	r4, #20
+ 1291 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1292              	.LVL73:
+ 208:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1293              		.loc 1 208 2 view .LVU426
+ 1294              	.LBB79:
+ 1295              	.LBI79:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1296              		.loc 1 78 6 view .LVU427
+ 1297              	.LBB80:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1298              		.loc 1 81 8 view .LVU428
+ 1299              	.L104:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1300              		.loc 1 83 3 view .LVU429
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1301              		.loc 1 83 10 is_stmt 0 view .LVU430
+ 1302 0080 ADF80250 		strh	r5, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1303              		.loc 1 83 15 is_stmt 1 view .LVU431
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1304              		.loc 1 83 17 is_stmt 0 view .LVU432
+ 1305 0084 BDF80230 		ldrh	r3, [sp, #2]
+ 1306 0088 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1307              		.loc 1 83 3 view .LVU433
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 33
+
+
+ 1308 008a 072B     		cmp	r3, #7
+ 1309 008c 0AD8     		bhi	.L102
+ 1310              	.L103:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1311              		.loc 1 83 26 is_stmt 1 view .LVU434
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1312              		.loc 1 83 22 view .LVU435
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1313              		.loc 1 83 23 is_stmt 0 view .LVU436
+ 1314 008e BDF80230 		ldrh	r3, [sp, #2]
+ 1315 0092 0133     		adds	r3, r3, #1
+ 1316 0094 9BB2     		uxth	r3, r3
+ 1317 0096 ADF80230 		strh	r3, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1318              		.loc 1 83 15 is_stmt 1 view .LVU437
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1319              		.loc 1 83 17 is_stmt 0 view .LVU438
+ 1320 009a BDF80230 		ldrh	r3, [sp, #2]
+ 1321 009e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1322              		.loc 1 83 3 view .LVU439
+ 1323 00a0 072B     		cmp	r3, #7
+ 1324 00a2 F4D9     		bls	.L103
+ 1325              	.L102:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1326              		.loc 1 81 8 is_stmt 1 view .LVU440
+ 1327              	.LVL74:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1328              		.loc 1 81 8 is_stmt 0 view .LVU441
+ 1329 00a4 013C     		subs	r4, r4, #1
+ 1330              	.LVL75:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1331              		.loc 1 81 8 view .LVU442
+ 1332 00a6 EBD1     		bne	.L104
+ 1333              	.LVL76:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1334              		.loc 1 81 8 view .LVU443
+ 1335              	.LBE80:
+ 1336              	.LBE79:
+ 209:BSP/LTDC/touch_iic.c **** 	
+ 210:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(0);
+ 1337              		.loc 1 210 2 is_stmt 1 view .LVU444
+ 1338              		.loc 1 210 2 view .LVU445
+ 1339 00a8 2246     		mov	r2, r4
+ 1340 00aa 4FF40061 		mov	r1, #2048
+ 1341 00ae 0D48     		ldr	r0, .L117
+ 1342 00b0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1343              	.LVL77:
+ 211:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1344              		.loc 1 211 2 view .LVU446
+ 1345              	.LBB81:
+ 1346              	.LBI81:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1347              		.loc 1 78 6 view .LVU447
+ 1348              	.LBB82:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1349              		.loc 1 81 8 view .LVU448
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 34
+
+
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1350              		.loc 1 81 8 is_stmt 0 view .LVU449
+ 1351              	.LBE82:
+ 1352              	.LBE81:
+ 210:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1353              		.loc 1 210 2 view .LVU450
+ 1354 00b4 1422     		movs	r2, #20
+ 1355              	.LVL78:
+ 1356              	.L107:
+ 1357              	.LBB84:
+ 1358              	.LBB83:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1359              		.loc 1 83 3 is_stmt 1 view .LVU451
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1360              		.loc 1 83 10 is_stmt 0 view .LVU452
+ 1361 00b6 ADF80040 		strh	r4, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1362              		.loc 1 83 15 is_stmt 1 view .LVU453
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1363              		.loc 1 83 17 is_stmt 0 view .LVU454
+ 1364 00ba BDF80030 		ldrh	r3, [sp]
+ 1365 00be 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1366              		.loc 1 83 3 view .LVU455
+ 1367 00c0 072B     		cmp	r3, #7
+ 1368 00c2 0AD8     		bhi	.L105
+ 1369              	.L106:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1370              		.loc 1 83 26 is_stmt 1 view .LVU456
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1371              		.loc 1 83 22 view .LVU457
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1372              		.loc 1 83 23 is_stmt 0 view .LVU458
+ 1373 00c4 BDF80030 		ldrh	r3, [sp]
+ 1374 00c8 0133     		adds	r3, r3, #1
+ 1375 00ca 9BB2     		uxth	r3, r3
+ 1376 00cc ADF80030 		strh	r3, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1377              		.loc 1 83 15 is_stmt 1 view .LVU459
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1378              		.loc 1 83 17 is_stmt 0 view .LVU460
+ 1379 00d0 BDF80030 		ldrh	r3, [sp]
+ 1380 00d4 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1381              		.loc 1 83 3 view .LVU461
+ 1382 00d6 072B     		cmp	r3, #7
+ 1383 00d8 F4D9     		bls	.L106
+ 1384              	.L105:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1385              		.loc 1 81 8 is_stmt 1 view .LVU462
+ 1386              	.LVL79:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1387              		.loc 1 81 8 is_stmt 0 view .LVU463
+ 1388 00da 013A     		subs	r2, r2, #1
+ 1389              	.LVL80:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1390              		.loc 1 81 8 view .LVU464
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 35
+
+
+ 1391 00dc EBD1     		bne	.L107
+ 1392              	.LBE83:
+ 1393              	.LBE84:
+ 212:BSP/LTDC/touch_iic.c **** }
+ 1394              		.loc 1 212 1 view .LVU465
+ 1395 00de 03B0     		add	sp, sp, #12
+ 1396              		.cfi_def_cfa_offset 12
+ 1397              		@ sp needed
+ 1398 00e0 30BD     		pop	{r4, r5, pc}
+ 1399              	.L118:
+ 1400 00e2 00BF     		.align	2
+ 1401              	.L117:
+ 1402 00e4 00200258 		.word	1476534272
+ 1403              		.cfi_endproc
+ 1404              	.LFE344:
+ 1406              		.section	.text.Touch_IIC_WaitACK,"ax",%progbits
+ 1407              		.align	1
+ 1408              		.p2align 2,,3
+ 1409              		.global	Touch_IIC_WaitACK
+ 1410              		.syntax unified
+ 1411              		.thumb
+ 1412              		.thumb_func
+ 1414              	Touch_IIC_WaitACK:
+ 1415              	.LFB345:
+ 213:BSP/LTDC/touch_iic.c **** 
+ 214:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 215:BSP/LTDC/touch_iic.c **** *	函 数 名: Touch_IIC_WaitACK
+ 216:BSP/LTDC/touch_iic.c **** *	入口参数: 无
+ 217:BSP/LTDC/touch_iic.c **** *	返 回 值: 无
+ 218:BSP/LTDC/touch_iic.c **** *	函数功能: 等待接收设备发出应答信号
+ 219:BSP/LTDC/touch_iic.c **** *	说    明: 在SCL为高电平期间，若检测到SDA引脚为低电平，则接收设备响应正常
+ 220:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 221:BSP/LTDC/touch_iic.c **** 
+ 222:BSP/LTDC/touch_iic.c **** uint8_t Touch_IIC_WaitACK(void)
+ 223:BSP/LTDC/touch_iic.c **** {
+ 1416              		.loc 1 223 1 is_stmt 1 view -0
+ 1417              		.cfi_startproc
+ 1418              		@ args = 0, pretend = 0, frame = 8
+ 1419              		@ frame_needed = 0, uses_anonymous_args = 0
+ 224:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);
+ 1420              		.loc 1 224 2 view .LVU467
+ 1421              		.loc 1 224 2 view .LVU468
+ 223:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);
+ 1422              		.loc 1 223 1 is_stmt 0 view .LVU469
+ 1423 0000 30B5     		push	{r4, r5, lr}
+ 1424              		.cfi_def_cfa_offset 12
+ 1425              		.cfi_offset 4, -12
+ 1426              		.cfi_offset 5, -8
+ 1427              		.cfi_offset 14, -4
+ 1428              		.loc 1 224 2 view .LVU470
+ 1429 0002 0122     		movs	r2, #1
+ 223:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SDA(1);
+ 1430              		.loc 1 223 1 view .LVU471
+ 1431 0004 83B0     		sub	sp, sp, #12
+ 1432              		.cfi_def_cfa_offset 24
+ 1433              		.loc 1 224 2 view .LVU472
+ 1434 0006 4FF48071 		mov	r1, #256
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 36
+
+
+ 1435 000a 3948     		ldr	r0, .L143
+ 1436 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1437              	.LVL81:
+ 225:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1438              		.loc 1 225 2 is_stmt 1 view .LVU473
+ 1439              	.LBB93:
+ 1440              	.LBI93:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1441              		.loc 1 78 6 view .LVU474
+ 1442              	.LBB94:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1443              		.loc 1 81 8 view .LVU475
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1444              		.loc 1 81 8 is_stmt 0 view .LVU476
+ 1445              	.LBE94:
+ 1446              	.LBE93:
+ 224:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);
+ 1447              		.loc 1 224 2 view .LVU477
+ 1448 0010 1425     		movs	r5, #20
+ 1449              	.LBB96:
+ 1450              	.LBB95:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1451              		.loc 1 83 10 view .LVU478
+ 1452 0012 0022     		movs	r2, #0
+ 1453              	.LVL82:
+ 1454              	.L122:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1455              		.loc 1 83 3 is_stmt 1 view .LVU479
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1456              		.loc 1 83 10 is_stmt 0 view .LVU480
+ 1457 0014 ADF80220 		strh	r2, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1458              		.loc 1 83 15 is_stmt 1 view .LVU481
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1459              		.loc 1 83 17 is_stmt 0 view .LVU482
+ 1460 0018 BDF80230 		ldrh	r3, [sp, #2]
+ 1461 001c 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1462              		.loc 1 83 3 view .LVU483
+ 1463 001e 072B     		cmp	r3, #7
+ 1464 0020 0AD8     		bhi	.L120
+ 1465              	.L121:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1466              		.loc 1 83 26 is_stmt 1 view .LVU484
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1467              		.loc 1 83 22 view .LVU485
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1468              		.loc 1 83 23 is_stmt 0 view .LVU486
+ 1469 0022 BDF80230 		ldrh	r3, [sp, #2]
+ 1470 0026 0133     		adds	r3, r3, #1
+ 1471 0028 9BB2     		uxth	r3, r3
+ 1472 002a ADF80230 		strh	r3, [sp, #2]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1473              		.loc 1 83 15 is_stmt 1 view .LVU487
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1474              		.loc 1 83 17 is_stmt 0 view .LVU488
+ 1475 002e BDF80230 		ldrh	r3, [sp, #2]
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 37
+
+
+ 1476 0032 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1477              		.loc 1 83 3 view .LVU489
+ 1478 0034 072B     		cmp	r3, #7
+ 1479 0036 F4D9     		bls	.L121
+ 1480              	.L120:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1481              		.loc 1 81 8 is_stmt 1 view .LVU490
+ 1482              	.LVL83:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1483              		.loc 1 81 8 is_stmt 0 view .LVU491
+ 1484 0038 013D     		subs	r5, r5, #1
+ 1485              	.LVL84:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1486              		.loc 1 81 8 view .LVU492
+ 1487 003a EBD1     		bne	.L122
+ 1488              	.LVL85:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1489              		.loc 1 81 8 view .LVU493
+ 1490              	.LBE95:
+ 1491              	.LBE96:
+ 226:BSP/LTDC/touch_iic.c **** 	Touch_IIC_SCL(1);
+ 1492              		.loc 1 226 2 is_stmt 1 view .LVU494
+ 1493              		.loc 1 226 2 view .LVU495
+ 1494 003c 0122     		movs	r2, #1
+ 1495 003e 4FF40061 		mov	r1, #2048
+ 1496 0042 2B48     		ldr	r0, .L143
+ 1497 0044 1424     		movs	r4, #20
+ 1498 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1499              	.LVL86:
+ 227:BSP/LTDC/touch_iic.c **** 	Touch_IIC_Delay(IIC_DelayVaule);	
+ 1500              		.loc 1 227 2 view .LVU496
+ 1501              	.LBB97:
+ 1502              	.LBI97:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1503              		.loc 1 78 6 view .LVU497
+ 1504              	.LBB98:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1505              		.loc 1 81 8 view .LVU498
+ 1506              	.L125:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1507              		.loc 1 83 3 view .LVU499
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1508              		.loc 1 83 10 is_stmt 0 view .LVU500
+ 1509 004a ADF80050 		strh	r5, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1510              		.loc 1 83 15 is_stmt 1 view .LVU501
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1511              		.loc 1 83 17 is_stmt 0 view .LVU502
+ 1512 004e BDF80030 		ldrh	r3, [sp]
+ 1513 0052 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1514              		.loc 1 83 3 view .LVU503
+ 1515 0054 072B     		cmp	r3, #7
+ 1516 0056 0AD8     		bhi	.L123
+ 1517              	.L124:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 38
+
+
+ 1518              		.loc 1 83 26 is_stmt 1 view .LVU504
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1519              		.loc 1 83 22 view .LVU505
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1520              		.loc 1 83 23 is_stmt 0 view .LVU506
+ 1521 0058 BDF80030 		ldrh	r3, [sp]
+ 1522 005c 0133     		adds	r3, r3, #1
+ 1523 005e 9BB2     		uxth	r3, r3
+ 1524 0060 ADF80030 		strh	r3, [sp]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1525              		.loc 1 83 15 is_stmt 1 view .LVU507
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1526              		.loc 1 83 17 is_stmt 0 view .LVU508
+ 1527 0064 BDF80030 		ldrh	r3, [sp]
+ 1528 0068 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1529              		.loc 1 83 3 view .LVU509
+ 1530 006a 072B     		cmp	r3, #7
+ 1531 006c F4D9     		bls	.L124
+ 1532              	.L123:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1533              		.loc 1 81 8 is_stmt 1 view .LVU510
+ 1534              	.LVL87:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1535              		.loc 1 81 8 is_stmt 0 view .LVU511
+ 1536 006e 013C     		subs	r4, r4, #1
+ 1537              	.LVL88:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1538              		.loc 1 81 8 view .LVU512
+ 1539 0070 EBD1     		bne	.L125
+ 1540              	.LVL89:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1541              		.loc 1 81 8 view .LVU513
+ 1542              	.LBE98:
+ 1543              	.LBE97:
+ 228:BSP/LTDC/touch_iic.c **** 	
+ 229:BSP/LTDC/touch_iic.c **** 	if( HAL_GPIO_ReadPin(Touch_IIC_SDA_PORT,Touch_IIC_SDA_PIN) != 0) //判断设备是否有做出响应		
+ 1544              		.loc 1 229 2 is_stmt 1 view .LVU514
+ 1545              		.loc 1 229 6 is_stmt 0 view .LVU515
+ 1546 0072 4FF48071 		mov	r1, #256
+ 1547 0076 1E48     		ldr	r0, .L143
+ 1548 0078 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 1549              	.LVL90:
+ 230:BSP/LTDC/touch_iic.c **** 	{
+ 231:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SCL(0);	
+ 1550              		.loc 1 231 3 view .LVU516
+ 1551 007c 2246     		mov	r2, r4
+ 1552 007e 4FF40061 		mov	r1, #2048
+ 229:BSP/LTDC/touch_iic.c **** 	{
+ 1553              		.loc 1 229 4 view .LVU517
+ 1554 0082 C8B1     		cbz	r0, .L126
+ 1555              		.loc 1 231 3 is_stmt 1 discriminator 2 view .LVU518
+ 1556              		.loc 1 231 3 discriminator 2 view .LVU519
+ 1557 0084 1A48     		ldr	r0, .L143
+ 1558 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1559              	.LVL91:
+ 232:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );		
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 39
+
+
+ 1560              		.loc 1 232 3 discriminator 2 view .LVU520
+ 1561              	.LBB99:
+ 1562              	.LBI99:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1563              		.loc 1 78 6 discriminator 2 view .LVU521
+ 1564              	.LBB100:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1565              		.loc 1 81 8 discriminator 2 view .LVU522
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1566              		.loc 1 81 8 is_stmt 0 discriminator 2 view .LVU523
+ 1567              	.LBE100:
+ 1568              	.LBE99:
+ 231:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );		
+ 1569              		.loc 1 231 3 discriminator 2 view .LVU524
+ 1570 008a 1420     		movs	r0, #20
+ 1571              	.LVL92:
+ 1572              	.L129:
+ 1573              	.LBB102:
+ 1574              	.LBB101:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1575              		.loc 1 83 3 is_stmt 1 view .LVU525
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1576              		.loc 1 83 10 is_stmt 0 view .LVU526
+ 1577 008c ADF80440 		strh	r4, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1578              		.loc 1 83 15 is_stmt 1 view .LVU527
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1579              		.loc 1 83 17 is_stmt 0 view .LVU528
+ 1580 0090 BDF80430 		ldrh	r3, [sp, #4]
+ 1581 0094 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1582              		.loc 1 83 3 view .LVU529
+ 1583 0096 072B     		cmp	r3, #7
+ 1584 0098 0AD8     		bhi	.L127
+ 1585              	.L128:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1586              		.loc 1 83 26 is_stmt 1 view .LVU530
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1587              		.loc 1 83 22 view .LVU531
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1588              		.loc 1 83 23 is_stmt 0 view .LVU532
+ 1589 009a BDF80430 		ldrh	r3, [sp, #4]
+ 1590 009e 0133     		adds	r3, r3, #1
+ 1591 00a0 9BB2     		uxth	r3, r3
+ 1592 00a2 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1593              		.loc 1 83 15 is_stmt 1 view .LVU533
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1594              		.loc 1 83 17 is_stmt 0 view .LVU534
+ 1595 00a6 BDF80430 		ldrh	r3, [sp, #4]
+ 1596 00aa 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1597              		.loc 1 83 3 view .LVU535
+ 1598 00ac 072B     		cmp	r3, #7
+ 1599 00ae F4D9     		bls	.L128
+ 1600              	.L127:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 40
+
+
+ 1601              		.loc 1 81 8 is_stmt 1 view .LVU536
+ 1602              	.LVL93:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1603              		.loc 1 81 8 is_stmt 0 view .LVU537
+ 1604 00b0 0138     		subs	r0, r0, #1
+ 1605              	.LVL94:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1606              		.loc 1 81 8 view .LVU538
+ 1607 00b2 EBD1     		bne	.L129
+ 1608              	.LVL95:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1609              		.loc 1 81 8 view .LVU539
+ 1610              	.LBE101:
+ 1611              	.LBE102:
+ 233:BSP/LTDC/touch_iic.c **** 		return ACK_ERR;	//无应答
+ 234:BSP/LTDC/touch_iic.c **** 	}
+ 235:BSP/LTDC/touch_iic.c **** 	else
+ 236:BSP/LTDC/touch_iic.c **** 	{
+ 237:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SCL(0);	
+ 238:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );		
+ 239:BSP/LTDC/touch_iic.c **** 		return ACK_OK;	//应答正常
+ 240:BSP/LTDC/touch_iic.c **** 	}
+ 241:BSP/LTDC/touch_iic.c **** }
+ 1612              		.loc 1 241 1 view .LVU540
+ 1613 00b4 03B0     		add	sp, sp, #12
+ 1614              		.cfi_remember_state
+ 1615              		.cfi_def_cfa_offset 12
+ 1616              		@ sp needed
+ 1617 00b6 30BD     		pop	{r4, r5, pc}
+ 1618              	.L126:
+ 1619              		.cfi_restore_state
+ 237:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );		
+ 1620              		.loc 1 237 3 is_stmt 1 discriminator 2 view .LVU541
+ 237:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );		
+ 1621              		.loc 1 237 3 discriminator 2 view .LVU542
+ 1622 00b8 0D48     		ldr	r0, .L143
+ 1623 00ba FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1624              	.LVL96:
+ 238:BSP/LTDC/touch_iic.c **** 		return ACK_OK;	//应答正常
+ 1625              		.loc 1 238 3 discriminator 2 view .LVU543
+ 1626              	.LBB103:
+ 1627              	.LBI103:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1628              		.loc 1 78 6 discriminator 2 view .LVU544
+ 1629              	.LBB104:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1630              		.loc 1 81 8 discriminator 2 view .LVU545
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1631              		.loc 1 81 8 is_stmt 0 discriminator 2 view .LVU546
+ 1632              	.LBE104:
+ 1633              	.LBE103:
+ 237:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );		
+ 1634              		.loc 1 237 3 discriminator 2 view .LVU547
+ 1635 00be 1422     		movs	r2, #20
+ 1636              	.LVL97:
+ 1637              	.L133:
+ 1638              	.LBB106:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 41
+
+
+ 1639              	.LBB105:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1640              		.loc 1 83 3 is_stmt 1 view .LVU548
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1641              		.loc 1 83 10 is_stmt 0 view .LVU549
+ 1642 00c0 ADF80640 		strh	r4, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1643              		.loc 1 83 15 is_stmt 1 view .LVU550
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1644              		.loc 1 83 17 is_stmt 0 view .LVU551
+ 1645 00c4 BDF80630 		ldrh	r3, [sp, #6]
+ 1646 00c8 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1647              		.loc 1 83 3 view .LVU552
+ 1648 00ca 072B     		cmp	r3, #7
+ 1649 00cc 0AD8     		bhi	.L131
+ 1650              	.L132:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1651              		.loc 1 83 26 is_stmt 1 view .LVU553
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1652              		.loc 1 83 22 view .LVU554
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1653              		.loc 1 83 23 is_stmt 0 view .LVU555
+ 1654 00ce BDF80630 		ldrh	r3, [sp, #6]
+ 1655 00d2 0133     		adds	r3, r3, #1
+ 1656 00d4 9BB2     		uxth	r3, r3
+ 1657 00d6 ADF80630 		strh	r3, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1658              		.loc 1 83 15 is_stmt 1 view .LVU556
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1659              		.loc 1 83 17 is_stmt 0 view .LVU557
+ 1660 00da BDF80630 		ldrh	r3, [sp, #6]
+ 1661 00de 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1662              		.loc 1 83 3 view .LVU558
+ 1663 00e0 072B     		cmp	r3, #7
+ 1664 00e2 F4D9     		bls	.L132
+ 1665              	.L131:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1666              		.loc 1 81 8 is_stmt 1 view .LVU559
+ 1667              	.LVL98:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1668              		.loc 1 81 8 is_stmt 0 view .LVU560
+ 1669 00e4 013A     		subs	r2, r2, #1
+ 1670              	.LVL99:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1671              		.loc 1 81 8 view .LVU561
+ 1672 00e6 EBD1     		bne	.L133
+ 1673              	.LBE105:
+ 1674              	.LBE106:
+ 239:BSP/LTDC/touch_iic.c **** 	}
+ 1675              		.loc 1 239 10 view .LVU562
+ 1676 00e8 0120     		movs	r0, #1
+ 1677              	.LVL100:
+ 1678              		.loc 1 241 1 view .LVU563
+ 1679 00ea 03B0     		add	sp, sp, #12
+ 1680              		.cfi_def_cfa_offset 12
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 42
+
+
+ 1681              		@ sp needed
+ 1682 00ec 30BD     		pop	{r4, r5, pc}
+ 1683              	.L144:
+ 1684 00ee 00BF     		.align	2
+ 1685              	.L143:
+ 1686 00f0 00200258 		.word	1476534272
+ 1687              		.cfi_endproc
+ 1688              	.LFE345:
+ 1690              		.section	.text.Touch_IIC_WriteByte,"ax",%progbits
+ 1691              		.align	1
+ 1692              		.p2align 2,,3
+ 1693              		.global	Touch_IIC_WriteByte
+ 1694              		.syntax unified
+ 1695              		.thumb
+ 1696              		.thumb_func
+ 1698              	Touch_IIC_WriteByte:
+ 1699              	.LVL101:
+ 1700              	.LFB346:
+ 242:BSP/LTDC/touch_iic.c **** 
+ 243:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 244:BSP/LTDC/touch_iic.c **** *	函 数 名:	Touch_IIC_WriteByte
+ 245:BSP/LTDC/touch_iic.c **** *	入口参数:	IIC_Data - 要写入的8位数据
+ 246:BSP/LTDC/touch_iic.c **** *	返 回 值:	ACK_OK  - 设备响应正常
+ 247:BSP/LTDC/touch_iic.c **** *          	ACK_ERR - 设备响应错误
+ 248:BSP/LTDC/touch_iic.c **** *	函数功能:	写一字节数据
+ 249:BSP/LTDC/touch_iic.c **** *	说    明:高位在前
+ 250:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 251:BSP/LTDC/touch_iic.c **** 
+ 252:BSP/LTDC/touch_iic.c **** uint8_t Touch_IIC_WriteByte(uint8_t IIC_Data)
+ 253:BSP/LTDC/touch_iic.c **** {
+ 1701              		.loc 1 253 1 is_stmt 1 view -0
+ 1702              		.cfi_startproc
+ 1703              		@ args = 0, pretend = 0, frame = 8
+ 1704              		@ frame_needed = 0, uses_anonymous_args = 0
+ 254:BSP/LTDC/touch_iic.c **** 	uint8_t i;
+ 1705              		.loc 1 254 2 view .LVU565
+ 255:BSP/LTDC/touch_iic.c **** 
+ 256:BSP/LTDC/touch_iic.c **** 	for (i = 0; i < 8; i++)
+ 1706              		.loc 1 256 2 view .LVU566
+ 1707              		.loc 1 256 14 view .LVU567
+ 253:BSP/LTDC/touch_iic.c **** 	uint8_t i;
+ 1708              		.loc 1 253 1 is_stmt 0 view .LVU568
+ 1709 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 1710              		.cfi_def_cfa_offset 20
+ 1711              		.cfi_offset 4, -20
+ 1712              		.cfi_offset 5, -16
+ 1713              		.cfi_offset 6, -12
+ 1714              		.cfi_offset 7, -8
+ 1715              		.cfi_offset 14, -4
+ 1716 0002 0825     		movs	r5, #8
+ 1717 0004 83B0     		sub	sp, sp, #12
+ 1718              		.cfi_def_cfa_offset 32
+ 257:BSP/LTDC/touch_iic.c **** 	{
+ 258:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SDA(IIC_Data & 0x80);
+ 1719              		.loc 1 258 3 view .LVU569
+ 1720 0006 0027     		movs	r7, #0
+ 1721 0008 284E     		ldr	r6, .L162
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 43
+
+
+ 253:BSP/LTDC/touch_iic.c **** 	uint8_t i;
+ 1722              		.loc 1 253 1 view .LVU570
+ 1723 000a 0446     		mov	r4, r0
+ 1724              	.LVL102:
+ 1725              	.L155:
+ 1726              		.loc 1 258 3 is_stmt 1 view .LVU571
+ 1727 000c 2306     		lsls	r3, r4, #24
+ 1728              		.loc 1 258 3 view .LVU572
+ 1729 000e 4FF48071 		mov	r1, #256
+ 1730 0012 3046     		mov	r0, r6
+ 1731 0014 4CBF     		ite	mi
+ 1732 0016 0122     		movmi	r2, #1
+ 1733              		.loc 1 258 3 view .LVU573
+ 1734 0018 0022     		movpl	r2, #0
+ 1735 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1736              	.LVL103:
+ 1737              	.LBB111:
+ 1738              	.LBB112:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1739              		.loc 1 81 8 view .LVU574
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1740              		.loc 1 81 8 is_stmt 0 view .LVU575
+ 1741              	.LBE112:
+ 1742              	.LBE111:
+ 253:BSP/LTDC/touch_iic.c **** 	uint8_t i;
+ 1743              		.loc 1 253 1 view .LVU576
+ 1744 001e 1422     		movs	r2, #20
+ 1745              	.LVL104:
+ 1746              	.L150:
+ 1747              	.LBB114:
+ 1748              	.LBB113:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1749              		.loc 1 83 3 is_stmt 1 view .LVU577
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1750              		.loc 1 83 10 is_stmt 0 view .LVU578
+ 1751 0020 ADF80670 		strh	r7, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1752              		.loc 1 83 15 is_stmt 1 view .LVU579
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1753              		.loc 1 83 17 is_stmt 0 view .LVU580
+ 1754 0024 BDF80630 		ldrh	r3, [sp, #6]
+ 1755 0028 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1756              		.loc 1 83 3 view .LVU581
+ 1757 002a 072B     		cmp	r3, #7
+ 1758 002c 0AD8     		bhi	.L148
+ 1759              	.L149:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1760              		.loc 1 83 26 is_stmt 1 view .LVU582
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1761              		.loc 1 83 22 view .LVU583
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1762              		.loc 1 83 23 is_stmt 0 view .LVU584
+ 1763 002e BDF80630 		ldrh	r3, [sp, #6]
+ 1764 0032 0133     		adds	r3, r3, #1
+ 1765 0034 9BB2     		uxth	r3, r3
+ 1766 0036 ADF80630 		strh	r3, [sp, #6]	@ movhi
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 44
+
+
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1767              		.loc 1 83 15 is_stmt 1 view .LVU585
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1768              		.loc 1 83 17 is_stmt 0 view .LVU586
+ 1769 003a BDF80630 		ldrh	r3, [sp, #6]
+ 1770 003e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1771              		.loc 1 83 3 view .LVU587
+ 1772 0040 072B     		cmp	r3, #7
+ 1773 0042 F4D9     		bls	.L149
+ 1774              	.L148:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1775              		.loc 1 81 8 is_stmt 1 view .LVU588
+ 1776              	.LVL105:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1777              		.loc 1 81 8 is_stmt 0 view .LVU589
+ 1778 0044 013A     		subs	r2, r2, #1
+ 1779              	.LVL106:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1780              		.loc 1 81 8 view .LVU590
+ 1781 0046 EBD1     		bne	.L150
+ 1782              	.LVL107:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1783              		.loc 1 81 8 view .LVU591
+ 1784              	.LBE113:
+ 1785              	.LBE114:
+ 259:BSP/LTDC/touch_iic.c **** 		
+ 260:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );
+ 261:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SCL(1);
+ 1786              		.loc 1 261 3 is_stmt 1 view .LVU592
+ 1787              		.loc 1 261 3 view .LVU593
+ 1788 0048 0122     		movs	r2, #1
+ 1789 004a 4FF40061 		mov	r1, #2048
+ 1790 004e 3046     		mov	r0, r6
+ 1791 0050 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1792              	.LVL108:
+ 262:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );
+ 1793              		.loc 1 262 3 view .LVU594
+ 1794              	.LBB115:
+ 1795              	.LBI115:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1796              		.loc 1 78 6 view .LVU595
+ 1797              	.LBB116:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1798              		.loc 1 81 8 view .LVU596
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1799              		.loc 1 81 8 is_stmt 0 view .LVU597
+ 1800              	.LBE116:
+ 1801              	.LBE115:
+ 261:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );
+ 1802              		.loc 1 261 3 view .LVU598
+ 1803 0054 1422     		movs	r2, #20
+ 1804              	.LVL109:
+ 1805              	.L153:
+ 1806              	.LBB118:
+ 1807              	.LBB117:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 45
+
+
+ 1808              		.loc 1 83 3 is_stmt 1 view .LVU599
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1809              		.loc 1 83 10 is_stmt 0 view .LVU600
+ 1810 0056 ADF80470 		strh	r7, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1811              		.loc 1 83 15 is_stmt 1 view .LVU601
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1812              		.loc 1 83 17 is_stmt 0 view .LVU602
+ 1813 005a BDF80430 		ldrh	r3, [sp, #4]
+ 1814 005e 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1815              		.loc 1 83 3 view .LVU603
+ 1816 0060 072B     		cmp	r3, #7
+ 1817 0062 0AD8     		bhi	.L151
+ 1818              	.L152:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1819              		.loc 1 83 26 is_stmt 1 view .LVU604
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1820              		.loc 1 83 22 view .LVU605
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1821              		.loc 1 83 23 is_stmt 0 view .LVU606
+ 1822 0064 BDF80430 		ldrh	r3, [sp, #4]
+ 1823 0068 0133     		adds	r3, r3, #1
+ 1824 006a 9BB2     		uxth	r3, r3
+ 1825 006c ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1826              		.loc 1 83 15 is_stmt 1 view .LVU607
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1827              		.loc 1 83 17 is_stmt 0 view .LVU608
+ 1828 0070 BDF80430 		ldrh	r3, [sp, #4]
+ 1829 0074 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1830              		.loc 1 83 3 view .LVU609
+ 1831 0076 072B     		cmp	r3, #7
+ 1832 0078 F4D9     		bls	.L152
+ 1833              	.L151:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1834              		.loc 1 81 8 is_stmt 1 view .LVU610
+ 1835              	.LVL110:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1836              		.loc 1 81 8 is_stmt 0 view .LVU611
+ 1837 007a 013A     		subs	r2, r2, #1
+ 1838              	.LVL111:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1839              		.loc 1 81 8 view .LVU612
+ 1840 007c EBD1     		bne	.L153
+ 1841              	.LVL112:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1842              		.loc 1 81 8 view .LVU613
+ 1843              	.LBE117:
+ 1844              	.LBE118:
+ 263:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SCL(0);		
+ 1845              		.loc 1 263 3 is_stmt 1 view .LVU614
+ 1846              		.loc 1 263 3 view .LVU615
+ 1847 007e 4FF40061 		mov	r1, #2048
+ 1848 0082 0A48     		ldr	r0, .L162
+ 1849 0084 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 46
+
+
+ 1850              	.LVL113:
+ 264:BSP/LTDC/touch_iic.c **** 		if(i == 7)
+ 1851              		.loc 1 264 3 view .LVU616
+ 1852              		.loc 1 264 5 is_stmt 0 view .LVU617
+ 1853 0088 012D     		cmp	r5, #1
+ 1854 008a 04D0     		beq	.L161
+ 265:BSP/LTDC/touch_iic.c **** 		{
+ 266:BSP/LTDC/touch_iic.c **** 			Touch_IIC_SDA(1);			
+ 267:BSP/LTDC/touch_iic.c **** 		}
+ 268:BSP/LTDC/touch_iic.c **** 		IIC_Data <<= 1;
+ 1855              		.loc 1 268 3 is_stmt 1 discriminator 2 view .LVU618
+ 1856              		.loc 1 268 12 is_stmt 0 discriminator 2 view .LVU619
+ 1857 008c 6400     		lsls	r4, r4, #1
+ 1858              	.LVL114:
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1859              		.loc 1 256 2 discriminator 2 view .LVU620
+ 1860 008e 013D     		subs	r5, r5, #1
+ 1861              	.LVL115:
+ 1862              		.loc 1 268 12 discriminator 2 view .LVU621
+ 1863 0090 E4B2     		uxtb	r4, r4
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1864              		.loc 1 256 21 is_stmt 1 discriminator 2 view .LVU622
+ 1865              	.LVL116:
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1866              		.loc 1 256 14 discriminator 2 view .LVU623
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1867              		.loc 1 256 2 is_stmt 0 discriminator 2 view .LVU624
+ 1868 0092 EDB2     		uxtb	r5, r5
+ 1869              	.LVL117:
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1870              		.loc 1 256 2 discriminator 2 view .LVU625
+ 1871 0094 BAE7     		b	.L155
+ 1872              	.LVL118:
+ 1873              	.L161:
+ 266:BSP/LTDC/touch_iic.c **** 		}
+ 1874              		.loc 1 266 4 is_stmt 1 discriminator 1 view .LVU626
+ 266:BSP/LTDC/touch_iic.c **** 		}
+ 1875              		.loc 1 266 4 discriminator 1 view .LVU627
+ 1876 0096 2A46     		mov	r2, r5
+ 1877 0098 4FF48071 		mov	r1, #256
+ 1878 009c 0348     		ldr	r0, .L162
+ 1879 009e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1880              	.LVL119:
+ 1881              		.loc 1 268 3 discriminator 1 view .LVU628
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1882              		.loc 1 256 21 discriminator 1 view .LVU629
+ 256:BSP/LTDC/touch_iic.c **** 	{
+ 1883              		.loc 1 256 14 discriminator 1 view .LVU630
+ 269:BSP/LTDC/touch_iic.c **** 	}
+ 270:BSP/LTDC/touch_iic.c **** 
+ 271:BSP/LTDC/touch_iic.c **** 	return Touch_IIC_WaitACK(); //等待设备响应
+ 1884              		.loc 1 271 2 discriminator 1 view .LVU631
+ 272:BSP/LTDC/touch_iic.c **** }
+ 1885              		.loc 1 272 1 is_stmt 0 discriminator 1 view .LVU632
+ 1886 00a2 03B0     		add	sp, sp, #12
+ 1887              		.cfi_def_cfa_offset 20
+ 1888              		@ sp needed
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 47
+
+
+ 1889 00a4 BDE8F040 		pop	{r4, r5, r6, r7, lr}
+ 1890              		.cfi_restore 14
+ 1891              		.cfi_restore 7
+ 1892              		.cfi_restore 6
+ 1893              		.cfi_restore 5
+ 1894              		.cfi_restore 4
+ 1895              		.cfi_def_cfa_offset 0
+ 271:BSP/LTDC/touch_iic.c **** }
+ 1896              		.loc 1 271 9 discriminator 1 view .LVU633
+ 1897 00a8 FFF7FEBF 		b	Touch_IIC_WaitACK
+ 1898              	.LVL120:
+ 1899              	.L163:
+ 1900              		.align	2
+ 1901              	.L162:
+ 1902 00ac 00200258 		.word	1476534272
+ 1903              		.cfi_endproc
+ 1904              	.LFE346:
+ 1906              		.section	.text.Touch_IIC_ReadByte,"ax",%progbits
+ 1907              		.align	1
+ 1908              		.p2align 2,,3
+ 1909              		.global	Touch_IIC_ReadByte
+ 1910              		.syntax unified
+ 1911              		.thumb
+ 1912              		.thumb_func
+ 1914              	Touch_IIC_ReadByte:
+ 1915              	.LVL121:
+ 1916              	.LFB347:
+ 273:BSP/LTDC/touch_iic.c **** 
+ 274:BSP/LTDC/touch_iic.c **** /*****************************************************************************************
+ 275:BSP/LTDC/touch_iic.c **** *	函 数 名:	Touch_IIC_ReadByte
+ 276:BSP/LTDC/touch_iic.c **** *	入口参数:	ACK_Mode - 响应模式，输入1则发出应答信号，输入0发出非应答信号
+ 277:BSP/LTDC/touch_iic.c **** *	返 回 值:	ACK_OK  - 设备响应正常
+ 278:BSP/LTDC/touch_iic.c **** *          	ACK_ERR - 设备响应错误
+ 279:BSP/LTDC/touch_iic.c **** *	函数功能:读一字节数据
+ 280:BSP/LTDC/touch_iic.c **** *	说    明:1.高位在前
+ 281:BSP/LTDC/touch_iic.c **** *				2.应在主机接收最后一字节数据时发送非应答信号
+ 282:BSP/LTDC/touch_iic.c **** ******************************************************************************************/
+ 283:BSP/LTDC/touch_iic.c **** 
+ 284:BSP/LTDC/touch_iic.c **** uint8_t Touch_IIC_ReadByte(uint8_t ACK_Mode)
+ 285:BSP/LTDC/touch_iic.c **** {
+ 1917              		.loc 1 285 1 is_stmt 1 view -0
+ 1918              		.cfi_startproc
+ 1919              		@ args = 0, pretend = 0, frame = 8
+ 1920              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286:BSP/LTDC/touch_iic.c **** 	uint8_t IIC_Data = 0;
+ 1921              		.loc 1 286 2 view .LVU635
+ 287:BSP/LTDC/touch_iic.c **** 	uint8_t i = 0;
+ 1922              		.loc 1 287 2 view .LVU636
+ 288:BSP/LTDC/touch_iic.c **** 	
+ 289:BSP/LTDC/touch_iic.c **** 	for (i = 0; i < 8; i++)
+ 1923              		.loc 1 289 2 view .LVU637
+ 1924              		.loc 1 289 14 view .LVU638
+ 285:BSP/LTDC/touch_iic.c **** 	uint8_t IIC_Data = 0;
+ 1925              		.loc 1 285 1 is_stmt 0 view .LVU639
+ 1926 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 1927              		.cfi_def_cfa_offset 24
+ 1928              		.cfi_offset 4, -24
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 48
+
+
+ 1929              		.cfi_offset 5, -20
+ 1930              		.cfi_offset 6, -16
+ 1931              		.cfi_offset 7, -12
+ 1932              		.cfi_offset 8, -8
+ 1933              		.cfi_offset 14, -4
+ 1934 0004 0824     		movs	r4, #8
+ 1935 0006 82B0     		sub	sp, sp, #8
+ 1936              		.cfi_def_cfa_offset 32
+ 286:BSP/LTDC/touch_iic.c **** 	uint8_t i = 0;
+ 1937              		.loc 1 286 10 view .LVU640
+ 1938 0008 0027     		movs	r7, #0
+ 290:BSP/LTDC/touch_iic.c **** 	{
+ 291:BSP/LTDC/touch_iic.c **** 		IIC_Data <<= 1;
+ 292:BSP/LTDC/touch_iic.c **** 		
+ 293:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SCL(1);
+ 1939              		.loc 1 293 3 view .LVU641
+ 1940 000a 2B4D     		ldr	r5, .L181
+ 285:BSP/LTDC/touch_iic.c **** 	uint8_t IIC_Data = 0;
+ 1941              		.loc 1 285 1 view .LVU642
+ 1942 000c 0646     		mov	r6, r0
+ 1943              	.LVL122:
+ 1944              	.L171:
+ 291:BSP/LTDC/touch_iic.c **** 		
+ 1945              		.loc 1 291 3 is_stmt 1 view .LVU643
+ 291:BSP/LTDC/touch_iic.c **** 		
+ 1946              		.loc 1 291 12 is_stmt 0 view .LVU644
+ 1947 000e 7F00     		lsls	r7, r7, #1
+ 1948              	.LVL123:
+ 1949              		.loc 1 293 3 view .LVU645
+ 1950 0010 0122     		movs	r2, #1
+ 1951 0012 4FF40061 		mov	r1, #2048
+ 1952 0016 2846     		mov	r0, r5
+ 1953 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1954              	.LVL124:
+ 1955 001c 4FF01408 		mov	r8, #20
+ 291:BSP/LTDC/touch_iic.c **** 		
+ 1956              		.loc 1 291 12 view .LVU646
+ 1957 0020 FFB2     		uxtb	r7, r7
+ 1958              	.LVL125:
+ 1959              		.loc 1 293 3 is_stmt 1 view .LVU647
+ 1960              		.loc 1 293 3 view .LVU648
+ 294:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );
+ 1961              		.loc 1 294 3 view .LVU649
+ 1962              	.LBB123:
+ 1963              	.LBI123:
+  78:BSP/LTDC/touch_iic.c **** {
+ 1964              		.loc 1 78 6 view .LVU650
+ 1965              	.LBB124:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1966              		.loc 1 81 8 view .LVU651
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1967              		.loc 1 83 10 is_stmt 0 view .LVU652
+ 1968 0022 0022     		movs	r2, #0
+ 1969              	.LVL126:
+ 1970              	.L167:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1971              		.loc 1 83 3 is_stmt 1 view .LVU653
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 49
+
+
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1972              		.loc 1 83 10 is_stmt 0 view .LVU654
+ 1973 0024 ADF80620 		strh	r2, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1974              		.loc 1 83 15 is_stmt 1 view .LVU655
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1975              		.loc 1 83 17 is_stmt 0 view .LVU656
+ 1976 0028 BDF80630 		ldrh	r3, [sp, #6]
+ 1977 002c 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1978              		.loc 1 83 3 view .LVU657
+ 1979 002e 072B     		cmp	r3, #7
+ 1980 0030 0AD8     		bhi	.L165
+ 1981              	.L166:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1982              		.loc 1 83 26 is_stmt 1 view .LVU658
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1983              		.loc 1 83 22 view .LVU659
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1984              		.loc 1 83 23 is_stmt 0 view .LVU660
+ 1985 0032 BDF80630 		ldrh	r3, [sp, #6]
+ 1986 0036 0133     		adds	r3, r3, #1
+ 1987 0038 9BB2     		uxth	r3, r3
+ 1988 003a ADF80630 		strh	r3, [sp, #6]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1989              		.loc 1 83 15 is_stmt 1 view .LVU661
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1990              		.loc 1 83 17 is_stmt 0 view .LVU662
+ 1991 003e BDF80630 		ldrh	r3, [sp, #6]
+ 1992 0042 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 1993              		.loc 1 83 3 view .LVU663
+ 1994 0044 072B     		cmp	r3, #7
+ 1995 0046 F4D9     		bls	.L166
+ 1996              	.L165:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1997              		.loc 1 81 8 is_stmt 1 view .LVU664
+ 1998              	.LVL127:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 1999              		.loc 1 81 8 is_stmt 0 view .LVU665
+ 2000 0048 B8F10108 		subs	r8, r8, #1
+ 2001              	.LVL128:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2002              		.loc 1 81 8 view .LVU666
+ 2003 004c EAD1     		bne	.L167
+ 2004              	.LVL129:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2005              		.loc 1 81 8 view .LVU667
+ 2006              	.LBE124:
+ 2007              	.LBE123:
+ 295:BSP/LTDC/touch_iic.c **** 		IIC_Data |= (HAL_GPIO_ReadPin(Touch_IIC_SDA_PORT,Touch_IIC_SDA_PIN) & 0x01);	
+ 2008              		.loc 1 295 3 is_stmt 1 view .LVU668
+ 2009              		.loc 1 295 16 is_stmt 0 view .LVU669
+ 2010 004e 4FF48071 		mov	r1, #256
+ 2011 0052 2846     		mov	r0, r5
+ 2012 0054 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 2013              	.LVL130:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 50
+
+
+ 2014              		.loc 1 295 12 view .LVU670
+ 2015 0058 00F00103 		and	r3, r0, #1
+ 296:BSP/LTDC/touch_iic.c **** 		Touch_IIC_SCL(0);
+ 2016              		.loc 1 296 3 view .LVU671
+ 2017 005c 4246     		mov	r2, r8
+ 2018 005e 4FF40061 		mov	r1, #2048
+ 2019 0062 2846     		mov	r0, r5
+ 295:BSP/LTDC/touch_iic.c **** 		IIC_Data |= (HAL_GPIO_ReadPin(Touch_IIC_SDA_PORT,Touch_IIC_SDA_PIN) & 0x01);	
+ 2020              		.loc 1 295 12 view .LVU672
+ 2021 0064 1F43     		orrs	r7, r7, r3
+ 2022              	.LVL131:
+ 2023              		.loc 1 296 3 is_stmt 1 view .LVU673
+ 2024              		.loc 1 296 3 view .LVU674
+ 2025 0066 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 2026              	.LVL132:
+ 297:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );
+ 2027              		.loc 1 297 3 view .LVU675
+ 2028              	.LBB125:
+ 2029              	.LBI125:
+  78:BSP/LTDC/touch_iic.c **** {
+ 2030              		.loc 1 78 6 view .LVU676
+ 2031              	.LBB126:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2032              		.loc 1 81 8 view .LVU677
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2033              		.loc 1 81 8 is_stmt 0 view .LVU678
+ 2034              	.LBE126:
+ 2035              	.LBE125:
+ 296:BSP/LTDC/touch_iic.c **** 		Touch_IIC_Delay( IIC_DelayVaule );
+ 2036              		.loc 1 296 3 view .LVU679
+ 2037 006a 1422     		movs	r2, #20
+ 2038              	.LVL133:
+ 2039              	.L170:
+ 2040              	.LBB128:
+ 2041              	.LBB127:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2042              		.loc 1 83 3 is_stmt 1 view .LVU680
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2043              		.loc 1 83 10 is_stmt 0 view .LVU681
+ 2044 006c ADF80480 		strh	r8, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2045              		.loc 1 83 15 is_stmt 1 view .LVU682
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2046              		.loc 1 83 17 is_stmt 0 view .LVU683
+ 2047 0070 BDF80430 		ldrh	r3, [sp, #4]
+ 2048 0074 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2049              		.loc 1 83 3 view .LVU684
+ 2050 0076 072B     		cmp	r3, #7
+ 2051 0078 0AD8     		bhi	.L168
+ 2052              	.L169:
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2053              		.loc 1 83 26 is_stmt 1 view .LVU685
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2054              		.loc 1 83 22 view .LVU686
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2055              		.loc 1 83 23 is_stmt 0 view .LVU687
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 51
+
+
+ 2056 007a BDF80430 		ldrh	r3, [sp, #4]
+ 2057 007e 0133     		adds	r3, r3, #1
+ 2058 0080 9BB2     		uxth	r3, r3
+ 2059 0082 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2060              		.loc 1 83 15 is_stmt 1 view .LVU688
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2061              		.loc 1 83 17 is_stmt 0 view .LVU689
+ 2062 0086 BDF80430 		ldrh	r3, [sp, #4]
+ 2063 008a 9BB2     		uxth	r3, r3
+  83:BSP/LTDC/touch_iic.c **** 	}
+ 2064              		.loc 1 83 3 view .LVU690
+ 2065 008c 072B     		cmp	r3, #7
+ 2066 008e F4D9     		bls	.L169
+ 2067              	.L168:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2068              		.loc 1 81 8 is_stmt 1 view .LVU691
+ 2069              	.LVL134:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2070              		.loc 1 81 8 is_stmt 0 view .LVU692
+ 2071 0090 013A     		subs	r2, r2, #1
+ 2072              	.LVL135:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2073              		.loc 1 81 8 view .LVU693
+ 2074 0092 EBD1     		bne	.L170
+ 2075              	.LVL136:
+  81:BSP/LTDC/touch_iic.c **** 	{
+ 2076              		.loc 1 81 8 view .LVU694
+ 2077              	.LBE127:
+ 2078              	.LBE128:
+ 289:BSP/LTDC/touch_iic.c **** 	{
+ 2079              		.loc 1 289 21 is_stmt 1 view .LVU695
+ 289:BSP/LTDC/touch_iic.c **** 	{
+ 2080              		.loc 1 289 14 view .LVU696
+ 289:BSP/LTDC/touch_iic.c **** 	{
+ 2081              		.loc 1 289 2 is_stmt 0 view .LVU697
+ 2082 0094 013C     		subs	r4, r4, #1
+ 2083              	.LVL137:
+ 289:BSP/LTDC/touch_iic.c **** 	{
+ 2084              		.loc 1 289 2 view .LVU698
+ 2085 0096 14F0FF04 		ands	r4, r4, #255
+ 2086 009a B8D1     		bne	.L171
+ 298:BSP/LTDC/touch_iic.c **** 	}
+ 299:BSP/LTDC/touch_iic.c **** 	
+ 300:BSP/LTDC/touch_iic.c **** 	if ( ACK_Mode == 1 )				//	应答信号
+ 2087              		.loc 1 300 2 is_stmt 1 view .LVU699
+ 2088              		.loc 1 300 5 is_stmt 0 view .LVU700
+ 2089 009c 012E     		cmp	r6, #1
+ 2090 009e 05D0     		beq	.L180
+ 301:BSP/LTDC/touch_iic.c **** 		Touch_IIC_ACK();
+ 302:BSP/LTDC/touch_iic.c **** 	else
+ 303:BSP/LTDC/touch_iic.c **** 		Touch_IIC_NoACK();		 	// 非应答信号
+ 2091              		.loc 1 303 3 is_stmt 1 view .LVU701
+ 2092 00a0 FFF7FEFF 		bl	Touch_IIC_NoACK
+ 2093              	.LVL138:
+ 304:BSP/LTDC/touch_iic.c **** 	
+ 305:BSP/LTDC/touch_iic.c **** 	return IIC_Data; 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 52
+
+
+ 2094              		.loc 1 305 2 view .LVU702
+ 306:BSP/LTDC/touch_iic.c **** }
+ 2095              		.loc 1 306 1 is_stmt 0 view .LVU703
+ 2096 00a4 3846     		mov	r0, r7
+ 2097 00a6 02B0     		add	sp, sp, #8
+ 2098              		.cfi_remember_state
+ 2099              		.cfi_def_cfa_offset 24
+ 2100              		@ sp needed
+ 2101 00a8 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 2102              	.LVL139:
+ 2103              	.L180:
+ 2104              		.cfi_restore_state
+ 301:BSP/LTDC/touch_iic.c **** 		Touch_IIC_ACK();
+ 2105              		.loc 1 301 3 is_stmt 1 view .LVU704
+ 2106 00ac FFF7FEFF 		bl	Touch_IIC_ACK
+ 2107              	.LVL140:
+ 305:BSP/LTDC/touch_iic.c **** }
+ 2108              		.loc 1 305 2 view .LVU705
+ 2109              		.loc 1 306 1 is_stmt 0 view .LVU706
+ 2110 00b0 3846     		mov	r0, r7
+ 2111 00b2 02B0     		add	sp, sp, #8
+ 2112              		.cfi_def_cfa_offset 24
+ 2113              		@ sp needed
+ 2114 00b4 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 2115              	.LVL141:
+ 2116              	.L182:
+ 2117              		.loc 1 306 1 view .LVU707
+ 2118              		.align	2
+ 2119              	.L181:
+ 2120 00b8 00200258 		.word	1476534272
+ 2121              		.cfi_endproc
+ 2122              	.LFE347:
+ 2124              		.text
+ 2125              	.Letext0:
+ 2126              		.file 2 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 2127              		.file 3 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 2128              		.file 4 "../libdaisy_IIT6/libDaisy/Drivers/CMSIS-Device/ST/STM32H7xx/Include/stm32h743xx.h"
+ 2129              		.file 5 "../libdaisy_IIT6/libDaisy/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s 			page 53
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 touch_iic.c
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:19     .text.Touch_IIC_GPIO_Config:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:26     .text.Touch_IIC_GPIO_Config:0000000000000000 Touch_IIC_GPIO_Config
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:220    .text.Touch_IIC_GPIO_Config:00000000000000f4 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:228    .text.Touch_IIC_Delay:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:235    .text.Touch_IIC_Delay:0000000000000000 Touch_IIC_Delay
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:301    .text.Touch_INT_Out:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:308    .text.Touch_INT_Out:0000000000000000 Touch_INT_Out
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:350    .text.Touch_INT_Out:0000000000000020 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:355    .text.Touch_INT_In:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:362    .text.Touch_INT_In:0000000000000000 Touch_INT_In
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:404    .text.Touch_INT_In:0000000000000020 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:409    .text.Touch_IIC_Start:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:416    .text.Touch_IIC_Start:0000000000000000 Touch_IIC_Start
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:618    .text.Touch_IIC_Start:00000000000000b8 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:623    .text.Touch_IIC_Stop:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:630    .text.Touch_IIC_Stop:0000000000000000 Touch_IIC_Stop
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:877    .text.Touch_IIC_Stop:00000000000000e4 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:882    .text.Touch_IIC_ACK:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:889    .text.Touch_IIC_ACK:0000000000000000 Touch_IIC_ACK
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1143   .text.Touch_IIC_ACK:00000000000000f0 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1148   .text.Touch_IIC_NoACK:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1155   .text.Touch_IIC_NoACK:0000000000000000 Touch_IIC_NoACK
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1402   .text.Touch_IIC_NoACK:00000000000000e4 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1407   .text.Touch_IIC_WaitACK:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1414   .text.Touch_IIC_WaitACK:0000000000000000 Touch_IIC_WaitACK
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1686   .text.Touch_IIC_WaitACK:00000000000000f0 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1691   .text.Touch_IIC_WriteByte:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1698   .text.Touch_IIC_WriteByte:0000000000000000 Touch_IIC_WriteByte
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1902   .text.Touch_IIC_WriteByte:00000000000000ac $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1907   .text.Touch_IIC_ReadByte:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:1914   .text.Touch_IIC_ReadByte:0000000000000000 Touch_IIC_ReadByte
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccXZkdqQ.s:2120   .text.Touch_IIC_ReadByte:00000000000000b8 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_GPIO_WritePin
+HAL_GPIO_ReadPin

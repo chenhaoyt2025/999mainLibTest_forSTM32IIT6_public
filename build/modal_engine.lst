@@ -1,0 +1,1877 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"modal_engine.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text._ZN6plaits11ModalEngine12LoadUserDataEPKh,"axG",%progbits,_ZN6plaits11ModalEngine12
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.weak	_ZN6plaits11ModalEngine12LoadUserDataEPKh
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	_ZN6plaits11ModalEngine12LoadUserDataEPKh:
+  27              	.LVL0:
+  28              	.LFB1545:
+  29              		.file 1 "mi/plaits/dsp/engine/modal_engine.h"
+   1:mi/plaits/dsp/engine/modal_engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/modal_engine.h **** //
+   3:mi/plaits/dsp/engine/modal_engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/modal_engine.h **** //
+   5:mi/plaits/dsp/engine/modal_engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/modal_engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/modal_engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/modal_engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/modal_engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/modal_engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/modal_engine.h **** // 
+  12:mi/plaits/dsp/engine/modal_engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/modal_engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/modal_engine.h **** // 
+  15:mi/plaits/dsp/engine/modal_engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/modal_engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/modal_engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/modal_engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/modal_engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/modal_engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/modal_engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/modal_engine.h **** // 
+  23:mi/plaits/dsp/engine/modal_engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/modal_engine.h **** //
+  25:mi/plaits/dsp/engine/modal_engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/modal_engine.h **** //
+  27:mi/plaits/dsp/engine/modal_engine.h **** // One voice of modal synthesis.
+  28:mi/plaits/dsp/engine/modal_engine.h **** 
+  29:mi/plaits/dsp/engine/modal_engine.h **** #ifndef PLAITS_DSP_ENGINE_MODAL_ENGINE_H_
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 2
+
+
+  30:mi/plaits/dsp/engine/modal_engine.h **** #define PLAITS_DSP_ENGINE_MODAL_ENGINE_H_
+  31:mi/plaits/dsp/engine/modal_engine.h **** 
+  32:mi/plaits/dsp/engine/modal_engine.h **** #include "plaits/dsp/engine/engine.h"
+  33:mi/plaits/dsp/engine/modal_engine.h **** #include "plaits/dsp/physical_modelling/modal_voice.h"
+  34:mi/plaits/dsp/engine/modal_engine.h **** 
+  35:mi/plaits/dsp/engine/modal_engine.h **** namespace plaits {
+  36:mi/plaits/dsp/engine/modal_engine.h **** 
+  37:mi/plaits/dsp/engine/modal_engine.h **** class ModalEngine : public Engine {
+  38:mi/plaits/dsp/engine/modal_engine.h ****  public:
+  39:mi/plaits/dsp/engine/modal_engine.h ****   ModalEngine() { }
+  40:mi/plaits/dsp/engine/modal_engine.h ****   ~ModalEngine() { }
+  41:mi/plaits/dsp/engine/modal_engine.h ****   
+  42:mi/plaits/dsp/engine/modal_engine.h ****   virtual void Init(stmlib::BufferAllocator* allocator);
+  43:mi/plaits/dsp/engine/modal_engine.h ****   virtual void Reset();
+  44:mi/plaits/dsp/engine/modal_engine.h ****   virtual void LoadUserData(const uint8_t* user_data) { }
+  30              		.loc 1 44 16 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35              		.loc 1 44 57 is_stmt 0 view .LVU1
+  36 0000 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE1545:
+  40 0002 00BF     		.section	.text._ZN6plaits11ModalEngine5ResetEv,"ax",%progbits
+  41              		.align	1
+  42              		.p2align 2,,3
+  43              		.global	_ZN6plaits11ModalEngine5ResetEv
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  48              	_ZN6plaits11ModalEngine5ResetEv:
+  49              	.LVL1:
+  50              	.LFB1547:
+  51              		.file 2 "mi/plaits/dsp/engine/modal_engine.cpp"
+   1:mi/plaits/dsp/engine/modal_engine.cpp **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/modal_engine.cpp **** //
+   3:mi/plaits/dsp/engine/modal_engine.cpp **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/modal_engine.cpp **** //
+   5:mi/plaits/dsp/engine/modal_engine.cpp **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/modal_engine.cpp **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/modal_engine.cpp **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/modal_engine.cpp **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/modal_engine.cpp **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/modal_engine.cpp **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/modal_engine.cpp **** // 
+  12:mi/plaits/dsp/engine/modal_engine.cpp **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/modal_engine.cpp **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/modal_engine.cpp **** // 
+  15:mi/plaits/dsp/engine/modal_engine.cpp **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/modal_engine.cpp **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/modal_engine.cpp **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/modal_engine.cpp **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/modal_engine.cpp **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/modal_engine.cpp **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/modal_engine.cpp **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/modal_engine.cpp **** // 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 3
+
+
+  23:mi/plaits/dsp/engine/modal_engine.cpp **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/modal_engine.cpp **** //
+  25:mi/plaits/dsp/engine/modal_engine.cpp **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/modal_engine.cpp **** //
+  27:mi/plaits/dsp/engine/modal_engine.cpp **** // One voice of modal synthesis.
+  28:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  29:mi/plaits/dsp/engine/modal_engine.cpp **** #include "plaits/dsp/engine/modal_engine.h"
+  30:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  31:mi/plaits/dsp/engine/modal_engine.cpp **** #include <algorithm>
+  32:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  33:mi/plaits/dsp/engine/modal_engine.cpp **** namespace plaits {
+  34:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  35:mi/plaits/dsp/engine/modal_engine.cpp **** using namespace std;
+  36:mi/plaits/dsp/engine/modal_engine.cpp **** using namespace stmlib;
+  37:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  38:mi/plaits/dsp/engine/modal_engine.cpp **** void ModalEngine::Init(BufferAllocator* allocator) {
+  39:mi/plaits/dsp/engine/modal_engine.cpp ****   temp_buffer_ = allocator->Allocate<float>(kMaxBlockSize);
+  40:mi/plaits/dsp/engine/modal_engine.cpp ****   harmonics_lp_ = 0.0f;
+  41:mi/plaits/dsp/engine/modal_engine.cpp ****   Reset();
+  42:mi/plaits/dsp/engine/modal_engine.cpp **** }
+  43:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  44:mi/plaits/dsp/engine/modal_engine.cpp **** void ModalEngine::Reset() {
+  52              		.loc 2 44 27 is_stmt 1 view -0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  45:mi/plaits/dsp/engine/modal_engine.cpp ****   voice_.Init();
+  57              		.loc 2 45 3 view .LVU3
+  58              		.loc 2 45 14 is_stmt 0 view .LVU4
+  59 0000 1030     		adds	r0, r0, #16
+  60              	.LVL2:
+  61              		.loc 2 45 14 view .LVU5
+  62 0002 FFF7FEBF 		b	_ZN6plaits10ModalVoice4InitEv
+  63              	.LVL3:
+  64              		.loc 2 45 14 view .LVU6
+  65              		.cfi_endproc
+  66              	.LFE1547:
+  68 0006 00BF     		.section	.text._ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb,"ax",%progbits
+  69              		.align	1
+  70              		.p2align 2,,3
+  71              		.global	_ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  76              	_ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb:
+  77              	.LVL4:
+  78              	.LFB1548:
+  46:mi/plaits/dsp/engine/modal_engine.cpp **** }
+  47:mi/plaits/dsp/engine/modal_engine.cpp **** 
+  48:mi/plaits/dsp/engine/modal_engine.cpp **** void ModalEngine::Render(
+  49:mi/plaits/dsp/engine/modal_engine.cpp ****     const EngineParameters& parameters,
+  50:mi/plaits/dsp/engine/modal_engine.cpp ****     float* out,
+  51:mi/plaits/dsp/engine/modal_engine.cpp ****     float* aux,
+  52:mi/plaits/dsp/engine/modal_engine.cpp ****     size_t size,
+  53:mi/plaits/dsp/engine/modal_engine.cpp ****     bool* already_enveloped) {
+  79              		.loc 2 53 30 is_stmt 1 view -0
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 4
+
+
+  80              		.cfi_startproc
+  81              		@ args = 8, pretend = 0, frame = 8
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  54:mi/plaits/dsp/engine/modal_engine.cpp ****   fill(&out[0], &out[size], 0.0f);
+  83              		.loc 2 54 3 view .LVU8
+  53:mi/plaits/dsp/engine/modal_engine.cpp ****   fill(&out[0], &out[size], 0.0f);
+  84              		.loc 2 53 30 is_stmt 0 view .LVU9
+  85 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+  86              		.cfi_def_cfa_offset 28
+  87              		.cfi_offset 4, -28
+  88              		.cfi_offset 5, -24
+  89              		.cfi_offset 6, -20
+  90              		.cfi_offset 7, -16
+  91              		.cfi_offset 8, -12
+  92              		.cfi_offset 9, -8
+  93              		.cfi_offset 14, -4
+  94 0004 87B0     		sub	sp, sp, #28
+  95              		.cfi_def_cfa_offset 56
+  53:mi/plaits/dsp/engine/modal_engine.cpp ****   fill(&out[0], &out[size], 0.0f);
+  96              		.loc 2 53 30 view .LVU10
+  97 0006 1746     		mov	r7, r2
+  98 0008 0546     		mov	r5, r0
+  99 000a 0C46     		mov	r4, r1
+ 100 000c DDF83890 		ldr	r9, [sp, #56]
+ 101              	.LVL5:
+ 102              	.LBB34:
+ 103              	.LBI34:
+ 104              		.file 3 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h"
+   1:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Core algorithmic facilities -*- C++ -*-
+   2:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+   3:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Copyright (C) 2001-2020 Free Software Foundation, Inc.
+   4:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** //
+   5:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // This file is part of the GNU ISO C++ Library.  This library is free
+   6:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // software; you can redistribute it and/or modify it under the
+   7:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // terms of the GNU General Public License as published by the
+   8:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Free Software Foundation; either version 3, or (at your option)
+   9:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // any later version.
+  10:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  11:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // This library is distributed in the hope that it will be useful,
+  12:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // but WITHOUT ANY WARRANTY; without even the implied warranty of
+  13:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  14:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // GNU General Public License for more details.
+  15:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  16:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Under Section 7 of GPL version 3, you are granted additional
+  17:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // permissions described in the GCC Runtime Library Exception, version
+  18:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // 3.1, as published by the Free Software Foundation.
+  19:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  20:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // You should have received a copy of the GNU General Public License and
+  21:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // a copy of the GCC Runtime Library Exception along with this program;
+  22:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+  23:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // <http://www.gnu.org/licenses/>.
+  24:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  25:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** /*
+  26:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  27:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Copyright (c) 1994
+  28:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Hewlett-Packard Company
+  29:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 5
+
+
+  30:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Permission to use, copy, modify, distribute and sell this software
+  31:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * and its documentation for any purpose is hereby granted without fee,
+  32:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * provided that the above copyright notice appear in all copies and
+  33:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * that both that copyright notice and this permission notice appear
+  34:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * in supporting documentation.  Hewlett-Packard Company makes no
+  35:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * representations about the suitability of this software for any
+  36:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * purpose.  It is provided "as is" without express or implied warranty.
+  37:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  38:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  39:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Copyright (c) 1996-1998
+  40:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Silicon Graphics Computer Systems, Inc.
+  41:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  42:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Permission to use, copy, modify, distribute and sell this software
+  43:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * and its documentation for any purpose is hereby granted without fee,
+  44:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * provided that the above copyright notice appear in all copies and
+  45:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * that both that copyright notice and this permission notice appear
+  46:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * in supporting documentation.  Silicon Graphics makes no
+  47:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * representations about the suitability of this software for any
+  48:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * purpose.  It is provided "as is" without express or implied warranty.
+  49:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  */
+  50:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  51:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** /** @file bits/stl_algobase.h
+  52:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *  This is an internal header file, included by other library headers.
+  53:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *  Do not attempt to use it directly. @headername{algorithm}
+  54:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  */
+  55:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  56:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #ifndef _STL_ALGOBASE_H
+  57:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #define _STL_ALGOBASE_H 1
+  58:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  59:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/c++config.h>
+  60:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/functexcept.h>
+  61:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/cpp_type_traits.h>
+  62:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <ext/type_traits.h>
+  63:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <ext/numeric_traits.h>
+  64:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_pair.h>
+  65:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_iterator_base_types.h>
+  66:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_iterator_base_funcs.h>
+  67:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_iterator.h>
+  68:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/concept_check.h>
+  69:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <debug/debug.h>
+  70:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/move.h> // For std::swap
+  71:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/predefined_ops.h>
+  72:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+  73:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** # include <type_traits>
+  74:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+  75:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus > 201703L
+  76:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** # include <compare>
+  77:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+  78:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  79:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** namespace std _GLIBCXX_VISIBILITY(default)
+  80:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** {
+  81:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** _GLIBCXX_BEGIN_NAMESPACE_VERSION
+  82:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  83:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /*
+  84:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    * A constexpr wrapper for __builtin_memcmp.
+  85:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    * @param __num The number of elements of type _Tp (not bytes).
+  86:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    */
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 6
+
+
+  87:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp, typename _Up>
+  88:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+  89:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline int
+  90:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __memcmp(const _Tp* __first1, const _Up* __first2, size_t __num)
+  91:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+  92:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+  93:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       static_assert(sizeof(_Tp) == sizeof(_Up), "can be compared with memcmp");
+  94:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+  95:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #ifdef __cpp_lib_is_constant_evaluated
+  96:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (std::is_constant_evaluated())
+  97:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+  98:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for(; __num > 0; ++__first1, ++__first2, --__num)
+  99:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    if (*__first1 != *__first2)
+ 100:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      return *__first1 < *__first2 ? -1 : 1;
+ 101:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return 0;
+ 102:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 103:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       else
+ 104:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 105:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return __builtin_memcmp(__first1, __first2, sizeof(_Tp) * __num);
+ 106:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 107:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 108:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus < 201103L
+ 109:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // See http://gcc.gnu.org/ml/libstdc++/2004-08/msg00167.html: in a
+ 110:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // nutshell, we are partially implementing the resolution of DR 187,
+ 111:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // when it's safe, i.e., the value_types are equal.
+ 112:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _BoolType>
+ 113:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __iter_swap
+ 114:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 115:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 116:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static void
+ 117:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	iter_swap(_ForwardIterator1 __a, _ForwardIterator2 __b)
+ 118:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 119:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  typedef typename iterator_traits<_ForwardIterator1>::value_type
+ 120:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    _ValueType1;
+ 121:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  _ValueType1 __tmp = *__a;
+ 122:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  *__a = *__b;
+ 123:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  *__b = __tmp;
+ 124:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 125:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 126:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 127:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<>
+ 128:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __iter_swap<true>
+ 129:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 130:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 131:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static void
+ 132:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	iter_swap(_ForwardIterator1 __a, _ForwardIterator2 __b)
+ 133:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 134:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  swap(*__a, *__b);
+ 135:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 136:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 137:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif // C++03
+ 138:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 139:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 140:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Swaps the contents of two iterators.
+ 141:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 142:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  An iterator.
+ 143:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another iterator.
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 7
+
+
+ 144:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   Nothing.
+ 145:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 146:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This function swaps the values pointed to by two iterators, not the
+ 147:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  iterators themselves.
+ 148:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 149:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 150:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 151:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline void
+ 152:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     iter_swap(_ForwardIterator1 __a, _ForwardIterator2 __b)
+ 153:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 154:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 155:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 156:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator1>)
+ 157:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 158:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator2>)
+ 159:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 160:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus < 201103L
+ 161:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator1>::value_type
+ 162:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ValueType1;
+ 163:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator2>::value_type
+ 164:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ValueType2;
+ 165:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 166:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_ConvertibleConcept<_ValueType1,
+ 167:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ValueType2>)
+ 168:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_ConvertibleConcept<_ValueType2,
+ 169:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ValueType1>)
+ 170:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 171:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator1>::reference
+ 172:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ReferenceType1;
+ 173:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator2>::reference
+ 174:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ReferenceType2;
+ 175:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       std::__iter_swap<__are_same<_ValueType1, _ValueType2>::__value
+ 176:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	&& __are_same<_ValueType1&, _ReferenceType1>::__value
+ 177:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	&& __are_same<_ValueType2&, _ReferenceType2>::__value>::
+ 178:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	iter_swap(__a, __b);
+ 179:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #else
+ 180:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // _GLIBCXX_RESOLVE_LIB_DEFECTS
+ 181:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // 187. iter_swap underspecified
+ 182:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       swap(*__a, *__b);
+ 183:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 184:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 185:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 186:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 187:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Swap the elements of two sequences.
+ 188:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 189:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first1  A forward iterator.
+ 190:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last1   A forward iterator.
+ 191:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first2  A forward iterator.
+ 192:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   An iterator equal to @p first2+(last1-first1).
+ 193:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 194:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  Swaps each element in the range @p [first1,last1) with the
+ 195:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  corresponding element in the range @p [first2,(last1-first1)).
+ 196:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  The ranges must not overlap.
+ 197:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 198:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 199:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 200:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _ForwardIterator2
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 8
+
+
+ 201:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     swap_ranges(_ForwardIterator1 __first1, _ForwardIterator1 __last1,
+ 202:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		_ForwardIterator2 __first2)
+ 203:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 204:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 205:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 206:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator1>)
+ 207:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 208:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator2>)
+ 209:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_requires_valid_range(__first1, __last1);
+ 210:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 211:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       for (; __first1 != __last1; ++__first1, (void)++__first2)
+ 212:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	std::iter_swap(__first1, __first2);
+ 213:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return __first2;
+ 214:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 215:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 216:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 217:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief This does what you think it does.
+ 218:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup sorting_algorithms
+ 219:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  A thing of arbitrary type.
+ 220:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another thing of arbitrary type.
+ 221:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   The lesser of the parameters.
+ 222:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 223:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This is the simple classic generic implementation.  It will work on
+ 224:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  temporary expressions, since they are only evaluated once, unlike a
+ 225:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  preprocessor macro.
+ 226:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 227:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp>
+ 228:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+ 229:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline const _Tp&
+ 230:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     min(const _Tp& __a, const _Tp& __b)
+ 231:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 232:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 233:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_LessThanComparableConcept<_Tp>)
+ 234:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       //return __b < __a ? __b : __a;
+ 235:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (__b < __a)
+ 236:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return __b;
+ 237:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return __a;
+ 238:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 239:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 240:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 241:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief This does what you think it does.
+ 242:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup sorting_algorithms
+ 243:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  A thing of arbitrary type.
+ 244:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another thing of arbitrary type.
+ 245:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   The greater of the parameters.
+ 246:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 247:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This is the simple classic generic implementation.  It will work on
+ 248:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  temporary expressions, since they are only evaluated once, unlike a
+ 249:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  preprocessor macro.
+ 250:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 251:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp>
+ 252:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+ 253:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline const _Tp&
+ 254:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     max(const _Tp& __a, const _Tp& __b)
+ 255:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 256:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 257:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_LessThanComparableConcept<_Tp>)
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 9
+
+
+ 258:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       //return  __a < __b ? __b : __a;
+ 259:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (__a < __b)
+ 260:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return __b;
+ 261:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return __a;
+ 262:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 263:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 264:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 265:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief This does what you think it does.
+ 266:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup sorting_algorithms
+ 267:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  A thing of arbitrary type.
+ 268:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another thing of arbitrary type.
+ 269:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __comp  A @link comparison_functors comparison functor@endlink.
+ 270:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   The lesser of the parameters.
+ 271:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 272:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This will work on temporary expressions, since they are only evaluated
+ 273:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  once, unlike a preprocessor macro.
+ 274:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 275:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp, typename _Compare>
+ 276:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+ 277:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline const _Tp&
+ 278:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     min(const _Tp& __a, const _Tp& __b, _Compare __comp)
+ 279:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 280:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       //return __comp(__b, __a) ? __b : __a;
+ 281:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (__comp(__b, __a))
+ 282:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return __b;
+ 283:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return __a;
+ 284:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 285:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 286:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 287:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief This does what you think it does.
+ 288:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup sorting_algorithms
+ 289:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  A thing of arbitrary type.
+ 290:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another thing of arbitrary type.
+ 291:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __comp  A @link comparison_functors comparison functor@endlink.
+ 292:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   The greater of the parameters.
+ 293:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 294:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This will work on temporary expressions, since they are only evaluated
+ 295:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  once, unlike a preprocessor macro.
+ 296:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 297:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp, typename _Compare>
+ 298:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+ 299:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline const _Tp&
+ 300:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     max(const _Tp& __a, const _Tp& __b, _Compare __comp)
+ 301:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 302:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       //return __comp(__a, __b) ? __b : __a;
+ 303:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (__comp(__a, __b))
+ 304:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return __b;
+ 305:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return __a;
+ 306:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 307:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 308:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // Fallback implementation of the function in bits/stl_iterator.h used to
+ 309:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // remove the __normal_iterator wrapper. See copy, fill, ...
+ 310:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Iterator>
+ 311:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 312:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _Iterator
+ 313:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __niter_base(_Iterator __it)
+ 314:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX_NOEXCEPT_IF(std::is_nothrow_copy_constructible<_Iterator>::value)
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 10
+
+
+ 315:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { return __it; }
+ 316:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 317:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // Reverse the __niter_base transformation to get a
+ 318:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // __normal_iterator back again (this assumes that __normal_iterator
+ 319:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // is only used to wrap random access iterators, like pointers).
+ 320:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _From, typename _To>
+ 321:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 322:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _From
+ 323:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __niter_wrap(_From __from, _To __res)
+ 324:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { return __from + (__res - std::__niter_base(__from)); }
+ 325:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 326:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // No need to wrap, iterator already has the right type.
+ 327:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Iterator>
+ 328:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 329:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _Iterator
+ 330:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __niter_wrap(const _Iterator&, _Iterator __res)
+ 331:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { return __res; }
+ 332:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 333:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // All of these auxiliary structs serve two purposes.  (1) Replace
+ 334:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // calls to copy with memmove whenever possible.  (Memmove, not memcpy,
+ 335:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // because the input and output ranges are permitted to overlap.)
+ 336:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // (2) If we're using random access iterators, then write the loop as
+ 337:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // a for loop with an explicit count.
+ 338:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 339:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, bool _IsSimple, typename _Category>
+ 340:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move
+ 341:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 342:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _II, typename _OI>
+ 343:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 344:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _OI
+ 345:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_m(_II __first, _II __last, _OI __result)
+ 346:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 347:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for (; __first != __last; ++__result, (void)++__first)
+ 348:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *__result = *__first;
+ 349:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 350:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 351:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 352:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 353:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 354:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Category>
+ 355:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move<true, false, _Category>
+ 356:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 357:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _II, typename _OI>
+ 358:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 359:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _OI
+ 360:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_m(_II __first, _II __last, _OI __result)
+ 361:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 362:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for (; __first != __last; ++__result, (void)++__first)
+ 363:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *__result = std::move(*__first);
+ 364:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 365:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 366:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 367:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 368:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 369:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<>
+ 370:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move<false, false, random_access_iterator_tag>
+ 371:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 11
+
+
+ 372:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _II, typename _OI>
+ 373:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 374:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _OI
+ 375:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_m(_II __first, _II __last, _OI __result)
+ 376:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 377:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  typedef typename iterator_traits<_II>::difference_type _Distance;
+ 378:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for(_Distance __n = __last - __first; __n > 0; --__n)
+ 379:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    {
+ 380:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      *__result = *__first;
+ 381:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      ++__first;
+ 382:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      ++__result;
+ 383:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    }
+ 384:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 385:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 386:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 387:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 388:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 389:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<>
+ 390:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move<true, false, random_access_iterator_tag>
+ 391:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 392:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _II, typename _OI>
+ 393:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 394:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _OI
+ 395:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_m(_II __first, _II __last, _OI __result)
+ 396:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 397:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  typedef typename iterator_traits<_II>::difference_type _Distance;
+ 398:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for(_Distance __n = __last - __first; __n > 0; --__n)
+ 399:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    {
+ 400:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      *__result = std::move(*__first);
+ 401:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      ++__first;
+ 402:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      ++__result;
+ 403:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    }
+ 404:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 405:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 406:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 407:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 408:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 409:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove>
+ 410:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move<_IsMove, true, random_access_iterator_tag>
+ 411:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 412:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _Tp>
+ 413:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 414:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _Tp*
+ 415:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_m(const _Tp* __first, const _Tp* __last, _Tp* __result)
+ 416:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 417:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 418:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  using __assignable = conditional<_IsMove,
+ 419:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					   is_move_assignable<_Tp>,
+ 420:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					   is_copy_assignable<_Tp>>;
+ 421:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  // trivial types can have deleted assignment
+ 422:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  static_assert( __assignable::type::value, "type is not assignable" );
+ 423:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 424:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  const ptrdiff_t _Num = __last - __first;
+ 425:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  if (_Num)
+ 426:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    __builtin_memmove(__result, __first, sizeof(_Tp) * _Num);
+ 427:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result + _Num;
+ 428:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 12
+
+
+ 429:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 430:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 431:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // Helpers for streambuf iterators (either istream or ostream).
+ 432:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // NB: avoid including <iosfwd>, relatively large.
+ 433:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _CharT>
+ 434:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct char_traits;
+ 435:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 436:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _CharT, typename _Traits>
+ 437:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     class istreambuf_iterator;
+ 438:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 439:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _CharT, typename _Traits>
+ 440:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     class ostreambuf_iterator;
+ 441:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 442:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _CharT>
+ 443:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     typename __gnu_cxx::__enable_if<__is_char<_CharT>::__value,
+ 444:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	     ostreambuf_iterator<_CharT, char_traits<_CharT> > >::__type
+ 445:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a2(_CharT*, _CharT*,
+ 446:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   ostreambuf_iterator<_CharT, char_traits<_CharT> >);
+ 447:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 448:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _CharT>
+ 449:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     typename __gnu_cxx::__enable_if<__is_char<_CharT>::__value,
+ 450:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	     ostreambuf_iterator<_CharT, char_traits<_CharT> > >::__type
+ 451:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a2(const _CharT*, const _CharT*,
+ 452:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   ostreambuf_iterator<_CharT, char_traits<_CharT> >);
+ 453:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 454:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _CharT>
+ 455:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     typename __gnu_cxx::__enable_if<__is_char<_CharT>::__value,
+ 456:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				    _CharT*>::__type
+ 457:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a2(istreambuf_iterator<_CharT, char_traits<_CharT> >,
+ 458:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   istreambuf_iterator<_CharT, char_traits<_CharT> >, _CharT*);
+ 459:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 460:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _II, typename _OI>
+ 461:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 462:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _OI
+ 463:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a2(_II __first, _II __last, _OI __result)
+ 464:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 465:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_II>::iterator_category _Category;
+ 466:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #ifdef __cpp_lib_is_constant_evaluated
+ 467:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (std::is_constant_evaluated())
+ 468:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return std::__copy_move<_IsMove, false, _Category>::
+ 469:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  __copy_m(__first, __last, __result);
+ 470:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 471:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__copy_move<_IsMove, __memcpyable<_OI, _II>::__value,
+ 472:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			      _Category>::__copy_m(__first, __last, __result);
+ 473:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 474:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 475:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
+ 476:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 477:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp, typename _Ref, typename _Ptr>
+ 478:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct _Deque_iterator;
+ 479:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 480:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** _GLIBCXX_END_NAMESPACE_CONTAINER
+ 481:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 482:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 483:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _Tp, typename _Ref, typename _Ptr, typename _OI>
+ 484:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _OI
+ 485:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a1(_GLIBCXX_STD_C::_Deque_iterator<_Tp, _Ref, _Ptr>,
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 13
+
+
+ 486:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Ref, _Ptr>,
+ 487:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   _OI);
+ 488:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 489:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 490:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _ITp, typename _IRef, typename _IPtr, typename _OTp>
+ 491:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX_STD_C::_Deque_iterator<_OTp, _OTp&, _OTp*>
+ 492:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a1(_GLIBCXX_STD_C::_Deque_iterator<_ITp, _IRef, _IPtr>,
+ 493:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   _GLIBCXX_STD_C::_Deque_iterator<_ITp, _IRef, _IPtr>,
+ 494:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   _GLIBCXX_STD_C::_Deque_iterator<_OTp, _OTp&, _OTp*>);
+ 495:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 496:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _II, typename _Tp>
+ 497:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     typename __gnu_cxx::__enable_if<
+ 498:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __is_random_access_iter<_II>::__value,
+ 499:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Tp&, _Tp*> >::__type
+ 500:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a1(_II, _II, _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Tp&, _Tp*>);
+ 501:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 502:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _II, typename _OI>
+ 503:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 504:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _OI
+ 505:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a1(_II __first, _II __last, _OI __result)
+ 506:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { return std::__copy_move_a2<_IsMove>(__first, __last, __result); }
+ 507:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 508:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _II, typename _OI>
+ 509:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 510:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _OI
+ 511:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a(_II __first, _II __last, _OI __result)
+ 512:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 513:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__niter_wrap(__result,
+ 514:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		std::__copy_move_a1<_IsMove>(std::__niter_base(__first),
+ 515:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					     std::__niter_base(__last),
+ 516:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					     std::__niter_base(__result)));
+ 517:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 518:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 519:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 520:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _Ite, typename _Seq, typename _Cat, typename _OI>
+ 521:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _OI
+ 522:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a(const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&,
+ 523:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		  const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&,
+ 524:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		  _OI);
+ 525:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 526:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 527:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _II, typename _Ite, typename _Seq, typename _Cat>
+ 528:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>
+ 529:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a(_II, _II,
+ 530:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		  const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&);
+ 531:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 532:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 533:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _IIte, typename _ISeq, typename _ICat,
+ 534:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _OIte, typename _OSeq, typename _OCat>
+ 535:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     ::__gnu_debug::_Safe_iterator<_OIte, _OSeq, _OCat>
+ 536:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_a(const ::__gnu_debug::_Safe_iterator<_IIte, _ISeq, _ICat>&,
+ 537:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		  const ::__gnu_debug::_Safe_iterator<_IIte, _ISeq, _ICat>&,
+ 538:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		  const ::__gnu_debug::_Safe_iterator<_OIte, _OSeq, _OCat>&);
+ 539:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 540:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 541:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Copies the range [first,last) into result.
+ 542:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 14
+
+
+ 543:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first  An input iterator.
+ 544:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last   An input iterator.
+ 545:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __result An output iterator.
+ 546:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   result + (last - first)
+ 547:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 548:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This inline function will boil down to a call to @c memmove whenever
+ 549:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  possible.  Failing that, if random access iterators are passed, then the
+ 550:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  loop count will be known (and therefore a candidate for compiler
+ 551:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  optimizations such as unrolling).  Result may not be contained within
+ 552:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  [first,last); the copy_backward function should be used instead.
+ 553:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 554:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  Note that the end of the output range is permitted to be contained
+ 555:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  within [first,last).
+ 556:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 557:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _II, typename _OI>
+ 558:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 559:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _OI
+ 560:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     copy(_II __first, _II __last, _OI __result)
+ 561:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 562:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 563:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_InputIteratorConcept<_II>)
+ 564:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_OutputIteratorConcept<_OI,
+ 565:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    typename iterator_traits<_II>::value_type>)
+ 566:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_requires_can_increment_range(__first, __last, __result);
+ 567:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 568:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__copy_move_a<__is_move_iterator<_II>::__value>
+ 569:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	     (std::__miter_base(__first), std::__miter_base(__last), __result);
+ 570:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 571:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 572:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 573:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 574:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Moves the range [first,last) into result.
+ 575:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 576:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first  An input iterator.
+ 577:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last   An input iterator.
+ 578:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __result An output iterator.
+ 579:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   result + (last - first)
+ 580:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 581:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This inline function will boil down to a call to @c memmove whenever
+ 582:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  possible.  Failing that, if random access iterators are passed, then the
+ 583:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  loop count will be known (and therefore a candidate for compiler
+ 584:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  optimizations such as unrolling).  Result may not be contained within
+ 585:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  [first,last); the move_backward function should be used instead.
+ 586:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 587:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  Note that the end of the output range is permitted to be contained
+ 588:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  within [first,last).
+ 589:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 590:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _II, typename _OI>
+ 591:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 592:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _OI
+ 593:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     move(_II __first, _II __last, _OI __result)
+ 594:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 595:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 596:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_InputIteratorConcept<_II>)
+ 597:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_OutputIteratorConcept<_OI,
+ 598:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    typename iterator_traits<_II>::value_type>)
+ 599:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_requires_can_increment_range(__first, __last, __result);
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 15
+
+
+ 600:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 601:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__copy_move_a<true>(std::__miter_base(__first),
+ 602:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				      std::__miter_base(__last), __result);
+ 603:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 604:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 605:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #define _GLIBCXX_MOVE3(_Tp, _Up, _Vp) std::move(_Tp, _Up, _Vp)
+ 606:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #else
+ 607:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #define _GLIBCXX_MOVE3(_Tp, _Up, _Vp) std::copy(_Tp, _Up, _Vp)
+ 608:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 609:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 610:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, bool _IsSimple, typename _Category>
+ 611:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move_backward
+ 612:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 613:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _BI1, typename _BI2>
+ 614:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 615:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _BI2
+ 616:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_move_b(_BI1 __first, _BI1 __last, _BI2 __result)
+ 617:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 618:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  while (__first != __last)
+ 619:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *--__result = *--__last;
+ 620:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 621:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 622:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 623:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 624:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 625:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Category>
+ 626:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move_backward<true, false, _Category>
+ 627:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 628:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _BI1, typename _BI2>
+ 629:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 630:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _BI2
+ 631:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_move_b(_BI1 __first, _BI1 __last, _BI2 __result)
+ 632:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 633:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  while (__first != __last)
+ 634:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *--__result = std::move(*--__last);
+ 635:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 636:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 637:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 638:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 639:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 640:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<>
+ 641:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move_backward<false, false, random_access_iterator_tag>
+ 642:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 643:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _BI1, typename _BI2>
+ 644:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 645:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _BI2
+ 646:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_move_b(_BI1 __first, _BI1 __last, _BI2 __result)
+ 647:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 648:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  typename iterator_traits<_BI1>::difference_type
+ 649:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    __n = __last - __first;
+ 650:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for (; __n > 0; --__n)
+ 651:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *--__result = *--__last;
+ 652:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 653:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 654:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 655:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 656:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 16
+
+
+ 657:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<>
+ 658:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move_backward<true, false, random_access_iterator_tag>
+ 659:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 660:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _BI1, typename _BI2>
+ 661:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 662:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _BI2
+ 663:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_move_b(_BI1 __first, _BI1 __last, _BI2 __result)
+ 664:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 665:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  typename iterator_traits<_BI1>::difference_type
+ 666:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    __n = __last - __first;
+ 667:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for (; __n > 0; --__n)
+ 668:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *--__result = std::move(*--__last);
+ 669:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result;
+ 670:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 671:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 672:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 673:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 674:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove>
+ 675:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __copy_move_backward<_IsMove, true, random_access_iterator_tag>
+ 676:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 677:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _Tp>
+ 678:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_GLIBCXX20_CONSTEXPR
+ 679:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static _Tp*
+ 680:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__copy_move_b(const _Tp* __first, const _Tp* __last, _Tp* __result)
+ 681:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 682:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 683:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  using __assignable = conditional<_IsMove,
+ 684:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					   is_move_assignable<_Tp>,
+ 685:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					   is_copy_assignable<_Tp>>;
+ 686:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  // trivial types can have deleted assignment
+ 687:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  static_assert( __assignable::type::value, "type is not assignable" );
+ 688:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 689:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  const ptrdiff_t _Num = __last - __first;
+ 690:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  if (_Num)
+ 691:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    __builtin_memmove(__result - _Num, __first, sizeof(_Tp) * _Num);
+ 692:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return __result - _Num;
+ 693:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 694:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 695:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 696:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _BI1, typename _BI2>
+ 697:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 698:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _BI2
+ 699:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a2(_BI1 __first, _BI1 __last, _BI2 __result)
+ 700:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 701:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_BI1>::iterator_category _Category;
+ 702:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #ifdef __cpp_lib_is_constant_evaluated
+ 703:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (std::is_constant_evaluated())
+ 704:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return std::__copy_move_backward<_IsMove, false, _Category>::
+ 705:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  __copy_move_b(__first, __last, __result);
+ 706:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 707:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__copy_move_backward<_IsMove,
+ 708:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				       __memcpyable<_BI2, _BI1>::__value,
+ 709:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				       _Category>::__copy_move_b(__first,
+ 710:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 								 __last,
+ 711:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 								 __result);
+ 712:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 713:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 17
+
+
+ 714:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _BI1, typename _BI2>
+ 715:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 716:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _BI2
+ 717:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a1(_BI1 __first, _BI1 __last, _BI2 __result)
+ 718:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { return std::__copy_move_backward_a2<_IsMove>(__first, __last, __result); }
+ 719:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 720:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 721:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _Tp, typename _Ref, typename _Ptr, typename _OI>
+ 722:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _OI
+ 723:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a1(_GLIBCXX_STD_C::_Deque_iterator<_Tp, _Ref, _Ptr>,
+ 724:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			    _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Ref, _Ptr>,
+ 725:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			    _OI);
+ 726:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 727:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 728:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _ITp, typename _IRef, typename _IPtr, typename _OTp>
+ 729:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX_STD_C::_Deque_iterator<_OTp, _OTp&, _OTp*>
+ 730:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a1(
+ 731:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			_GLIBCXX_STD_C::_Deque_iterator<_ITp, _IRef, _IPtr>,
+ 732:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			_GLIBCXX_STD_C::_Deque_iterator<_ITp, _IRef, _IPtr>,
+ 733:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			_GLIBCXX_STD_C::_Deque_iterator<_OTp, _OTp&, _OTp*>);
+ 734:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 735:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _II, typename _Tp>
+ 736:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     typename __gnu_cxx::__enable_if<
+ 737:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __is_random_access_iter<_II>::__value,
+ 738:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Tp&, _Tp*> >::__type
+ 739:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a1(_II, _II,
+ 740:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 			    _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Tp&, _Tp*>);
+ 741:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 742:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove, typename _II, typename _OI>
+ 743:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 744:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _OI
+ 745:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a(_II __first, _II __last, _OI __result)
+ 746:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 747:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__niter_wrap(__result,
+ 748:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		std::__copy_move_backward_a1<_IsMove>
+ 749:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		  (std::__niter_base(__first), std::__niter_base(__last),
+ 750:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		   std::__niter_base(__result)));
+ 751:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 752:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 753:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 754:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _Ite, typename _Seq, typename _Cat, typename _OI>
+ 755:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _OI
+ 756:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a(
+ 757:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&,
+ 758:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&,
+ 759:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		_OI);
+ 760:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 761:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 762:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _II, typename _Ite, typename _Seq, typename _Cat>
+ 763:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>
+ 764:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a(_II, _II,
+ 765:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&);
+ 766:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 767:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _IsMove,
+ 768:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _IIte, typename _ISeq, typename _ICat,
+ 769:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	   typename _OIte, typename _OSeq, typename _OCat>
+ 770:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     ::__gnu_debug::_Safe_iterator<_OIte, _OSeq, _OCat>
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 18
+
+
+ 771:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __copy_move_backward_a(
+ 772:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		const ::__gnu_debug::_Safe_iterator<_IIte, _ISeq, _ICat>&,
+ 773:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		const ::__gnu_debug::_Safe_iterator<_IIte, _ISeq, _ICat>&,
+ 774:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		const ::__gnu_debug::_Safe_iterator<_OIte, _OSeq, _OCat>&);
+ 775:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 776:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 777:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Copies the range [first,last) into result.
+ 778:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 779:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first  A bidirectional iterator.
+ 780:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last   A bidirectional iterator.
+ 781:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __result A bidirectional iterator.
+ 782:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   result - (last - first)
+ 783:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 784:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  The function has the same effect as copy, but starts at the end of the
+ 785:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  range and works its way to the start, returning the start of the result.
+ 786:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This inline function will boil down to a call to @c memmove whenever
+ 787:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  possible.  Failing that, if random access iterators are passed, then the
+ 788:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  loop count will be known (and therefore a candidate for compiler
+ 789:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  optimizations such as unrolling).
+ 790:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 791:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  Result may not be in the range (first,last].  Use copy instead.  Note
+ 792:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  that the start of the output range may overlap [first,last).
+ 793:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 794:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _BI1, typename _BI2>
+ 795:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 796:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _BI2
+ 797:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     copy_backward(_BI1 __first, _BI1 __last, _BI2 __result)
+ 798:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 799:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 800:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_BidirectionalIteratorConcept<_BI1>)
+ 801:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_BidirectionalIteratorConcept<_BI2>)
+ 802:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_ConvertibleConcept<
+ 803:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    typename iterator_traits<_BI1>::value_type,
+ 804:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    typename iterator_traits<_BI2>::value_type>)
+ 805:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_requires_can_decrement_range(__first, __last, __result);
+ 806:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 807:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__copy_move_backward_a<__is_move_iterator<_BI1>::__value>
+ 808:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	     (std::__miter_base(__first), std::__miter_base(__last), __result);
+ 809:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 810:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 811:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+ 812:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 813:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Moves the range [first,last) into result.
+ 814:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 815:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first  A bidirectional iterator.
+ 816:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last   A bidirectional iterator.
+ 817:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __result A bidirectional iterator.
+ 818:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   result - (last - first)
+ 819:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 820:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  The function has the same effect as move, but starts at the end of the
+ 821:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  range and works its way to the start, returning the start of the result.
+ 822:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This inline function will boil down to a call to @c memmove whenever
+ 823:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  possible.  Failing that, if random access iterators are passed, then the
+ 824:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  loop count will be known (and therefore a candidate for compiler
+ 825:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  optimizations such as unrolling).
+ 826:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 827:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  Result may not be in the range (first,last].  Use move instead.  Note
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 19
+
+
+ 828:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  that the start of the output range may overlap [first,last).
+ 829:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 830:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _BI1, typename _BI2>
+ 831:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 832:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline _BI2
+ 833:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     move_backward(_BI1 __first, _BI1 __last, _BI2 __result)
+ 834:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 835:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 836:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_BidirectionalIteratorConcept<_BI1>)
+ 837:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_BidirectionalIteratorConcept<_BI2>)
+ 838:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_ConvertibleConcept<
+ 839:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    typename iterator_traits<_BI1>::value_type,
+ 840:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    typename iterator_traits<_BI2>::value_type>)
+ 841:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_requires_can_decrement_range(__first, __last, __result);
+ 842:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 843:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return std::__copy_move_backward_a<true>(std::__miter_base(__first),
+ 844:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					       std::__miter_base(__last),
+ 845:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 					       __result);
+ 846:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 847:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 848:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #define _GLIBCXX_MOVE_BACKWARD3(_Tp, _Up, _Vp) std::move_backward(_Tp, _Up, _Vp)
+ 849:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #else
+ 850:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #define _GLIBCXX_MOVE_BACKWARD3(_Tp, _Up, _Vp) std::copy_backward(_Tp, _Up, _Vp)
+ 851:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 852:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 853:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator, typename _Tp>
+ 854:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 855:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline typename
+ 856:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __gnu_cxx::__enable_if<!__is_scalar<_Tp>::__value, void>::__type
+ 857:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a1(_ForwardIterator __first, _ForwardIterator __last,
+ 858:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _Tp& __value)
+ 859:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 860:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       for (; __first != __last; ++__first)
+ 861:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	*__first = __value;
+ 862:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 863:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 864:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator, typename _Tp>
+ 865:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 866:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline typename
+ 867:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __gnu_cxx::__enable_if<__is_scalar<_Tp>::__value, void>::__type
+ 868:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a1(_ForwardIterator __first, _ForwardIterator __last,
+ 869:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _Tp& __value)
+ 870:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 871:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       const _Tp __tmp = __value;
+ 872:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       for (; __first != __last; ++__first)
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	*__first = __tmp;
+ 874:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 875:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 876:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // Specialization: for char types we can use memset.
+ 877:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp>
+ 878:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 879:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline typename
+ 880:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __gnu_cxx::__enable_if<__is_byte<_Tp>::__value, void>::__type
+ 881:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a1(_Tp* __first, _Tp* __last, const _Tp& __c)
+ 882:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 883:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       const _Tp __tmp = __c;
+ 884:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cpp_lib_is_constant_evaluated
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 20
+
+
+ 885:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (std::is_constant_evaluated())
+ 886:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 887:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for (; __first != __last; ++__first)
+ 888:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    *__first = __tmp;
+ 889:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return;
+ 890:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 891:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 892:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (const size_t __len = __last - __first)
+ 893:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	__builtin_memset(__first, static_cast<unsigned char>(__tmp), __len);
+ 894:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 895:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 896:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Ite, typename _Cont, typename _Tp>
+ 897:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 898:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline void
+ 899:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a1(::__gnu_cxx::__normal_iterator<_Ite, _Cont> __first,
+ 900:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      ::__gnu_cxx::__normal_iterator<_Ite, _Cont> __last,
+ 901:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _Tp& __value)
+ 902:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { std::__fill_a1(__first.base(), __last.base(), __value); }
+ 903:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 904:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp, typename _VTp>
+ 905:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     void
+ 906:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a1(const _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Tp&, _Tp*>&,
+ 907:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _GLIBCXX_STD_C::_Deque_iterator<_Tp, _Tp&, _Tp*>&,
+ 908:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _VTp&);
+ 909:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 910:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _FIte, typename _Tp>
+ 911:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 912:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline void
+ 913:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a(_FIte __first, _FIte __last, const _Tp& __value)
+ 914:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { std::__fill_a1(__first, __last, __value); }
+ 915:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 916:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Ite, typename _Seq, typename _Cat, typename _Tp>
+ 917:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     void
+ 918:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __fill_a(const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&,
+ 919:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	     const ::__gnu_debug::_Safe_iterator<_Ite, _Seq, _Cat>&,
+ 920:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	     const _Tp&);
+ 921:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 922:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 923:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Fills the range [first,last) with copies of value.
+ 924:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 925:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first  A forward iterator.
+ 926:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last   A forward iterator.
+ 927:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __value  A reference-to-const of arbitrary type.
+ 928:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   Nothing.
+ 929:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 930:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This function fills a range with copies of the same value.  For char
+ 931:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  types filling contiguous areas of memory, this becomes an inline call
+ 932:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  to @c memset or @c wmemset.
+ 933:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 934:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator, typename _Tp>
+ 935:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 936:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline void
+ 937:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     fill(_ForwardIterator __first, _ForwardIterator __last, const _Tp& __value)
+ 105              		.loc 3 937 5 is_stmt 1 view .LVU11
+ 106              	.LBB35:
+ 107              	.LBI35:
+ 913:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { std::__fill_a1(__first, __last, __value); }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 21
+
+
+ 108              		.loc 3 913 5 view .LVU12
+ 109              	.LBB36:
+ 110              	.LBI36:
+ 868:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _Tp& __value)
+ 111              		.loc 3 868 5 view .LVU13
+ 112              	.LBB37:
+ 872:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	*__first = __tmp;
+ 113              		.loc 3 872 22 view .LVU14
+ 114              	.LBE37:
+ 115              	.LBE36:
+ 116              	.LBE35:
+ 117              	.LBE34:
+  53:mi/plaits/dsp/engine/modal_engine.cpp ****   fill(&out[0], &out[size], 0.0f);
+ 118              		.loc 2 53 30 is_stmt 0 view .LVU15
+ 119 0010 9846     		mov	r8, r3
+ 120              	.LBB41:
+ 121              	.LBB40:
+ 122              	.LBB39:
+ 123              	.LBB38:
+ 872:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	*__first = __tmp;
+ 124              		.loc 3 872 22 view .LVU16
+ 125 0012 5FEA8902 		lsls	r2, r9, #2
+ 126              	.LVL6:
+ 872:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	*__first = __tmp;
+ 127              		.loc 3 872 22 view .LVU17
+ 128 0016 09D0     		beq	.L6
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 129              		.loc 3 873 11 view .LVU18
+ 130 0018 0021     		movs	r1, #0
+ 131              	.LVL7:
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 132              		.loc 3 873 11 view .LVU19
+ 133 001a 3846     		mov	r0, r7
+ 134              	.LVL8:
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 135              		.loc 3 873 11 view .LVU20
+ 136 001c 0592     		str	r2, [sp, #20]
+ 137 001e FFF7FEFF 		bl	memset
+ 138              	.LVL9:
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 139              		.loc 3 873 11 view .LVU21
+ 140              	.LBE38:
+ 141              	.LBE39:
+ 142              	.LBE40:
+ 143              	.LBE41:
+  55:mi/plaits/dsp/engine/modal_engine.cpp ****   fill(&aux[0], &aux[size], 0.0f);
+ 144              		.loc 2 55 3 is_stmt 1 view .LVU22
+ 145              	.LBB42:
+ 146              	.LBI42:
+ 147              		.loc 3 937 5 view .LVU23
+ 148              	.LBB43:
+ 149              	.LBI43:
+ 913:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     { std::__fill_a1(__first, __last, __value); }
+ 150              		.loc 3 913 5 view .LVU24
+ 151              	.LBB44:
+ 152              	.LBI44:
+ 868:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      const _Tp& __value)
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 22
+
+
+ 153              		.loc 3 868 5 view .LVU25
+ 154              	.LBB45:
+ 872:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	*__first = __tmp;
+ 155              		.loc 3 872 22 view .LVU26
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 156              		.loc 3 873 11 is_stmt 0 view .LVU27
+ 157 0022 059A     		ldr	r2, [sp, #20]
+ 158 0024 0021     		movs	r1, #0
+ 159 0026 4046     		mov	r0, r8
+ 160 0028 FFF7FEFF 		bl	memset
+ 161              	.LVL10:
+ 162              	.L6:
+ 873:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 163              		.loc 3 873 11 view .LVU28
+ 164              	.LBE45:
+ 165              	.LBE44:
+ 166              	.LBE43:
+ 167              	.LBE42:
+  56:mi/plaits/dsp/engine/modal_engine.cpp ****   
+  57:mi/plaits/dsp/engine/modal_engine.cpp ****   ONE_POLE(harmonics_lp_, parameters.harmonics, 0.01f);
+ 168              		.loc 2 57 3 is_stmt 1 view .LVU29
+ 169              	.LBB46:
+ 170              	.LBB47:
+ 171              		.file 4 "mi/plaits/dsp/engine/engine.h"
+   1:mi/plaits/dsp/engine/engine.h **** // Copyright 2016 Emilie Gillet.
+   2:mi/plaits/dsp/engine/engine.h **** //
+   3:mi/plaits/dsp/engine/engine.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/plaits/dsp/engine/engine.h **** //
+   5:mi/plaits/dsp/engine/engine.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/plaits/dsp/engine/engine.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/plaits/dsp/engine/engine.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/plaits/dsp/engine/engine.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/plaits/dsp/engine/engine.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/plaits/dsp/engine/engine.h **** // furnished to do so, subject to the following conditions:
+  11:mi/plaits/dsp/engine/engine.h **** // 
+  12:mi/plaits/dsp/engine/engine.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/plaits/dsp/engine/engine.h **** // all copies or substantial portions of the Software.
+  14:mi/plaits/dsp/engine/engine.h **** // 
+  15:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/plaits/dsp/engine/engine.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/plaits/dsp/engine/engine.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/plaits/dsp/engine/engine.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/plaits/dsp/engine/engine.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/plaits/dsp/engine/engine.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/plaits/dsp/engine/engine.h **** // THE SOFTWARE.
+  22:mi/plaits/dsp/engine/engine.h **** // 
+  23:mi/plaits/dsp/engine/engine.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/plaits/dsp/engine/engine.h **** //
+  25:mi/plaits/dsp/engine/engine.h **** // -----------------------------------------------------------------------------
+  26:mi/plaits/dsp/engine/engine.h **** //
+  27:mi/plaits/dsp/engine/engine.h **** // Base class for all engines.
+  28:mi/plaits/dsp/engine/engine.h **** 
+  29:mi/plaits/dsp/engine/engine.h **** #ifndef PLAITS_DSP_ENGINE_ENGINE_H_
+  30:mi/plaits/dsp/engine/engine.h **** #define PLAITS_DSP_ENGINE_ENGINE_H_
+  31:mi/plaits/dsp/engine/engine.h **** 
+  32:mi/plaits/dsp/engine/engine.h **** #include "plaits/dsp/dsp.h"
+  33:mi/plaits/dsp/engine/engine.h **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 23
+
+
+  34:mi/plaits/dsp/engine/engine.h **** #include "stmlib/dsp/units.h"
+  35:mi/plaits/dsp/engine/engine.h **** #include "stmlib/utils/buffer_allocator.h"
+  36:mi/plaits/dsp/engine/engine.h **** 
+  37:mi/plaits/dsp/engine/engine.h **** namespace plaits {
+  38:mi/plaits/dsp/engine/engine.h **** 
+  39:mi/plaits/dsp/engine/engine.h **** inline float NoteToFrequency(float midi_note) {
+  40:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 172              		.loc 4 40 13 is_stmt 0 view .LVU30
+ 173 002c F2EE025A 		vmov.f32	s11, #9.0e+0
+ 174              	.LBE47:
+ 175              	.LBE46:
+ 176              		.loc 2 57 3 view .LVU31
+ 177 0030 95ED501A 		vldr.32	s2, [r5, #320]
+ 178 0034 94ED047A 		vldr.32	s14, [r4, #16]
+  58:mi/plaits/dsp/engine/modal_engine.cpp ****   
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****   voice_.Render(
+ 179              		.loc 2 59 16 view .LVU32
+ 180 0038 05F11000 		add	r0, r5, #16
+ 181              	.LBB65:
+ 182              	.LBB56:
+ 183              		.loc 4 40 13 view .LVU33
+ 184 003c D4ED017A 		vldr.32	s15, [r4, #4]
+ 185              	.LBE56:
+ 186              	.LBE65:
+  57:mi/plaits/dsp/engine/modal_engine.cpp ****   
+ 187              		.loc 2 57 3 view .LVU34
+ 188 0040 37EE417A 		vsub.f32	s14, s14, s2
+ 189 0044 9FED2A6A 		vldr.32	s12, .L15
+ 190              	.LBB66:
+ 191              	.LBB57:
+ 192              		.loc 4 40 13 view .LVU35
+ 193 0048 77EEE57A 		vsub.f32	s15, s15, s11
+  41:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 194              		.loc 4 41 3 view .LVU36
+ 195 004c DFED296A 		vldr.32	s13, .L15+4
+ 196              	.LBE57:
+ 197              	.LBE66:
+  60:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 198              		.loc 2 60 18 view .LVU37
+ 199 0050 2268     		ldr	r2, [r4]
+  57:mi/plaits/dsp/engine/modal_engine.cpp ****   
+ 200              		.loc 2 57 3 view .LVU38
+ 201 0052 A7EE061A 		vfma.f32	s2, s14, s12
+  61:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_RISING_EDGE,
+  62:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.accent,
+ 202              		.loc 2 62 18 view .LVU39
+ 203 0056 94ED050A 		vldr.32	s0, [r4, #20]
+ 204              	.LBB67:
+ 205              	.LBB58:
+ 206              		.loc 4 41 3 view .LVU40
+ 207 005a F4EEE67A 		vcmpe.f32	s15, s13
+ 208              	.LBE58:
+ 209              	.LBE67:
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 210              		.loc 2 59 16 view .LVU41
+ 211 005e C2F34001 		ubfx	r1, r2, #1, #1
+ 212 0062 02F00102 		and	r2, r2, #1
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 24
+
+
+ 213              	.LBB68:
+ 214              	.LBB59:
+ 215              		.loc 4 41 3 view .LVU42
+ 216 0066 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 217              	.LBE59:
+ 218              	.LBE68:
+  57:mi/plaits/dsp/engine/modal_engine.cpp ****   
+ 219              		.loc 2 57 3 view .LVU43
+ 220 006a 85ED501A 		vstr.32	s2, [r5, #320]
+  57:mi/plaits/dsp/engine/modal_engine.cpp ****   
+ 221              		.loc 2 57 55 is_stmt 1 view .LVU44
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 222              		.loc 2 59 3 view .LVU45
+ 223              	.LVL11:
+ 224              	.LBB69:
+ 225              	.LBI46:
+  39:mi/plaits/dsp/engine/engine.h ****   midi_note -= 9.0f;
+ 226              		.loc 4 39 14 view .LVU46
+ 227              	.LBB60:
+  40:mi/plaits/dsp/engine/engine.h ****   CONSTRAIN(midi_note, -128.0f, 127.0f);
+ 228              		.loc 4 40 3 view .LVU47
+ 229              		.loc 4 41 3 view .LVU48
+ 230 006e 0AD4     		bmi	.L11
+ 231              		.loc 4 41 3 view .LVU49
+ 232 0070 9FED217A 		vldr.32	s14, .L15+8
+ 233 0074 F4EEC77A 		vcmpe.f32	s15, s14
+ 234 0078 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 235 007c 24DD     		ble	.L14
+ 236 007e 4FF0000C 		mov	ip, #0
+ 237 0082 FF26     		movs	r6, #255
+ 238 0084 02E0     		b	.L9
+ 239              	.L11:
+ 240 0086 4FF0000C 		mov	ip, #0
+ 241 008a 6646     		mov	r6, ip
+ 242              	.LVL12:
+ 243              	.L9:
+ 244              		.loc 4 41 40 view .LVU50
+  42:mi/plaits/dsp/engine/engine.h ****   return a0 * 0.25f * stmlib::SemitonesToRatio(midi_note);
+ 245              		.loc 4 42 3 view .LVU51
+ 246              	.LBB48:
+ 247              	.LBI48:
+ 248              		.file 5 "mi/stmlib/dsp/units.h"
+   1:mi/stmlib/dsp/units.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/units.h **** //
+   3:mi/stmlib/dsp/units.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/units.h **** //
+   5:mi/stmlib/dsp/units.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/units.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/units.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/units.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/units.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/units.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/units.h **** // 
+  12:mi/stmlib/dsp/units.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/units.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/units.h **** // 
+  15:mi/stmlib/dsp/units.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 25
+
+
+  16:mi/stmlib/dsp/units.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/units.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/units.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/units.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/units.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/units.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/units.h **** // 
+  23:mi/stmlib/dsp/units.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/units.h **** //
+  25:mi/stmlib/dsp/units.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/units.h **** //
+  27:mi/stmlib/dsp/units.h **** // Conversion from semitones to frequency ratio.
+  28:mi/stmlib/dsp/units.h **** 
+  29:mi/stmlib/dsp/units.h **** #ifndef STMLIB_DSP_UNITS_H_
+  30:mi/stmlib/dsp/units.h **** #define STMLIB_DSP_UNITS_H_
+  31:mi/stmlib/dsp/units.h **** 
+  32:mi/stmlib/dsp/units.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/units.h **** #include "stmlib/dsp/dsp.h"
+  34:mi/stmlib/dsp/units.h **** 
+  35:mi/stmlib/dsp/units.h **** namespace stmlib {
+  36:mi/stmlib/dsp/units.h **** 
+  37:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_high[257];
+  38:mi/stmlib/dsp/units.h **** extern const float lut_pitch_ratio_low[257];
+  39:mi/stmlib/dsp/units.h **** 
+  40:mi/stmlib/dsp/units.h **** inline float SemitonesToRatio(float semitones) {
+ 249              		.loc 5 40 14 view .LVU52
+ 250              	.LBB49:
+  41:mi/stmlib/dsp/units.h ****   float pitch = semitones + 128.0f;
+ 251              		.loc 5 41 3 view .LVU53
+  42:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ 252              		.loc 5 42 3 view .LVU54
+ 253              		.loc 5 42 3 view .LVU55
+  43:mi/stmlib/dsp/units.h **** 
+  44:mi/stmlib/dsp/units.h ****   return lut_pitch_ratio_high[pitch_integral] * \
+ 254              		.loc 5 44 3 view .LVU56
+ 255              		.loc 5 44 3 is_stmt 0 view .LVU57
+ 256              	.LBE49:
+ 257              	.LBE48:
+ 258              	.LBE60:
+ 259              	.LBE69:
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 260              		.loc 2 59 16 view .LVU58
+ 261 008c 0097     		str	r7, [sp]
+ 262              	.LBB70:
+ 263              	.LBB61:
+ 264              		.loc 4 42 57 view .LVU59
+ 265 008e DFED1B0A 		vldr.32	s1, .L15+12
+ 266              	.LBE61:
+ 267              	.LBE70:
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 268              		.loc 2 59 16 view .LVU60
+ 269 0092 CDE90189 		strd	r8, r9, [sp, #4]
+ 270 0096 94ED032A 		vldr.32	s4, [r4, #12]
+ 271 009a D4ED021A 		vldr.32	s3, [r4, #8]
+ 272              	.LBB71:
+ 273              	.LBB62:
+ 274              	.LBB53:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 26
+
+
+ 275              	.LBB50:
+ 276              		.loc 5 44 45 view .LVU61
+ 277 009e 184C     		ldr	r4, .L15+16
+ 278              	.LVL13:
+ 279              		.loc 5 44 45 view .LVU62
+ 280              	.LBE50:
+ 281              	.LBE53:
+ 282              	.LBE62:
+ 283              	.LBE71:
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 284              		.loc 2 59 16 view .LVU63
+ 285 00a0 D5F83C31 		ldr	r3, [r5, #316]
+ 286              	.LBB72:
+ 287              	.LBB63:
+ 288              	.LBB54:
+ 289              	.LBB51:
+ 290              		.loc 5 44 45 view .LVU64
+ 291 00a4 04EB8604 		add	r4, r4, r6, lsl #2
+  45:mi/stmlib/dsp/units.h ****       lut_pitch_ratio_low[static_cast<int32_t>(pitch_fractional * 256.0f)];
+ 292              		.loc 5 45 74 view .LVU65
+ 293 00a8 D4ED007A 		vldr.32	s15, [r4]
+ 294 00ac 154C     		ldr	r4, .L15+20
+ 295 00ae 04EB8C0C 		add	ip, r4, ip, lsl #2
+ 296 00b2 9CED007A 		vldr.32	s14, [ip]
+ 297 00b6 67EE877A 		vmul.f32	s15, s15, s14
+ 298              	.LBE51:
+ 299              	.LBE54:
+ 300              	.LBE63:
+ 301              	.LBE72:
+  59:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.trigger & TRIGGER_UNPATCHED,
+ 302              		.loc 2 59 16 view .LVU66
+ 303 00ba 67EEA00A 		vmul.f32	s1, s15, s1
+ 304 00be FFF7FEFF 		bl	_ZN6plaits10ModalVoice6RenderEbbfffffPfS1_S1_j
+ 305              	.LVL14:
+  63:mi/plaits/dsp/engine/modal_engine.cpp ****       NoteToFrequency(parameters.note),
+  64:mi/plaits/dsp/engine/modal_engine.cpp ****       harmonics_lp_,
+  65:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.timbre,
+  66:mi/plaits/dsp/engine/modal_engine.cpp ****       parameters.morph,
+  67:mi/plaits/dsp/engine/modal_engine.cpp ****       temp_buffer_,
+  68:mi/plaits/dsp/engine/modal_engine.cpp ****       out,
+  69:mi/plaits/dsp/engine/modal_engine.cpp ****       aux,
+  70:mi/plaits/dsp/engine/modal_engine.cpp ****       size);
+  71:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 306              		.loc 2 71 1 view .LVU67
+ 307 00c2 07B0     		add	sp, sp, #28
+ 308              		.cfi_remember_state
+ 309              		.cfi_def_cfa_offset 28
+ 310              		@ sp needed
+ 311 00c4 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 312              	.LVL15:
+ 313              	.L14:
+ 314              		.cfi_restore_state
+ 315              	.LBB73:
+ 316              	.LBB64:
+ 317              	.LBB55:
+ 318              	.LBB52:
+  41:mi/stmlib/dsp/units.h ****   MAKE_INTEGRAL_FRACTIONAL(pitch)
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 27
+
+
+ 319              		.loc 5 41 9 view .LVU68
+ 320 00c8 9FED0F7A 		vldr.32	s14, .L15+24
+ 321 00cc 77EE877A 		vadd.f32	s15, s15, s14
+ 322              	.LVL16:
+  42:mi/stmlib/dsp/units.h **** 
+ 323              		.loc 5 42 3 view .LVU69
+ 324 00d0 BDEEE77A 		vcvt.s32.f32	s14, s15
+ 325 00d4 17EE106A 		vmov	r6, s14	@ int
+ 326 00d8 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 327 00dc 77EEC77A 		vsub.f32	s15, s15, s14
+ 328              		.loc 5 45 27 view .LVU70
+ 329 00e0 B0EE677A 		vmov.f32	s14, s15
+ 330 00e4 BEEECC7A 		vcvt.s32.f32	s14, s14, #8
+ 331 00e8 17EE10CA 		vmov	ip, s14	@ int
+ 332 00ec CEE7     		b	.L9
+ 333              	.L16:
+ 334 00ee 00BF     		.align	2
+ 335              	.L15:
+ 336 00f0 0AD7233C 		.word	1008981770
+ 337 00f4 000000C3 		.word	-1023410176
+ 338 00f8 0000FE42 		.word	1123942400
+ 339 00fc 51969639 		.word	966170193
+ 340 0100 00000000 		.word	_ZN6stmlib20lut_pitch_ratio_highE
+ 341 0104 00000000 		.word	_ZN6stmlib19lut_pitch_ratio_lowE
+ 342 0108 00000043 		.word	1124073472
+ 343              	.LBE52:
+ 344              	.LBE55:
+ 345              	.LBE64:
+ 346              	.LBE73:
+ 347              		.cfi_endproc
+ 348              	.LFE1548:
+ 350              		.section	.text._ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE,"ax",%progbits
+ 351              		.align	1
+ 352              		.p2align 2,,3
+ 353              		.global	_ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE
+ 354              		.syntax unified
+ 355              		.thumb
+ 356              		.thumb_func
+ 358              	_ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE:
+ 359              	.LVL17:
+ 360              	.LFB1546:
+  38:mi/plaits/dsp/engine/modal_engine.cpp ****   temp_buffer_ = allocator->Allocate<float>(kMaxBlockSize);
+ 361              		.loc 2 38 52 is_stmt 1 view -0
+ 362              		.cfi_startproc
+ 363              		@ args = 0, pretend = 0, frame = 0
+ 364              		@ frame_needed = 0, uses_anonymous_args = 0
+ 365              		@ link register save eliminated.
+  39:mi/plaits/dsp/engine/modal_engine.cpp ****   harmonics_lp_ = 0.0f;
+ 366              		.loc 2 39 3 view .LVU72
+ 367              	.LBB80:
+ 368              	.LBI80:
+ 369              		.file 6 "mi/stmlib/utils/buffer_allocator.h"
+   1:mi/stmlib/utils/buffer_allocator.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/utils/buffer_allocator.h **** //
+   3:mi/stmlib/utils/buffer_allocator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/utils/buffer_allocator.h **** //
+   5:mi/stmlib/utils/buffer_allocator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 28
+
+
+   6:mi/stmlib/utils/buffer_allocator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/utils/buffer_allocator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/utils/buffer_allocator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/utils/buffer_allocator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/utils/buffer_allocator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/utils/buffer_allocator.h **** // 
+  12:mi/stmlib/utils/buffer_allocator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/utils/buffer_allocator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/utils/buffer_allocator.h **** // 
+  15:mi/stmlib/utils/buffer_allocator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/utils/buffer_allocator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/utils/buffer_allocator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/utils/buffer_allocator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/utils/buffer_allocator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/utils/buffer_allocator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/utils/buffer_allocator.h **** // THE SOFTWARE.
+  22:mi/stmlib/utils/buffer_allocator.h **** // 
+  23:mi/stmlib/utils/buffer_allocator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/utils/buffer_allocator.h **** //
+  25:mi/stmlib/utils/buffer_allocator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/utils/buffer_allocator.h **** //
+  27:mi/stmlib/utils/buffer_allocator.h **** // Stream buffer for serialization.
+  28:mi/stmlib/utils/buffer_allocator.h **** 
+  29:mi/stmlib/utils/buffer_allocator.h **** #ifndef STMLIB_UTILS_BUFFER_ALLOCATOR_H_
+  30:mi/stmlib/utils/buffer_allocator.h **** #define STMLIB_UTILS_BUFFER_ALLOCATOR_H_
+  31:mi/stmlib/utils/buffer_allocator.h **** 
+  32:mi/stmlib/utils/buffer_allocator.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/utils/buffer_allocator.h **** 
+  34:mi/stmlib/utils/buffer_allocator.h **** namespace stmlib {
+  35:mi/stmlib/utils/buffer_allocator.h **** 
+  36:mi/stmlib/utils/buffer_allocator.h **** class BufferAllocator {
+  37:mi/stmlib/utils/buffer_allocator.h ****  public:
+  38:mi/stmlib/utils/buffer_allocator.h ****   BufferAllocator() { }
+  39:mi/stmlib/utils/buffer_allocator.h ****   ~BufferAllocator() { }
+  40:mi/stmlib/utils/buffer_allocator.h ****   
+  41:mi/stmlib/utils/buffer_allocator.h ****   BufferAllocator(void* buffer, size_t size) {
+  42:mi/stmlib/utils/buffer_allocator.h ****     Init(buffer, size);
+  43:mi/stmlib/utils/buffer_allocator.h ****   }
+  44:mi/stmlib/utils/buffer_allocator.h ****   
+  45:mi/stmlib/utils/buffer_allocator.h ****   inline void Init(void* buffer, size_t size) {
+  46:mi/stmlib/utils/buffer_allocator.h ****     buffer_ = static_cast<uint8_t*>(buffer);
+  47:mi/stmlib/utils/buffer_allocator.h ****     size_ = size;
+  48:mi/stmlib/utils/buffer_allocator.h ****     Free();
+  49:mi/stmlib/utils/buffer_allocator.h ****   }
+  50:mi/stmlib/utils/buffer_allocator.h **** 
+  51:mi/stmlib/utils/buffer_allocator.h ****   template<typename T>
+  52:mi/stmlib/utils/buffer_allocator.h ****   inline T* Allocate() {
+  53:mi/stmlib/utils/buffer_allocator.h ****     return Allocate<T>(1);
+  54:mi/stmlib/utils/buffer_allocator.h ****   }
+  55:mi/stmlib/utils/buffer_allocator.h ****   
+  56:mi/stmlib/utils/buffer_allocator.h ****   template<typename T>
+  57:mi/stmlib/utils/buffer_allocator.h ****   inline T* Allocate(size_t size) {
+ 370              		.loc 6 57 13 view .LVU73
+ 371              	.LBB81:
+ 372              	.LBB82:
+  58:mi/stmlib/utils/buffer_allocator.h ****     size_t size_bytes = sizeof(T) * size;
+  59:mi/stmlib/utils/buffer_allocator.h ****     if (size_bytes <= free_) {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 29
+
+
+ 373              		.loc 6 59 23 is_stmt 0 view .LVU74
+ 374 0000 8B68     		ldr	r3, [r1, #8]
+ 375              		.loc 6 59 5 view .LVU75
+ 376 0002 5F2B     		cmp	r3, #95
+ 377              	.LBE82:
+ 378              	.LBE81:
+ 379              	.LBE80:
+  38:mi/plaits/dsp/engine/modal_engine.cpp ****   temp_buffer_ = allocator->Allocate<float>(kMaxBlockSize);
+ 380              		.loc 2 38 52 view .LVU76
+ 381 0004 10B4     		push	{r4}
+ 382              		.cfi_def_cfa_offset 4
+ 383              		.cfi_offset 4, -4
+ 384              	.LBB88:
+ 385              	.LBB86:
+ 386              	.LBB84:
+ 387              		.loc 6 59 5 view .LVU77
+ 388 0006 15D9     		bls	.L20
+ 389              	.LBB83:
+  60:mi/stmlib/utils/buffer_allocator.h ****       T* start = static_cast<T*>(static_cast<void*>(next_));
+ 390              		.loc 6 60 10 view .LVU78
+ 391 0008 0A68     		ldr	r2, [r1]
+ 392              	.LVL18:
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+  62:mi/stmlib/utils/buffer_allocator.h ****       free_ -= size_bytes;
+ 393              		.loc 6 62 13 view .LVU79
+ 394 000a 603B     		subs	r3, r3, #96
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+ 395              		.loc 6 61 13 view .LVU80
+ 396 000c 02F16004 		add	r4, r2, #96
+ 397              		.loc 6 62 13 view .LVU81
+ 398 0010 8B60     		str	r3, [r1, #8]
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+ 399              		.loc 6 61 13 view .LVU82
+ 400 0012 0C60     		str	r4, [r1]
+ 401              	.LVL19:
+ 402              	.L18:
+  61:mi/stmlib/utils/buffer_allocator.h ****       next_ += size_bytes;
+ 403              		.loc 6 61 13 view .LVU83
+ 404              	.LBE83:
+ 405              	.LBE84:
+ 406              	.LBE86:
+ 407              	.LBE88:
+  41:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 408              		.loc 2 41 9 view .LVU84
+ 409 0014 0368     		ldr	r3, [r0]
+  40:mi/plaits/dsp/engine/modal_engine.cpp ****   Reset();
+ 410              		.loc 2 40 17 view .LVU85
+ 411 0016 4FF0000C 		mov	ip, #0
+ 412 001a 0949     		ldr	r1, .L22
+ 413              	.LVL20:
+  41:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 414              		.loc 2 41 9 view .LVU86
+ 415 001c 5B68     		ldr	r3, [r3, #4]
+  39:mi/plaits/dsp/engine/modal_engine.cpp ****   harmonics_lp_ = 0.0f;
+ 416              		.loc 2 39 16 view .LVU87
+ 417 001e C0F83C21 		str	r2, [r0, #316]
+  40:mi/plaits/dsp/engine/modal_engine.cpp ****   Reset();
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 30
+
+
+ 418              		.loc 2 40 3 is_stmt 1 view .LVU88
+ 419 0022 8B42     		cmp	r3, r1
+  40:mi/plaits/dsp/engine/modal_engine.cpp ****   Reset();
+ 420              		.loc 2 40 17 is_stmt 0 view .LVU89
+ 421 0024 C0F840C1 		str	ip, [r0, #320]	@ float
+  41:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 422              		.loc 2 41 3 is_stmt 1 view .LVU90
+ 423 0028 06D1     		bne	.L19
+ 424              	.LVL21:
+ 425              	.LBB89:
+ 426              	.LBI89:
+  44:mi/plaits/dsp/engine/modal_engine.cpp ****   voice_.Init();
+ 427              		.loc 2 44 6 view .LVU91
+ 428              	.LBB90:
+  45:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 429              		.loc 2 45 3 view .LVU92
+  45:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 430              		.loc 2 45 14 is_stmt 0 view .LVU93
+ 431 002a 1030     		adds	r0, r0, #16
+ 432              	.LVL22:
+  45:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 433              		.loc 2 45 14 view .LVU94
+ 434              	.LBE90:
+ 435              	.LBE89:
+  42:mi/plaits/dsp/engine/modal_engine.cpp **** 
+ 436              		.loc 2 42 1 view .LVU95
+ 437 002c 5DF8044B 		ldr	r4, [sp], #4
+ 438              		.cfi_remember_state
+ 439              		.cfi_restore 4
+ 440              		.cfi_def_cfa_offset 0
+ 441              	.LBB92:
+ 442              	.LBB91:
+  45:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 443              		.loc 2 45 14 view .LVU96
+ 444 0030 FFF7FEBF 		b	_ZN6plaits10ModalVoice4InitEv
+ 445              	.LVL23:
+ 446              	.L20:
+ 447              		.cfi_restore_state
+  45:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 448              		.loc 2 45 14 view .LVU97
+ 449              	.LBE91:
+ 450              	.LBE92:
+ 451              	.LBB93:
+ 452              	.LBB87:
+ 453              	.LBB85:
+  63:mi/stmlib/utils/buffer_allocator.h ****       return start;
+  64:mi/stmlib/utils/buffer_allocator.h ****     } else {
+  65:mi/stmlib/utils/buffer_allocator.h ****       return NULL;
+ 454              		.loc 6 65 14 view .LVU98
+ 455 0034 0022     		movs	r2, #0
+ 456 0036 EDE7     		b	.L18
+ 457              	.LVL24:
+ 458              	.L19:
+ 459              		.loc 6 65 14 view .LVU99
+ 460              	.LBE85:
+ 461              	.LBE87:
+ 462              	.LBE93:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 31
+
+
+  42:mi/plaits/dsp/engine/modal_engine.cpp **** 
+ 463              		.loc 2 42 1 view .LVU100
+ 464 0038 5DF8044B 		ldr	r4, [sp], #4
+ 465              		.cfi_restore 4
+ 466              		.cfi_def_cfa_offset 0
+  41:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 467              		.loc 2 41 8 view .LVU101
+ 468 003c 1847     		bx	r3	@ indirect register sibling call
+ 469              	.LVL25:
+ 470              	.L23:
+  41:mi/plaits/dsp/engine/modal_engine.cpp **** }
+ 471              		.loc 2 41 8 view .LVU102
+ 472 003e 00BF     		.align	2
+ 473              	.L22:
+ 474 0040 00000000 		.word	_ZN6plaits11ModalEngine5ResetEv
+ 475              		.cfi_endproc
+ 476              	.LFE1546:
+ 478              		.global	_ZTVN6plaits11ModalEngineE
+ 479              		.section	.rodata._ZTVN6plaits11ModalEngineE,"a"
+ 480              		.align	2
+ 483              	_ZTVN6plaits11ModalEngineE:
+ 484 0000 00000000 		.word	0
+ 485 0004 00000000 		.word	0
+ 486 0008 00000000 		.word	_ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE
+ 487 000c 00000000 		.word	_ZN6plaits11ModalEngine5ResetEv
+ 488 0010 00000000 		.word	_ZN6plaits11ModalEngine12LoadUserDataEPKh
+ 489 0014 00000000 		.word	_ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+ 490              		.text
+ 491              	.Letext0:
+ 492              		.file 7 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 493              		.file 8 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 494              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 495              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 496              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 497              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/type_traits"
+ 498              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/debug/debug.h"
+ 499              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cstdlib"
+ 500              		.file 15 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v
+ 501              		.file 16 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/algorithmfwd.h"
+ 502              		.file 17 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_pair.h"
+ 503              		.file 18 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/exception_ptr.h"
+ 504              		.file 19 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/predefined_ops.h
+ 505              		.file 20 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 506              		.file 21 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdlib.h"
+ 507              		.file 22 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 508              		.file 23 "mi/stmlib/stmlib.h"
+ 509              		.file 24 "mi/plaits/dsp/dsp.h"
+ 510              		.file 25 "mi/plaits/dsp/physical_modelling/resonator.h"
+ 511              		.file 26 "mi/plaits/dsp/physical_modelling/modal_voice.h"
+ 512              		.file 27 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s 			page 32
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 modal_engine.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:19     .text._ZN6plaits11ModalEngine12LoadUserDataEPKh:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:26     .text._ZN6plaits11ModalEngine12LoadUserDataEPKh:0000000000000000 _ZN6plaits11ModalEngine12LoadUserDataEPKh
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:41     .text._ZN6plaits11ModalEngine5ResetEv:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:48     .text._ZN6plaits11ModalEngine5ResetEv:0000000000000000 _ZN6plaits11ModalEngine5ResetEv
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:69     .text._ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:76     .text._ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb:0000000000000000 _ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:336    .text._ZN6plaits11ModalEngine6RenderERKNS_16EngineParametersEPfS4_jPb:00000000000000f0 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:351    .text._ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:358    .text._ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000000 _ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:474    .text._ZN6plaits11ModalEngine4InitEPN6stmlib15BufferAllocatorE:0000000000000040 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:483    .rodata._ZTVN6plaits11ModalEngineE:0000000000000000 _ZTVN6plaits11ModalEngineE
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//cc9U6U1A.s:480    .rodata._ZTVN6plaits11ModalEngineE:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+_ZN6plaits10ModalVoice4InitEv
+memset
+_ZN6plaits10ModalVoice6RenderEbbfffffPfS1_S1_j
+_ZN6stmlib20lut_pitch_ratio_highE
+_ZN6stmlib19lut_pitch_ratio_lowE

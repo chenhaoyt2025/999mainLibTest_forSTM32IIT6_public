@@ -1,0 +1,2554 @@
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 2
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"rings_resonator_rg.cpp"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text._ZN5rings9Resonator4InitEv,"ax",%progbits
+  19              		.align	1
+  20              		.p2align 2,,3
+  21              		.global	_ZN5rings9Resonator4InitEv
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	_ZN5rings9Resonator4InitEv:
+  27              	.LVL0:
+  28              	.LFB1544:
+  29              		.file 1 "mi/ringsX_MIDI/dsp/resonator.cpp"
+   1:mi/ringsX_MIDI/dsp/resonator.cpp **** // Copyright 2015 Emilie Gillet.
+   2:mi/ringsX_MIDI/dsp/resonator.cpp **** //
+   3:mi/ringsX_MIDI/dsp/resonator.cpp **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/ringsX_MIDI/dsp/resonator.cpp **** //
+   5:mi/ringsX_MIDI/dsp/resonator.cpp **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/ringsX_MIDI/dsp/resonator.cpp **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/ringsX_MIDI/dsp/resonator.cpp **** // in the Software without restriction, including without limitation the rights
+   8:mi/ringsX_MIDI/dsp/resonator.cpp **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/ringsX_MIDI/dsp/resonator.cpp **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/ringsX_MIDI/dsp/resonator.cpp **** // furnished to do so, subject to the following conditions:
+  11:mi/ringsX_MIDI/dsp/resonator.cpp **** // 
+  12:mi/ringsX_MIDI/dsp/resonator.cpp **** // The above copyright notice and this permission notice shall be included in
+  13:mi/ringsX_MIDI/dsp/resonator.cpp **** // all copies or substantial portions of the Software.
+  14:mi/ringsX_MIDI/dsp/resonator.cpp **** // 
+  15:mi/ringsX_MIDI/dsp/resonator.cpp **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/ringsX_MIDI/dsp/resonator.cpp **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/ringsX_MIDI/dsp/resonator.cpp **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/ringsX_MIDI/dsp/resonator.cpp **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/ringsX_MIDI/dsp/resonator.cpp **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/ringsX_MIDI/dsp/resonator.cpp **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/ringsX_MIDI/dsp/resonator.cpp **** // THE SOFTWARE.
+  22:mi/ringsX_MIDI/dsp/resonator.cpp **** // 
+  23:mi/ringsX_MIDI/dsp/resonator.cpp **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/ringsX_MIDI/dsp/resonator.cpp **** //
+  25:mi/ringsX_MIDI/dsp/resonator.cpp **** // -----------------------------------------------------------------------------
+  26:mi/ringsX_MIDI/dsp/resonator.cpp **** //
+  27:mi/ringsX_MIDI/dsp/resonator.cpp **** // Resonator.
+  28:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  29:mi/ringsX_MIDI/dsp/resonator.cpp **** #include "ringsX_MIDI/dsp/resonator.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 2
+
+
+  30:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  31:mi/ringsX_MIDI/dsp/resonator.cpp **** #include "stmlib/dsp/dsp.h"
+  32:mi/ringsX_MIDI/dsp/resonator.cpp **** #include "stmlib/dsp/cosine_oscillator.h"
+  33:mi/ringsX_MIDI/dsp/resonator.cpp **** #include "stmlib/dsp/parameter_interpolator.h"
+  34:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  35:mi/ringsX_MIDI/dsp/resonator.cpp **** #include "ringsX_MIDI/resources.h"
+  36:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  37:mi/ringsX_MIDI/dsp/resonator.cpp **** namespace rings {
+  38:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  39:mi/ringsX_MIDI/dsp/resonator.cpp **** using namespace std;
+  40:mi/ringsX_MIDI/dsp/resonator.cpp **** using namespace stmlib;
+  41:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  42:mi/ringsX_MIDI/dsp/resonator.cpp **** void Resonator::Init() {
+  30              		.loc 1 42 24 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  43:mi/ringsX_MIDI/dsp/resonator.cpp ****   for (int32_t i = 0; i < kMaxModes; ++i) {
+  34              		.loc 1 43 3 view .LVU1
+  35              	.LBB72:
+  36              		.loc 1 43 25 view .LVU2
+  37              	.LBE72:
+  42:mi/ringsX_MIDI/dsp/resonator.cpp ****   for (int32_t i = 0; i < kMaxModes; ++i) {
+  38              		.loc 1 42 24 is_stmt 0 view .LVU3
+  39 0000 10B5     		push	{r4, lr}
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 4, -8
+  42              		.cfi_offset 14, -4
+  43 0002 0346     		mov	r3, r0
+  44 0004 00F5A064 		add	r4, r0, #1280
+  45              	.LVL1:
+  46              	.L2:
+  47              	.LBB90:
+  44:mi/ringsX_MIDI/dsp/resonator.cpp ****     f_[i].Init();
+  48              		.loc 1 44 5 is_stmt 1 discriminator 2 view .LVU4
+  49              	.LBB73:
+  50              	.LBI73:
+  51              		.file 2 "mi/stmlib/dsp/filter.h"
+   1:mi/stmlib/dsp/filter.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/filter.h **** //
+   3:mi/stmlib/dsp/filter.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/filter.h **** //
+   5:mi/stmlib/dsp/filter.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/filter.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/filter.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/filter.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/filter.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/filter.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/filter.h **** // 
+  12:mi/stmlib/dsp/filter.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/filter.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/filter.h **** // 
+  15:mi/stmlib/dsp/filter.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/filter.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/filter.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/filter.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/filter.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 3
+
+
+  20:mi/stmlib/dsp/filter.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/filter.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/filter.h **** // 
+  23:mi/stmlib/dsp/filter.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/filter.h **** //
+  25:mi/stmlib/dsp/filter.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/filter.h **** //
+  27:mi/stmlib/dsp/filter.h **** // Zero-delay-feedback filters (one pole and SVF).
+  28:mi/stmlib/dsp/filter.h **** // Naive SVF.
+  29:mi/stmlib/dsp/filter.h **** 
+  30:mi/stmlib/dsp/filter.h **** #ifndef STMLIB_DSP_FILTER_H_
+  31:mi/stmlib/dsp/filter.h **** #define STMLIB_DSP_FILTER_H_
+  32:mi/stmlib/dsp/filter.h **** 
+  33:mi/stmlib/dsp/filter.h **** #include "stmlib/stmlib.h"
+  34:mi/stmlib/dsp/filter.h **** 
+  35:mi/stmlib/dsp/filter.h **** #include <cmath>
+  36:mi/stmlib/dsp/filter.h **** #include <algorithm>
+  37:mi/stmlib/dsp/filter.h **** 
+  38:mi/stmlib/dsp/filter.h **** namespace stmlib {
+  39:mi/stmlib/dsp/filter.h **** 
+  40:mi/stmlib/dsp/filter.h **** enum FilterMode {
+  41:mi/stmlib/dsp/filter.h ****   FILTER_MODE_LOW_PASS,
+  42:mi/stmlib/dsp/filter.h ****   FILTER_MODE_BAND_PASS,
+  43:mi/stmlib/dsp/filter.h ****   FILTER_MODE_BAND_PASS_NORMALIZED,
+  44:mi/stmlib/dsp/filter.h ****   FILTER_MODE_HIGH_PASS
+  45:mi/stmlib/dsp/filter.h **** };
+  46:mi/stmlib/dsp/filter.h **** 
+  47:mi/stmlib/dsp/filter.h **** enum FrequencyApproximation {
+  48:mi/stmlib/dsp/filter.h ****   FREQUENCY_EXACT,
+  49:mi/stmlib/dsp/filter.h ****   FREQUENCY_ACCURATE,
+  50:mi/stmlib/dsp/filter.h ****   FREQUENCY_FAST,
+  51:mi/stmlib/dsp/filter.h ****   FREQUENCY_DIRTY
+  52:mi/stmlib/dsp/filter.h **** };
+  53:mi/stmlib/dsp/filter.h **** 
+  54:mi/stmlib/dsp/filter.h **** #define M_PI_F float(M_PI)
+  55:mi/stmlib/dsp/filter.h **** #define M_PI_POW_2 M_PI * M_PI
+  56:mi/stmlib/dsp/filter.h **** #define M_PI_POW_3 M_PI_POW_2 * M_PI
+  57:mi/stmlib/dsp/filter.h **** #define M_PI_POW_5 M_PI_POW_3 * M_PI_POW_2
+  58:mi/stmlib/dsp/filter.h **** #define M_PI_POW_7 M_PI_POW_5 * M_PI_POW_2
+  59:mi/stmlib/dsp/filter.h **** #define M_PI_POW_9 M_PI_POW_7 * M_PI_POW_2
+  60:mi/stmlib/dsp/filter.h **** #define M_PI_POW_11 M_PI_POW_9 * M_PI_POW_2
+  61:mi/stmlib/dsp/filter.h **** 
+  62:mi/stmlib/dsp/filter.h **** class DCBlocker {
+  63:mi/stmlib/dsp/filter.h ****  public:
+  64:mi/stmlib/dsp/filter.h ****   DCBlocker() { }
+  65:mi/stmlib/dsp/filter.h ****   ~DCBlocker() { }
+  66:mi/stmlib/dsp/filter.h ****   
+  67:mi/stmlib/dsp/filter.h ****   void Init(float pole) {
+  68:mi/stmlib/dsp/filter.h ****     x_ = 0.0f;
+  69:mi/stmlib/dsp/filter.h ****     y_ = 0.0f;
+  70:mi/stmlib/dsp/filter.h ****     pole_ = pole;
+  71:mi/stmlib/dsp/filter.h ****   }
+  72:mi/stmlib/dsp/filter.h ****   
+  73:mi/stmlib/dsp/filter.h ****   inline void Process(float* in_out, size_t size) {
+  74:mi/stmlib/dsp/filter.h ****     float x = x_;
+  75:mi/stmlib/dsp/filter.h ****     float y = y_;
+  76:mi/stmlib/dsp/filter.h ****     const float pole = pole_;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 4
+
+
+  77:mi/stmlib/dsp/filter.h ****     while (size--) {
+  78:mi/stmlib/dsp/filter.h ****       float old_x = x;
+  79:mi/stmlib/dsp/filter.h ****       x = *in_out;
+  80:mi/stmlib/dsp/filter.h ****       *in_out++ = y = y * pole + x - old_x;
+  81:mi/stmlib/dsp/filter.h ****     }
+  82:mi/stmlib/dsp/filter.h ****     x_ = x;
+  83:mi/stmlib/dsp/filter.h ****     y_ = y;
+  84:mi/stmlib/dsp/filter.h ****   }
+  85:mi/stmlib/dsp/filter.h ****   
+  86:mi/stmlib/dsp/filter.h ****  private:
+  87:mi/stmlib/dsp/filter.h ****   float pole_;
+  88:mi/stmlib/dsp/filter.h ****   float x_;
+  89:mi/stmlib/dsp/filter.h ****   float y_;
+  90:mi/stmlib/dsp/filter.h **** };
+  91:mi/stmlib/dsp/filter.h **** 
+  92:mi/stmlib/dsp/filter.h **** class OnePole {
+  93:mi/stmlib/dsp/filter.h ****  public:
+  94:mi/stmlib/dsp/filter.h ****   OnePole() { }
+  95:mi/stmlib/dsp/filter.h ****   ~OnePole() { }
+  96:mi/stmlib/dsp/filter.h ****   
+  97:mi/stmlib/dsp/filter.h ****   void Init() {
+  98:mi/stmlib/dsp/filter.h ****     set_f<FREQUENCY_DIRTY>(0.01f);
+  99:mi/stmlib/dsp/filter.h ****     Reset();
+ 100:mi/stmlib/dsp/filter.h ****   }
+ 101:mi/stmlib/dsp/filter.h ****   
+ 102:mi/stmlib/dsp/filter.h ****   void Reset() {
+ 103:mi/stmlib/dsp/filter.h ****     state_ = 0.0f;
+ 104:mi/stmlib/dsp/filter.h ****   }
+ 105:mi/stmlib/dsp/filter.h ****   
+ 106:mi/stmlib/dsp/filter.h ****   template<FrequencyApproximation approximation>
+ 107:mi/stmlib/dsp/filter.h ****   static inline float tan(float f) {
+ 108:mi/stmlib/dsp/filter.h ****     if (approximation == FREQUENCY_EXACT) {
+ 109:mi/stmlib/dsp/filter.h ****       // Clip coefficient to about 100.
+ 110:mi/stmlib/dsp/filter.h ****       f = f < 0.497f ? f : 0.497f;
+ 111:mi/stmlib/dsp/filter.h ****       return tanf(M_PI_F * f);
+ 112:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_DIRTY) {
+ 113:mi/stmlib/dsp/filter.h ****       // Optimized for frequencies below 8kHz.
+ 114:mi/stmlib/dsp/filter.h ****       const float a = 3.736e-01f * M_PI_POW_3;
+ 115:mi/stmlib/dsp/filter.h ****       return f * (M_PI_F + a * f * f);
+ 116:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_FAST) {
+ 117:mi/stmlib/dsp/filter.h ****       // The usual tangent approximation uses 3.1755e-01 and 2.033e-01, but
+ 118:mi/stmlib/dsp/filter.h ****       // the coefficients used here are optimized to minimize error for the
+ 119:mi/stmlib/dsp/filter.h ****       // 16Hz to 16kHz range, with a sample rate of 48kHz.
+ 120:mi/stmlib/dsp/filter.h ****       const float a = 3.260e-01f * M_PI_POW_3;
+ 121:mi/stmlib/dsp/filter.h ****       const float b = 1.823e-01f * M_PI_POW_5;
+ 122:mi/stmlib/dsp/filter.h ****       float f2 = f * f;
+ 123:mi/stmlib/dsp/filter.h ****       return f * (M_PI_F + f2 * (a + b * f2));
+ 124:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_ACCURATE) {
+ 125:mi/stmlib/dsp/filter.h ****       // These coefficients don't need to be tweaked for the audio range.
+ 126:mi/stmlib/dsp/filter.h ****       const float a = 3.333314036e-01f * M_PI_POW_3;
+ 127:mi/stmlib/dsp/filter.h ****       const float b = 1.333923995e-01f * M_PI_POW_5;
+ 128:mi/stmlib/dsp/filter.h ****       const float c = 5.33740603e-02f * M_PI_POW_7;
+ 129:mi/stmlib/dsp/filter.h ****       const float d = 2.900525e-03f * M_PI_POW_9;
+ 130:mi/stmlib/dsp/filter.h ****       const float e = 9.5168091e-03f * M_PI_POW_11;
+ 131:mi/stmlib/dsp/filter.h ****       float f2 = f * f;
+ 132:mi/stmlib/dsp/filter.h ****       return f * (M_PI_F + f2 * (a + f2 * (b + f2 * (c + f2 * (d + f2 * e)))));
+ 133:mi/stmlib/dsp/filter.h ****     }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 5
+
+
+ 134:mi/stmlib/dsp/filter.h ****   }
+ 135:mi/stmlib/dsp/filter.h ****   
+ 136:mi/stmlib/dsp/filter.h ****   // Set frequency and resonance from true units. Various approximations
+ 137:mi/stmlib/dsp/filter.h ****   // are available to avoid the cost of tanf.
+ 138:mi/stmlib/dsp/filter.h ****   template<FrequencyApproximation approximation>
+ 139:mi/stmlib/dsp/filter.h ****   inline void set_f(float f) {
+ 140:mi/stmlib/dsp/filter.h ****     g_ = tan<approximation>(f);
+ 141:mi/stmlib/dsp/filter.h ****     gi_ = 1.0f / (1.0f + g_);
+ 142:mi/stmlib/dsp/filter.h ****   }
+ 143:mi/stmlib/dsp/filter.h ****   
+ 144:mi/stmlib/dsp/filter.h ****   template<FilterMode mode>
+ 145:mi/stmlib/dsp/filter.h ****   inline float Process(float in) {
+ 146:mi/stmlib/dsp/filter.h ****     float lp;
+ 147:mi/stmlib/dsp/filter.h ****     lp = (g_ * in + state_) * gi_;
+ 148:mi/stmlib/dsp/filter.h ****     state_ = g_ * (in - lp) + lp;
+ 149:mi/stmlib/dsp/filter.h **** 
+ 150:mi/stmlib/dsp/filter.h ****     if (mode == FILTER_MODE_LOW_PASS) {
+ 151:mi/stmlib/dsp/filter.h ****       return lp;
+ 152:mi/stmlib/dsp/filter.h ****     } else if (mode == FILTER_MODE_HIGH_PASS) {
+ 153:mi/stmlib/dsp/filter.h ****       return in - lp;
+ 154:mi/stmlib/dsp/filter.h ****     } else {
+ 155:mi/stmlib/dsp/filter.h ****       return 0.0f;
+ 156:mi/stmlib/dsp/filter.h ****     }
+ 157:mi/stmlib/dsp/filter.h ****   }
+ 158:mi/stmlib/dsp/filter.h ****   
+ 159:mi/stmlib/dsp/filter.h ****   template<FilterMode mode>
+ 160:mi/stmlib/dsp/filter.h ****   inline void Process(float* in_out, size_t size) {
+ 161:mi/stmlib/dsp/filter.h ****     while (size--) {
+ 162:mi/stmlib/dsp/filter.h ****       *in_out = Process<mode>(*in_out);
+ 163:mi/stmlib/dsp/filter.h ****       ++in_out;
+ 164:mi/stmlib/dsp/filter.h ****     }
+ 165:mi/stmlib/dsp/filter.h ****   }
+ 166:mi/stmlib/dsp/filter.h ****   
+ 167:mi/stmlib/dsp/filter.h ****  private:
+ 168:mi/stmlib/dsp/filter.h ****   float g_;
+ 169:mi/stmlib/dsp/filter.h ****   float gi_;
+ 170:mi/stmlib/dsp/filter.h ****   float state_;
+ 171:mi/stmlib/dsp/filter.h ****   
+ 172:mi/stmlib/dsp/filter.h ****   DISALLOW_COPY_AND_ASSIGN(OnePole);
+ 173:mi/stmlib/dsp/filter.h **** };
+ 174:mi/stmlib/dsp/filter.h **** 
+ 175:mi/stmlib/dsp/filter.h **** 
+ 176:mi/stmlib/dsp/filter.h **** 
+ 177:mi/stmlib/dsp/filter.h **** class Svf {
+ 178:mi/stmlib/dsp/filter.h ****  public:
+ 179:mi/stmlib/dsp/filter.h ****   Svf() { }
+ 180:mi/stmlib/dsp/filter.h ****   ~Svf() { }
+ 181:mi/stmlib/dsp/filter.h ****   
+ 182:mi/stmlib/dsp/filter.h ****   void Init() {
+  52              		.loc 2 182 8 discriminator 2 view .LVU5
+  53              	.LBE73:
+  54              	.LBE90:
+ 183:mi/stmlib/dsp/filter.h ****     set_f_q<FREQUENCY_DIRTY>(0.01f, 100.0f);
+  55              		.loc 2 183 5 discriminator 2 view .LVU6
+  56              	.LBB91:
+  57              	.LBB87:
+  58              	.LBB74:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 6
+
+
+  59              	.LBI74:
+ 184:mi/stmlib/dsp/filter.h ****     Reset();
+ 185:mi/stmlib/dsp/filter.h ****   }
+ 186:mi/stmlib/dsp/filter.h ****   
+ 187:mi/stmlib/dsp/filter.h ****   void Reset() {
+ 188:mi/stmlib/dsp/filter.h ****     state_1_ = state_2_ = 0.0f;
+ 189:mi/stmlib/dsp/filter.h ****   }
+ 190:mi/stmlib/dsp/filter.h ****   
+ 191:mi/stmlib/dsp/filter.h ****   // Copy settings from another filter.
+ 192:mi/stmlib/dsp/filter.h ****   inline void set(const Svf& f) {
+ 193:mi/stmlib/dsp/filter.h ****     g_ = f.g();
+ 194:mi/stmlib/dsp/filter.h ****     r_ = f.r();
+ 195:mi/stmlib/dsp/filter.h ****     h_ = f.h();
+ 196:mi/stmlib/dsp/filter.h ****   }
+ 197:mi/stmlib/dsp/filter.h **** 
+ 198:mi/stmlib/dsp/filter.h ****   // Set all parameters from LUT.
+ 199:mi/stmlib/dsp/filter.h ****   inline void set_g_r_h(float g, float r, float h) {
+ 200:mi/stmlib/dsp/filter.h ****     g_ = g;
+ 201:mi/stmlib/dsp/filter.h ****     r_ = r;
+ 202:mi/stmlib/dsp/filter.h ****     h_ = h;
+ 203:mi/stmlib/dsp/filter.h ****   }
+ 204:mi/stmlib/dsp/filter.h ****   
+ 205:mi/stmlib/dsp/filter.h ****   // Set frequency and resonance coefficients from LUT, adjust remaining
+ 206:mi/stmlib/dsp/filter.h ****   // parameter.
+ 207:mi/stmlib/dsp/filter.h ****   inline void set_g_r(float g, float r) {
+ 208:mi/stmlib/dsp/filter.h ****     g_ = g;
+ 209:mi/stmlib/dsp/filter.h ****     r_ = r;
+ 210:mi/stmlib/dsp/filter.h ****     h_ = 1.0f / (1.0f + r_ * g_ + g_ * g_);
+ 211:mi/stmlib/dsp/filter.h ****   }
+ 212:mi/stmlib/dsp/filter.h **** 
+ 213:mi/stmlib/dsp/filter.h ****   // Set frequency from LUT, resonance in true units, adjust the rest.
+ 214:mi/stmlib/dsp/filter.h ****   inline void set_g_q(float g, float resonance) {
+ 215:mi/stmlib/dsp/filter.h ****     g_ = g;
+ 216:mi/stmlib/dsp/filter.h ****     r_ = 1.0f / resonance;
+ 217:mi/stmlib/dsp/filter.h ****     h_ = 1.0f / (1.0f + r_ * g_ + g_ * g_);
+ 218:mi/stmlib/dsp/filter.h ****   }
+ 219:mi/stmlib/dsp/filter.h **** 
+ 220:mi/stmlib/dsp/filter.h ****   // Set frequency and resonance from true units. Various approximations
+ 221:mi/stmlib/dsp/filter.h ****   // are available to avoid the cost of tanf.
+ 222:mi/stmlib/dsp/filter.h ****   template<FrequencyApproximation approximation>
+ 223:mi/stmlib/dsp/filter.h ****   inline void set_f_q(float f, float resonance) {
+  60              		.loc 2 223 15 discriminator 2 view .LVU7
+  61              		.loc 2 223 15 is_stmt 0 discriminator 2 view .LVU8
+  62              	.LBE74:
+  63              	.LBB78:
+  64              	.LBB79:
+ 188:mi/stmlib/dsp/filter.h ****   }
+  65              		.loc 2 188 25 discriminator 2 view .LVU9
+  66 0008 0022     		movs	r2, #0
+  67              	.LBE79:
+  68              	.LBE78:
+  69              	.LBB82:
+  70              	.LBB75:
+ 224:mi/stmlib/dsp/filter.h ****     g_ = OnePole::tan<approximation>(f);
+  71              		.loc 2 224 8 discriminator 2 view .LVU10
+  72 000a DFF84CE0 		ldr	lr, .L6+16
+ 225:mi/stmlib/dsp/filter.h ****     r_ = 1.0f / resonance;
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 7
+
+
+  73              		.loc 2 225 8 discriminator 2 view .LVU11
+  74 000e DFF84CC0 		ldr	ip, .L6+20
+  75              	.LBE75:
+  76              	.LBE82:
+  77              	.LBE87:
+  43:mi/ringsX_MIDI/dsp/resonator.cpp ****     f_[i].Init();
+  78              		.loc 1 43 25 discriminator 2 view .LVU12
+  79 0012 1433     		adds	r3, r3, #20
+  80              	.LBB88:
+  81              	.LBB83:
+  82              	.LBB76:
+ 226:mi/stmlib/dsp/filter.h ****     h_ = 1.0f / (1.0f + r_ * g_ + g_ * g_);
+  83              		.loc 2 226 8 discriminator 2 view .LVU13
+  84 0014 0C49     		ldr	r1, .L6
+ 224:mi/stmlib/dsp/filter.h ****     r_ = 1.0f / resonance;
+  85              		.loc 2 224 8 discriminator 2 view .LVU14
+  86 0016 C3F808E0 		str	lr, [r3, #8]	@ float
+  87              	.LBE76:
+  88              	.LBE83:
+  89              	.LBB84:
+  90              	.LBB80:
+ 188:mi/stmlib/dsp/filter.h ****   }
+  91              		.loc 2 188 25 discriminator 2 view .LVU15
+  92 001a 9A61     		str	r2, [r3, #24]	@ float
+  93              	.LBE80:
+  94              	.LBE84:
+  95              	.LBB85:
+  96              	.LBB77:
+ 225:mi/stmlib/dsp/filter.h ****     h_ = 1.0f / (1.0f + r_ * g_ + g_ * g_);
+  97              		.loc 2 225 8 discriminator 2 view .LVU16
+  98 001c C3F80CC0 		str	ip, [r3, #12]	@ float
+  99              		.loc 2 226 8 discriminator 2 view .LVU17
+ 100 0020 1961     		str	r1, [r3, #16]	@ float
+ 101              	.LVL2:
+ 102              		.loc 2 226 8 discriminator 2 view .LVU18
+ 103              	.LBE77:
+ 104              	.LBE85:
+ 105              	.LBE88:
+ 106              	.LBE91:
+ 184:mi/stmlib/dsp/filter.h ****   }
+ 107              		.loc 2 184 5 is_stmt 1 discriminator 2 view .LVU19
+ 108              	.LBB92:
+ 109              	.LBB89:
+ 110              	.LBB86:
+ 111              	.LBI78:
+ 187:mi/stmlib/dsp/filter.h ****     state_1_ = state_2_ = 0.0f;
+ 112              		.loc 2 187 8 discriminator 2 view .LVU20
+ 113              	.LBB81:
+ 188:mi/stmlib/dsp/filter.h ****   }
+ 114              		.loc 2 188 5 discriminator 2 view .LVU21
+ 188:mi/stmlib/dsp/filter.h ****   }
+ 115              		.loc 2 188 14 is_stmt 0 discriminator 2 view .LVU22
+ 116 0022 5A61     		str	r2, [r3, #20]	@ float
+ 188:mi/stmlib/dsp/filter.h ****   }
+ 117              		.loc 2 188 14 discriminator 2 view .LVU23
+ 118              	.LBE81:
+ 119              	.LBE86:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 8
+
+
+ 120              	.LBE89:
+  43:mi/ringsX_MIDI/dsp/resonator.cpp ****     f_[i].Init();
+ 121              		.loc 1 43 3 is_stmt 1 discriminator 2 view .LVU24
+  43:mi/ringsX_MIDI/dsp/resonator.cpp ****     f_[i].Init();
+ 122              		.loc 1 43 25 discriminator 2 view .LVU25
+ 123 0024 A342     		cmp	r3, r4
+ 124 0026 EFD1     		bne	.L2
+ 125              	.LBE92:
+  45:mi/ringsX_MIDI/dsp/resonator.cpp ****   }
+  46:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  47:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_frequency(220.0f / kSampleRate);
+ 126              		.loc 1 47 3 view .LVU26
+ 127              	.LVL3:
+ 128              	.LBB93:
+ 129              	.LBI93:
+ 130              		.file 3 "mi/ringsX_MIDI/dsp/resonator.h"
+   1:mi/ringsX_MIDI/dsp/resonator.h **** // Copyright 2015 Emilie Gillet.
+   2:mi/ringsX_MIDI/dsp/resonator.h **** //
+   3:mi/ringsX_MIDI/dsp/resonator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/ringsX_MIDI/dsp/resonator.h **** //
+   5:mi/ringsX_MIDI/dsp/resonator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/ringsX_MIDI/dsp/resonator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/ringsX_MIDI/dsp/resonator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/ringsX_MIDI/dsp/resonator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/ringsX_MIDI/dsp/resonator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/ringsX_MIDI/dsp/resonator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/ringsX_MIDI/dsp/resonator.h **** // 
+  12:mi/ringsX_MIDI/dsp/resonator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/ringsX_MIDI/dsp/resonator.h **** // all copies or substantial portions of the Software.
+  14:mi/ringsX_MIDI/dsp/resonator.h **** // 
+  15:mi/ringsX_MIDI/dsp/resonator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/ringsX_MIDI/dsp/resonator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/ringsX_MIDI/dsp/resonator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/ringsX_MIDI/dsp/resonator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/ringsX_MIDI/dsp/resonator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/ringsX_MIDI/dsp/resonator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/ringsX_MIDI/dsp/resonator.h **** // THE SOFTWARE.
+  22:mi/ringsX_MIDI/dsp/resonator.h **** // 
+  23:mi/ringsX_MIDI/dsp/resonator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/ringsX_MIDI/dsp/resonator.h **** //
+  25:mi/ringsX_MIDI/dsp/resonator.h **** // -----------------------------------------------------------------------------
+  26:mi/ringsX_MIDI/dsp/resonator.h **** //
+  27:mi/ringsX_MIDI/dsp/resonator.h **** // Resonator.
+  28:mi/ringsX_MIDI/dsp/resonator.h **** 
+  29:mi/ringsX_MIDI/dsp/resonator.h **** #ifndef RINGS_DSP_RESONATOR_H_
+  30:mi/ringsX_MIDI/dsp/resonator.h **** #define RINGS_DSP_RESONATOR_H_
+  31:mi/ringsX_MIDI/dsp/resonator.h **** 
+  32:mi/ringsX_MIDI/dsp/resonator.h **** #include "stmlib/stmlib.h"
+  33:mi/ringsX_MIDI/dsp/resonator.h **** 
+  34:mi/ringsX_MIDI/dsp/resonator.h **** #include <algorithm>
+  35:mi/ringsX_MIDI/dsp/resonator.h **** 
+  36:mi/ringsX_MIDI/dsp/resonator.h **** #include "ringsX_MIDI/dsp/dsp.h"
+  37:mi/ringsX_MIDI/dsp/resonator.h **** #include "stmlib/dsp/filter.h"
+  38:mi/ringsX_MIDI/dsp/resonator.h **** #include "stmlib/dsp/delay_line.h"
+  39:mi/ringsX_MIDI/dsp/resonator.h **** 
+  40:mi/ringsX_MIDI/dsp/resonator.h **** namespace rings {
+  41:mi/ringsX_MIDI/dsp/resonator.h **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 9
+
+
+  42:mi/ringsX_MIDI/dsp/resonator.h **** const int32_t kMaxModes = 64;
+  43:mi/ringsX_MIDI/dsp/resonator.h **** 
+  44:mi/ringsX_MIDI/dsp/resonator.h **** class Resonator {
+  45:mi/ringsX_MIDI/dsp/resonator.h ****  public:
+  46:mi/ringsX_MIDI/dsp/resonator.h ****   Resonator() { }
+  47:mi/ringsX_MIDI/dsp/resonator.h ****   ~Resonator() { }
+  48:mi/ringsX_MIDI/dsp/resonator.h ****   
+  49:mi/ringsX_MIDI/dsp/resonator.h ****   void Init();
+  50:mi/ringsX_MIDI/dsp/resonator.h ****   void Process(
+  51:mi/ringsX_MIDI/dsp/resonator.h ****       const float* in,
+  52:mi/ringsX_MIDI/dsp/resonator.h ****       float* out,
+  53:mi/ringsX_MIDI/dsp/resonator.h ****       float* aux,
+  54:mi/ringsX_MIDI/dsp/resonator.h ****       size_t size);
+  55:mi/ringsX_MIDI/dsp/resonator.h ****   
+  56:mi/ringsX_MIDI/dsp/resonator.h ****   inline void set_frequency(float frequency) {
+ 131              		.loc 3 56 15 view .LVU27
+ 132              	.LBB94:
+  57:mi/ringsX_MIDI/dsp/resonator.h ****     frequency_ = frequency;
+ 133              		.loc 3 57 5 view .LVU28
+ 134              	.LBE94:
+ 135              	.LBE93:
+ 136              	.LBB97:
+ 137              	.LBB98:
+  58:mi/ringsX_MIDI/dsp/resonator.h ****   }
+  59:mi/ringsX_MIDI/dsp/resonator.h ****   
+  60:mi/ringsX_MIDI/dsp/resonator.h ****   inline void set_structure(float structure) {
+  61:mi/ringsX_MIDI/dsp/resonator.h ****     structure_ = structure;
+  62:mi/ringsX_MIDI/dsp/resonator.h ****   }
+  63:mi/ringsX_MIDI/dsp/resonator.h ****   
+  64:mi/ringsX_MIDI/dsp/resonator.h ****   inline void set_brightness(float brightness) {
+  65:mi/ringsX_MIDI/dsp/resonator.h ****     brightness_ = brightness;
+ 138              		.loc 3 65 17 is_stmt 0 view .LVU29
+ 139 0028 4FF07C53 		mov	r3, #1056964608
+ 140              	.LBE98:
+ 141              	.LBE97:
+ 142              	.LBB101:
+ 143              	.LBB95:
+  57:mi/ringsX_MIDI/dsp/resonator.h ****     frequency_ = frequency;
+ 144              		.loc 3 57 16 view .LVU30
+ 145 002c 0749     		ldr	r1, .L6+4
+ 146              	.LBE95:
+ 147              	.LBE101:
+ 148              	.LBB102:
+ 149              	.LBB103:
+  61:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 150              		.loc 3 61 16 view .LVU31
+ 151 002e 4FF07A54 		mov	r4, #1048576000
+ 152              	.LBE103:
+ 153              	.LBE102:
+  48:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_structure(0.25f);
+  49:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_brightness(0.5f);
+  50:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_damping(0.3f);
+  51:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_position(0.999f);
+  52:mi/ringsX_MIDI/dsp/resonator.cpp ****   previous_position_ = 0.0f;
+ 154              		.loc 1 52 22 view .LVU32
+ 155 0032 0261     		str	r2, [r0, #16]	@ float
+ 156              	.LBB106:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 10
+
+
+ 157              	.LBB96:
+  57:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 158              		.loc 3 57 16 view .LVU33
+ 159 0034 0160     		str	r1, [r0]	@ float
+ 160              	.LVL4:
+  57:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 161              		.loc 3 57 16 view .LVU34
+ 162              	.LBE96:
+ 163              	.LBE106:
+  48:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_structure(0.25f);
+ 164              		.loc 1 48 3 is_stmt 1 view .LVU35
+ 165              	.LBB107:
+ 166              	.LBI102:
+  60:mi/ringsX_MIDI/dsp/resonator.h ****     structure_ = structure;
+ 167              		.loc 3 60 15 view .LVU36
+ 168              	.LBB104:
+  61:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 169              		.loc 3 61 5 view .LVU37
+ 170              	.LBE104:
+ 171              	.LBE107:
+ 172              	.LBB108:
+ 173              	.LBB109:
+  66:mi/ringsX_MIDI/dsp/resonator.h ****   }
+  67:mi/ringsX_MIDI/dsp/resonator.h ****   
+  68:mi/ringsX_MIDI/dsp/resonator.h ****   inline void set_damping(float damping) {
+  69:mi/ringsX_MIDI/dsp/resonator.h ****     damping_ = damping;
+  70:mi/ringsX_MIDI/dsp/resonator.h ****   }
+  71:mi/ringsX_MIDI/dsp/resonator.h ****   
+  72:mi/ringsX_MIDI/dsp/resonator.h ****   inline void set_position(float position) {
+  73:mi/ringsX_MIDI/dsp/resonator.h ****     position_ = position;
+  74:mi/ringsX_MIDI/dsp/resonator.h ****   }
+  75:mi/ringsX_MIDI/dsp/resonator.h ****   
+  76:mi/ringsX_MIDI/dsp/resonator.h ****   inline void set_resolution(int32_t resolution) {
+  77:mi/ringsX_MIDI/dsp/resonator.h ****     resolution -= resolution & 1; // Must be even!
+  78:mi/ringsX_MIDI/dsp/resonator.h ****     resolution_ = std::min(resolution, kMaxModes);
+ 174              		.loc 3 78 17 is_stmt 0 view .LVU38
+ 175 0036 4022     		movs	r2, #64
+ 176              	.LBE109:
+ 177              	.LBE108:
+ 178              	.LBB112:
+ 179              	.LBB113:
+  69:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 180              		.loc 3 69 14 view .LVU39
+ 181 0038 0549     		ldr	r1, .L6+8
+ 182              	.LBE113:
+ 183              	.LBE112:
+ 184              	.LBB115:
+ 185              	.LBB99:
+  65:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 186              		.loc 3 65 17 view .LVU40
+ 187 003a 8360     		str	r3, [r0, #8]	@ float
+ 188              	.LBE99:
+ 189              	.LBE115:
+ 190              	.LBB116:
+ 191              	.LBB117:
+  73:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 192              		.loc 3 73 15 view .LVU41
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 11
+
+
+ 193 003c 054B     		ldr	r3, .L6+12
+ 194              	.LBE117:
+ 195              	.LBE116:
+ 196              	.LBB120:
+ 197              	.LBB105:
+  61:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 198              		.loc 3 61 16 view .LVU42
+ 199 003e 4460     		str	r4, [r0, #4]	@ float
+ 200              	.LVL5:
+  61:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 201              		.loc 3 61 16 view .LVU43
+ 202              	.LBE105:
+ 203              	.LBE120:
+  49:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_damping(0.3f);
+ 204              		.loc 1 49 3 is_stmt 1 view .LVU44
+ 205              	.LBB121:
+ 206              	.LBI97:
+  64:mi/ringsX_MIDI/dsp/resonator.h ****     brightness_ = brightness;
+ 207              		.loc 3 64 15 view .LVU45
+ 208              	.LBB100:
+  65:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 209              		.loc 3 65 5 view .LVU46
+  65:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 210              		.loc 3 65 5 is_stmt 0 view .LVU47
+ 211              	.LBE100:
+ 212              	.LBE121:
+  50:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_position(0.999f);
+ 213              		.loc 1 50 3 is_stmt 1 view .LVU48
+ 214              	.LBB122:
+ 215              	.LBI112:
+  68:mi/ringsX_MIDI/dsp/resonator.h ****     damping_ = damping;
+ 216              		.loc 3 68 15 view .LVU49
+ 217              	.LBB114:
+  69:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 218              		.loc 3 69 5 view .LVU50
+  69:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 219              		.loc 3 69 14 is_stmt 0 view .LVU51
+ 220 0040 4161     		str	r1, [r0, #20]	@ float
+ 221              	.LVL6:
+  69:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 222              		.loc 3 69 14 view .LVU52
+ 223              	.LBE114:
+ 224              	.LBE122:
+  51:mi/ringsX_MIDI/dsp/resonator.cpp ****   previous_position_ = 0.0f;
+ 225              		.loc 1 51 3 is_stmt 1 view .LVU53
+ 226              	.LBB123:
+ 227              	.LBI116:
+  72:mi/ringsX_MIDI/dsp/resonator.h ****     position_ = position;
+ 228              		.loc 3 72 15 view .LVU54
+ 229              	.LBB118:
+  73:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 230              		.loc 3 73 5 view .LVU55
+ 231              	.LBE118:
+ 232              	.LBE123:
+ 233              	.LBB124:
+ 234              	.LBB110:
+ 235              		.loc 3 78 17 is_stmt 0 view .LVU56
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 12
+
+
+ 236 0042 8261     		str	r2, [r0, #24]
+ 237              	.LBE110:
+ 238              	.LBE124:
+ 239              	.LBB125:
+ 240              	.LBB119:
+  73:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 241              		.loc 3 73 15 view .LVU57
+ 242 0044 C360     		str	r3, [r0, #12]	@ float
+ 243              	.LVL7:
+  73:mi/ringsX_MIDI/dsp/resonator.h ****   }
+ 244              		.loc 3 73 15 view .LVU58
+ 245              	.LBE119:
+ 246              	.LBE125:
+ 247              		.loc 1 52 3 is_stmt 1 view .LVU59
+  53:mi/ringsX_MIDI/dsp/resonator.cpp ****   set_resolution(kMaxModes);
+ 248              		.loc 1 53 3 view .LVU60
+ 249              	.LBB126:
+ 250              	.LBI108:
+  76:mi/ringsX_MIDI/dsp/resonator.h ****     resolution -= resolution & 1; // Must be even!
+ 251              		.loc 3 76 15 view .LVU61
+ 252              	.LBB111:
+  77:mi/ringsX_MIDI/dsp/resonator.h ****     resolution_ = std::min(resolution, kMaxModes);
+ 253              		.loc 3 77 5 view .LVU62
+ 254              		.loc 3 78 5 view .LVU63
+ 255              		.loc 3 78 5 is_stmt 0 view .LVU64
+ 256              	.LBE111:
+ 257              	.LBE126:
+  54:mi/ringsX_MIDI/dsp/resonator.cpp **** }
+ 258              		.loc 1 54 1 view .LVU65
+ 259 0046 10BD     		pop	{r4, pc}
+ 260              	.L7:
+ 261              		.align	2
+ 262              	.L6:
+ 263 0048 CAAA7F3F 		.word	1065331402
+ 264 004c C92F963B 		.word	999698377
+ 265 0050 9A99993E 		.word	1050253722
+ 266 0054 77BE7F3F 		.word	1065336439
+ 267 0058 22BA003D 		.word	1023457826
+ 268 005c 0AD7233C 		.word	1008981770
+ 269              		.cfi_endproc
+ 270              	.LFE1544:
+ 272              		.section	.text._ZN5rings9Resonator14ComputeFiltersEv,"ax",%progbits
+ 273              		.align	1
+ 274              		.p2align 2,,3
+ 275              		.global	_ZN5rings9Resonator14ComputeFiltersEv
+ 276              		.syntax unified
+ 277              		.thumb
+ 278              		.thumb_func
+ 280              	_ZN5rings9Resonator14ComputeFiltersEv:
+ 281              	.LVL8:
+ 282              	.LFB1545:
+  55:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+  56:mi/ringsX_MIDI/dsp/resonator.cpp **** int32_t Resonator::ComputeFilters() {
+ 283              		.loc 1 56 37 is_stmt 1 view -0
+ 284              		.cfi_startproc
+ 285              		@ args = 0, pretend = 0, frame = 0
+ 286              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 13
+
+
+  57:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure_, 256.0f);
+ 287              		.loc 1 57 3 view .LVU67
+  58:mi/ringsX_MIDI/dsp/resonator.cpp ****   float harmonic = frequency_;
+  59:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stretch_factor = 1.0f; 
+  60:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q = 500.0f * Interpolate(
+  61:mi/ringsX_MIDI/dsp/resonator.cpp ****       lut_4_decades,
+  62:mi/ringsX_MIDI/dsp/resonator.cpp ****       damping_,
+  63:mi/ringsX_MIDI/dsp/resonator.cpp ****       256.0f);
+  64:mi/ringsX_MIDI/dsp/resonator.cpp ****   float brightness_attenuation = 1.0f - structure_;
+ 288              		.loc 1 64 9 is_stmt 0 view .LVU68
+ 289 0000 B7EE007A 		vmov.f32	s14, #1.0e+0
+  57:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure_, 256.0f);
+ 290              		.loc 1 57 32 view .LVU69
+ 291 0004 D0ED014A 		vldr.32	s9, [r0, #4]
+ 292              	.LVL9:
+ 293              	.LBB139:
+ 294              	.LBI139:
+ 295              		.file 4 "mi/stmlib/dsp/dsp.h"
+   1:mi/stmlib/dsp/dsp.h **** // Copyright 2012 Emilie Gillet.
+   2:mi/stmlib/dsp/dsp.h **** //
+   3:mi/stmlib/dsp/dsp.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/dsp.h **** //
+   5:mi/stmlib/dsp/dsp.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/dsp.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/dsp.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/dsp.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/dsp.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/dsp.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/dsp.h **** // 
+  12:mi/stmlib/dsp/dsp.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/dsp.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/dsp.h **** // 
+  15:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/dsp.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/dsp.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/dsp.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/dsp.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/dsp.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/dsp.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/dsp.h **** // 
+  23:mi/stmlib/dsp/dsp.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/dsp.h **** //
+  25:mi/stmlib/dsp/dsp.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/dsp.h **** //
+  27:mi/stmlib/dsp/dsp.h **** // DSP utility routines.
+  28:mi/stmlib/dsp/dsp.h **** 
+  29:mi/stmlib/dsp/dsp.h **** #ifndef STMLIB_UTILS_DSP_DSP_H_
+  30:mi/stmlib/dsp/dsp.h **** #define STMLIB_UTILS_DSP_DSP_H_
+  31:mi/stmlib/dsp/dsp.h **** 
+  32:mi/stmlib/dsp/dsp.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/dsp.h **** 
+  34:mi/stmlib/dsp/dsp.h **** #include <cmath>
+  35:mi/stmlib/dsp/dsp.h **** #include <math.h>
+  36:mi/stmlib/dsp/dsp.h **** 
+  37:mi/stmlib/dsp/dsp.h **** namespace stmlib {
+  38:mi/stmlib/dsp/dsp.h **** 
+  39:mi/stmlib/dsp/dsp.h **** #define MAKE_INTEGRAL_FRACTIONAL(x) \
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 14
+
+
+  40:mi/stmlib/dsp/dsp.h ****   int32_t x ## _integral = static_cast<int32_t>(x); \
+  41:mi/stmlib/dsp/dsp.h ****   float x ## _fractional = x - static_cast<float>(x ## _integral);
+  42:mi/stmlib/dsp/dsp.h **** 
+  43:mi/stmlib/dsp/dsp.h **** inline float Interpolate(const float* table, float index, float size) {
+ 296              		.loc 4 43 14 is_stmt 1 view .LVU70
+ 297              	.LBB140:
+  44:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 298              		.loc 4 44 3 view .LVU71
+ 299              	.LBE140:
+ 300              	.LBE139:
+  65:mi/ringsX_MIDI/dsp/resonator.cpp ****   // Reduces the range of brightness when structure is very low, to prevent
+  66:mi/ringsX_MIDI/dsp/resonator.cpp ****   // clipping.
+  67:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+  68:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+  69:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float brightness = brightness_ * (1.0f - 0.2f * brightness_attenuation);
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 301              		.loc 1 71 37 is_stmt 0 view .LVU72
+ 302 0008 F0EE003A 		vmov.f32	s7, #2.0e+0
+ 303              	.LBB153:
+ 304              	.LBB141:
+ 305              		.loc 4 44 9 view .LVU73
+ 306 000c DFED5F6A 		vldr.32	s13, .L21
+ 307              	.LBE141:
+ 308              	.LBE153:
+ 309              	.LBB154:
+ 310              	.LBB155:
+ 311 0010 90ED056A 		vldr.32	s12, [r0, #20]
+ 312              	.LBE155:
+ 313              	.LBE154:
+  64:mi/ringsX_MIDI/dsp/resonator.cpp ****   // Reduces the range of brightness when structure is very low, to prevent
+ 314              		.loc 1 64 9 view .LVU74
+ 315 0014 77EE647A 		vsub.f32	s15, s14, s9
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 316              		.loc 1 70 42 view .LVU75
+ 317 0018 9FED5D2A 		vldr.32	s4, .L21+4
+  72:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 318              		.loc 1 72 50 view .LVU76
+ 319 001c 73EEE41A 		vsub.f32	s3, s7, s9
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 320              		.loc 1 70 9 view .LVU77
+ 321 0020 D0ED022A 		vldr.32	s5, [r0, #8]
+ 322              	.LBB167:
+ 323              	.LBB156:
+ 324              		.loc 4 44 9 view .LVU78
+ 325 0024 26EE266A 		vmul.f32	s12, s12, s13
+  45:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+  46:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 326              		.loc 4 46 9 view .LVU79
+ 327 0028 5A4B     		ldr	r3, .L21+8
+ 328              	.LBE156:
+ 329              	.LBE167:
+  67:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+ 330              		.loc 1 67 26 view .LVU80
+ 331 002a 67EEA77A 		vmul.f32	s15, s15, s15
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 332              		.loc 1 71 9 view .LVU81
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 15
+
+
+ 333 002e 9FED5A5A 		vldr.32	s10, .L21+12
+ 334              	.LBB168:
+ 335              	.LBB142:
+  44:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 336              		.loc 4 44 9 view .LVU82
+ 337 0032 64EEA66A 		vmul.f32	s13, s9, s13
+ 338              	.LVL10:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 339              		.loc 4 45 3 is_stmt 1 view .LVU83
+ 340              	.LBE142:
+ 341              	.LBE168:
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 342              		.loc 1 71 9 is_stmt 0 view .LVU84
+ 343 0036 DFED595A 		vldr.32	s11, .L21+16
+ 344              		.loc 1 72 42 view .LVU85
+ 345 003a 61EEA44A 		vmul.f32	s9, s3, s9
+ 346              		.loc 1 72 9 view .LVU86
+ 347 003e DFED581A 		vldr.32	s3, .L21+20
+  68:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+ 348              		.loc 1 68 26 view .LVU87
+ 349 0042 67EEA77A 		vmul.f32	s15, s15, s15
+ 350              	.LBB169:
+ 351              	.LBB143:
+ 352              		.loc 4 46 9 view .LVU88
+ 353 0046 5749     		ldr	r1, .L21+24
+ 354              	.LBE143:
+ 355              	.LBE169:
+ 356              	.LBB170:
+ 357              	.LBB157:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 358              		.loc 4 45 3 view .LVU89
+ 359 0048 BDEEC64A 		vcvt.s32.f32	s8, s12
+ 360              	.LBE157:
+ 361              	.LBE170:
+  58:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stretch_factor = 1.0f; 
+ 362              		.loc 1 58 9 view .LVU90
+ 363 004c D0ED000A 		vldr.32	s1, [r0]
+ 364              		.loc 1 72 9 view .LVU91
+ 365 0050 64EEA11A 		vmul.f32	s3, s9, s3
+  63:mi/ringsX_MIDI/dsp/resonator.cpp ****   float brightness_attenuation = 1.0f - structure_;
+ 366              		.loc 1 63 13 view .LVU92
+ 367 0054 9FED543A 		vldr.32	s6, .L21+28
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 368              		.loc 1 70 42 view .LVU93
+ 369 0058 67EEE77A 		vnmul.f32	s15, s15, s15
+  59:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q = 500.0f * Interpolate(
+ 370              		.loc 1 59 9 view .LVU94
+ 371 005c F0EE474A 		vmov.f32	s9, s14
+ 372              	.LBB171:
+ 373              	.LBB158:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 374              		.loc 4 45 3 view .LVU95
+ 375 0060 14EE102A 		vmov	r2, s8	@ int
+ 376              	.LBE158:
+ 377              	.LBE171:
+ 378              	.LBB172:
+ 379              	.LBB144:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 16
+
+
+ 380 0064 BDEEE64A 		vcvt.s32.f32	s8, s13
+ 381              	.LBE144:
+ 382              	.LBE172:
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 383              		.loc 1 70 42 view .LVU96
+ 384 0068 A7EE827A 		vfma.f32	s14, s15, s4
+ 385              	.LBB173:
+ 386              	.LBB159:
+ 387              		.loc 4 46 9 view .LVU97
+ 388 006c 03EB820C 		add	ip, r3, r2, lsl #2
+ 389 0070 0346     		mov	r3, r0
+  47:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+  48:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 390              		.loc 4 48 17 view .LVU98
+ 391 0072 DCED017A 		vldr.32	s15, [ip, #4]
+ 392              	.LBE159:
+ 393              	.LBE173:
+  56:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stiffness = Interpolate(lut_stiffness, structure_, 256.0f);
+ 394              		.loc 1 56 37 view .LVU99
+ 395 0076 00B5     		push	{lr}
+ 396              		.cfi_def_cfa_offset 4
+ 397              		.cfi_offset 14, -4
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 398              		.loc 1 70 9 view .LVU100
+ 399 0078 27EE227A 		vmul.f32	s14, s14, s5
+ 400              	.LBB174:
+ 401              	.LBB145:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 402              		.loc 4 45 3 view .LVU101
+ 403 007c 14EE10EA 		vmov	lr, s8	@ int
+ 404              	.LVL11:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 405              		.loc 4 45 3 is_stmt 1 view .LVU102
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 406              		.loc 4 46 3 view .LVU103
+ 407              	.LBE145:
+ 408              	.LBE174:
+ 409              	.LBB175:
+ 410              	.LBB160:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 411              		.loc 4 45 3 is_stmt 0 view .LVU104
+ 412 0080 04EE102A 		vmov	s8, r2	@ int
+ 413 0084 8269     		ldr	r2, [r0, #24]
+ 414              	.LBE160:
+ 415              	.LBE175:
+ 416              	.LBB176:
+ 417              	.LBB146:
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 418              		.loc 4 46 9 view .LVU105
+ 419 0086 01EB8E00 		add	r0, r1, lr, lsl #2
+ 420              	.LVL12:
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 421              		.loc 4 46 9 view .LVU106
+ 422              	.LBE146:
+ 423              	.LBE176:
+ 424              	.LBB177:
+ 425              	.LBB178:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 17
+
+
+ 426              	.LBB179:
+ 427              		.file 5 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h"
+   1:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Core algorithmic facilities -*- C++ -*-
+   2:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+   3:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Copyright (C) 2001-2020 Free Software Foundation, Inc.
+   4:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** //
+   5:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // This file is part of the GNU ISO C++ Library.  This library is free
+   6:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // software; you can redistribute it and/or modify it under the
+   7:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // terms of the GNU General Public License as published by the
+   8:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Free Software Foundation; either version 3, or (at your option)
+   9:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // any later version.
+  10:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  11:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // This library is distributed in the hope that it will be useful,
+  12:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // but WITHOUT ANY WARRANTY; without even the implied warranty of
+  13:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  14:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // GNU General Public License for more details.
+  15:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  16:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // Under Section 7 of GPL version 3, you are granted additional
+  17:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // permissions described in the GCC Runtime Library Exception, version
+  18:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // 3.1, as published by the Free Software Foundation.
+  19:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  20:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // You should have received a copy of the GNU General Public License and
+  21:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // a copy of the GCC Runtime Library Exception along with this program;
+  22:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+  23:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** // <http://www.gnu.org/licenses/>.
+  24:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  25:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** /*
+  26:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  27:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Copyright (c) 1994
+  28:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Hewlett-Packard Company
+  29:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  30:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Permission to use, copy, modify, distribute and sell this software
+  31:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * and its documentation for any purpose is hereby granted without fee,
+  32:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * provided that the above copyright notice appear in all copies and
+  33:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * that both that copyright notice and this permission notice appear
+  34:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * in supporting documentation.  Hewlett-Packard Company makes no
+  35:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * representations about the suitability of this software for any
+  36:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * purpose.  It is provided "as is" without express or implied warranty.
+  37:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  38:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  39:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Copyright (c) 1996-1998
+  40:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Silicon Graphics Computer Systems, Inc.
+  41:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *
+  42:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * Permission to use, copy, modify, distribute and sell this software
+  43:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * and its documentation for any purpose is hereby granted without fee,
+  44:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * provided that the above copyright notice appear in all copies and
+  45:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * that both that copyright notice and this permission notice appear
+  46:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * in supporting documentation.  Silicon Graphics makes no
+  47:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * representations about the suitability of this software for any
+  48:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  * purpose.  It is provided "as is" without express or implied warranty.
+  49:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  */
+  50:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  51:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** /** @file bits/stl_algobase.h
+  52:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *  This is an internal header file, included by other library headers.
+  53:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  *  Do not attempt to use it directly. @headername{algorithm}
+  54:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****  */
+  55:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 18
+
+
+  56:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #ifndef _STL_ALGOBASE_H
+  57:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #define _STL_ALGOBASE_H 1
+  58:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  59:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/c++config.h>
+  60:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/functexcept.h>
+  61:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/cpp_type_traits.h>
+  62:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <ext/type_traits.h>
+  63:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <ext/numeric_traits.h>
+  64:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_pair.h>
+  65:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_iterator_base_types.h>
+  66:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_iterator_base_funcs.h>
+  67:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/stl_iterator.h>
+  68:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/concept_check.h>
+  69:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <debug/debug.h>
+  70:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/move.h> // For std::swap
+  71:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #include <bits/predefined_ops.h>
+  72:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+  73:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** # include <type_traits>
+  74:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+  75:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus > 201703L
+  76:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** # include <compare>
+  77:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+  78:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  79:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** namespace std _GLIBCXX_VISIBILITY(default)
+  80:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** {
+  81:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** _GLIBCXX_BEGIN_NAMESPACE_VERSION
+  82:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+  83:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /*
+  84:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    * A constexpr wrapper for __builtin_memcmp.
+  85:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    * @param __num The number of elements of type _Tp (not bytes).
+  86:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    */
+  87:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp, typename _Up>
+  88:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+  89:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline int
+  90:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     __memcmp(const _Tp* __first1, const _Up* __first2, size_t __num)
+  91:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+  92:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus >= 201103L
+  93:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       static_assert(sizeof(_Tp) == sizeof(_Up), "can be compared with memcmp");
+  94:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+  95:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #ifdef __cpp_lib_is_constant_evaluated
+  96:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (std::is_constant_evaluated())
+  97:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+  98:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  for(; __num > 0; ++__first1, ++__first2, --__num)
+  99:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    if (*__first1 != *__first2)
+ 100:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	      return *__first1 < *__first2 ? -1 : 1;
+ 101:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  return 0;
+ 102:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 103:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       else
+ 104:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 105:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	return __builtin_memcmp(__first1, __first2, sizeof(_Tp) * __num);
+ 106:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 107:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 108:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus < 201103L
+ 109:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // See http://gcc.gnu.org/ml/libstdc++/2004-08/msg00167.html: in a
+ 110:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // nutshell, we are partially implementing the resolution of DR 187,
+ 111:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   // when it's safe, i.e., the value_types are equal.
+ 112:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<bool _BoolType>
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 19
+
+
+ 113:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __iter_swap
+ 114:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 115:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 116:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static void
+ 117:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	iter_swap(_ForwardIterator1 __a, _ForwardIterator2 __b)
+ 118:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 119:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  typedef typename iterator_traits<_ForwardIterator1>::value_type
+ 120:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	    _ValueType1;
+ 121:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  _ValueType1 __tmp = *__a;
+ 122:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  *__a = *__b;
+ 123:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  *__b = __tmp;
+ 124:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 125:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 126:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 127:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<>
+ 128:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     struct __iter_swap<true>
+ 129:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 130:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 131:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	static void
+ 132:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	iter_swap(_ForwardIterator1 __a, _ForwardIterator2 __b)
+ 133:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	{
+ 134:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	  swap(*__a, *__b);
+ 135:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	}
+ 136:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     };
+ 137:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif // C++03
+ 138:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 139:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 140:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Swaps the contents of two iterators.
+ 141:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 142:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  An iterator.
+ 143:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another iterator.
+ 144:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   Nothing.
+ 145:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 146:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This function swaps the values pointed to by two iterators, not the
+ 147:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  iterators themselves.
+ 148:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 149:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 150:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 151:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline void
+ 152:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     iter_swap(_ForwardIterator1 __a, _ForwardIterator2 __b)
+ 153:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 154:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 155:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 156:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator1>)
+ 157:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 158:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator2>)
+ 159:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 160:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #if __cplusplus < 201103L
+ 161:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator1>::value_type
+ 162:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ValueType1;
+ 163:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator2>::value_type
+ 164:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ValueType2;
+ 165:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 166:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_ConvertibleConcept<_ValueType1,
+ 167:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ValueType2>)
+ 168:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_ConvertibleConcept<_ValueType2,
+ 169:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ValueType1>)
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 20
+
+
+ 170:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 171:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator1>::reference
+ 172:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ReferenceType1;
+ 173:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       typedef typename iterator_traits<_ForwardIterator2>::reference
+ 174:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	_ReferenceType2;
+ 175:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       std::__iter_swap<__are_same<_ValueType1, _ValueType2>::__value
+ 176:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	&& __are_same<_ValueType1&, _ReferenceType1>::__value
+ 177:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	&& __are_same<_ValueType2&, _ReferenceType2>::__value>::
+ 178:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	iter_swap(__a, __b);
+ 179:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #else
+ 180:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // _GLIBCXX_RESOLVE_LIB_DEFECTS
+ 181:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // 187. iter_swap underspecified
+ 182:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       swap(*__a, *__b);
+ 183:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** #endif
+ 184:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 185:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 186:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 187:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief Swap the elements of two sequences.
+ 188:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup mutating_algorithms
+ 189:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first1  A forward iterator.
+ 190:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __last1   A forward iterator.
+ 191:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __first2  A forward iterator.
+ 192:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   An iterator equal to @p first2+(last1-first1).
+ 193:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 194:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  Swaps each element in the range @p [first1,last1) with the
+ 195:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  corresponding element in the range @p [first2,(last1-first1)).
+ 196:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  The ranges must not overlap.
+ 197:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ 198:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _ForwardIterator1, typename _ForwardIterator2>
+ 199:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX20_CONSTEXPR
+ 200:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _ForwardIterator2
+ 201:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     swap_ranges(_ForwardIterator1 __first1, _ForwardIterator1 __last1,
+ 202:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 		_ForwardIterator2 __first2)
+ 203:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 204:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 205:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 206:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator1>)
+ 207:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_Mutable_ForwardIteratorConcept<
+ 208:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 				  _ForwardIterator2>)
+ 209:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_requires_valid_range(__first1, __last1);
+ 210:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 211:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       for (; __first1 != __last1; ++__first1, (void)++__first2)
+ 212:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 	std::iter_swap(__first1, __first2);
+ 213:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       return __first2;
+ 214:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     }
+ 215:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h **** 
+ 216:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   /**
+ 217:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @brief This does what you think it does.
+ 218:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @ingroup sorting_algorithms
+ 219:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __a  A thing of arbitrary type.
+ 220:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @param  __b  Another thing of arbitrary type.
+ 221:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  @return   The lesser of the parameters.
+ 222:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *
+ 223:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  This is the simple classic generic implementation.  It will work on
+ 224:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  temporary expressions, since they are only evaluated once, unlike a
+ 225:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****    *  preprocessor macro.
+ 226:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   */
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 21
+
+
+ 227:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****   template<typename _Tp>
+ 228:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     _GLIBCXX14_CONSTEXPR
+ 229:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     inline const _Tp&
+ 230:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     min(const _Tp& __a, const _Tp& __b)
+ 231:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 232:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       // concept requirements
+ 233:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       __glibcxx_function_requires(_LessThanComparableConcept<_Tp>)
+ 234:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       //return __b < __a ? __b : __a;
+ 235:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****       if (__b < __a)
+ 428              		.loc 5 235 15 view .LVU107
+ 429 008a 0121     		movs	r1, #1
+ 430              	.LBE179:
+ 431              	.LBE178:
+ 432              	.LBE177:
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 433              		.loc 1 71 37 view .LVU108
+ 434 008c 73EEC73A 		vsub.f32	s7, s7, s14
+ 435 0090 402A     		cmp	r2, #64
+ 436              	.LBB211:
+ 437              	.LBB161:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 438              		.loc 4 45 3 view .LVU109
+ 439 0092 B8EEC40A 		vcvt.f32.s32	s0, s8
+ 440              	.LBE161:
+ 441              	.LBE211:
+ 442              	.LBB212:
+ 443              	.LBB147:
+ 444 0096 04EE10EA 		vmov	s8, lr	@ int
+ 445 009a A8BF     		it	ge
+ 446 009c 4022     		movge	r2, #64
+ 447              	.LBE147:
+ 448              	.LBE212:
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 449              		.loc 1 71 29 view .LVU110
+ 450 009e 23EE877A 		vmul.f32	s14, s7, s14
+ 451              	.LBB213:
+ 452              	.LBB162:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 453              		.loc 4 45 3 view .LVU111
+ 454 00a2 36EE406A 		vsub.f32	s12, s12, s0
+ 455              	.LBE162:
+ 456              	.LBE213:
+ 457              	.LBB214:
+ 458              	.LBB148:
+ 459 00a6 B8EEC41A 		vcvt.f32.s32	s2, s8
+ 460              	.LBE148:
+ 461              	.LBE214:
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 462              		.loc 1 71 9 view .LVU112
+ 463 00aa E7EE055A 		vfma.f32	s11, s14, s10
+ 464              	.LBB215:
+ 465              	.LBB163:
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 466              		.loc 4 46 9 view .LVU113
+ 467 00ae 9CED005A 		vldr.32	s10, [ip]
+ 468              	.LBE163:
+ 469              	.LBE215:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 22
+
+
+  58:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stretch_factor = 1.0f; 
+ 470              		.loc 1 58 9 view .LVU114
+ 471 00b2 B0EE604A 		vmov.f32	s8, s1
+ 472 00b6 9446     		mov	ip, r2
+ 473              	.LBB216:
+ 474              	.LBB164:
+ 475              		.loc 4 48 17 view .LVU115
+ 476 00b8 77EEC57A 		vsub.f32	s15, s15, s10
+ 477              	.LBE164:
+ 478              	.LBE216:
+ 479              	.LBB217:
+ 480              	.LBB149:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 481              		.loc 4 45 3 view .LVU116
+ 482 00bc 76EEC16A 		vsub.f32	s13, s13, s2
+ 483              	.LVL13:
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 484              		.loc 4 45 3 view .LVU117
+ 485              	.LBE149:
+ 486              	.LBE217:
+ 487              	.LBB218:
+ 488              	.LBB165:
+ 489              		.loc 4 48 24 view .LVU118
+ 490 00c0 A6EE275A 		vfma.f32	s10, s12, s15
+ 491              	.LBE165:
+ 492              	.LBE218:
+ 493              	.LBB219:
+ 494              	.LBB150:
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 495              		.loc 4 46 9 view .LVU119
+ 496 00c4 90ED006A 		vldr.32	s12, [r0]
+ 497              	.LVL14:
+  47:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 498              		.loc 4 47 3 is_stmt 1 view .LVU120
+ 499              		.loc 4 48 3 view .LVU121
+ 500              		.loc 4 48 17 is_stmt 0 view .LVU122
+ 501 00c8 D0ED017A 		vldr.32	s15, [r0, #4]
+ 502              	.LBE150:
+ 503              	.LBE219:
+  73:mi/ringsX_MIDI/dsp/resonator.cpp ****   int32_t num_modes = 0;
+ 504              		.loc 1 73 11 view .LVU123
+ 505 00cc 0020     		movs	r0, #0
+ 506              	.LBB220:
+ 507              	.LBB151:
+ 508              		.loc 4 48 17 view .LVU124
+ 509 00ce 77EEC67A 		vsub.f32	s15, s15, s12
+ 510              	.LBE151:
+ 511              	.LBE220:
+  63:mi/ringsX_MIDI/dsp/resonator.cpp ****   float brightness_attenuation = 1.0f - structure_;
+ 512              		.loc 1 63 13 view .LVU125
+ 513 00d2 25EE035A 		vmul.f32	s10, s10, s6
+ 514              	.LBB221:
+ 515              	.LBB152:
+ 516              		.loc 4 48 24 view .LVU126
+ 517 00d6 A6EEA76A 		vfma.f32	s12, s13, s15
+ 518              	.LVL15:
+ 519              		.loc 4 48 24 view .LVU127
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 23
+
+
+ 520              	.LBE152:
+ 521              	.LBE221:
+  58:mi/ringsX_MIDI/dsp/resonator.cpp ****   float stretch_factor = 1.0f; 
+ 522              		.loc 1 58 3 is_stmt 1 view .LVU128
+  59:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q = 500.0f * Interpolate(
+ 523              		.loc 1 59 3 view .LVU129
+  60:mi/ringsX_MIDI/dsp/resonator.cpp ****       lut_4_decades,
+ 524              		.loc 1 60 3 view .LVU130
+ 525              	.LBB222:
+ 526              	.LBI154:
+  43:mi/stmlib/dsp/dsp.h ****   index *= size;
+ 527              		.loc 4 43 14 view .LVU131
+ 528              	.LBB166:
+  44:mi/stmlib/dsp/dsp.h ****   MAKE_INTEGRAL_FRACTIONAL(index)
+ 529              		.loc 4 44 3 view .LVU132
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 530              		.loc 4 45 3 view .LVU133
+  45:mi/stmlib/dsp/dsp.h ****   float a = table[index_integral];
+ 531              		.loc 4 45 3 view .LVU134
+  46:mi/stmlib/dsp/dsp.h ****   float b = table[index_integral + 1];
+ 532              		.loc 4 46 3 view .LVU135
+  47:mi/stmlib/dsp/dsp.h ****   return a + (b - a) * index_fractional;
+ 533              		.loc 4 47 3 view .LVU136
+ 534              		.loc 4 48 3 view .LVU137
+ 535              		.loc 4 48 3 is_stmt 0 view .LVU138
+ 536              	.LBE166:
+ 537              	.LBE222:
+  64:mi/ringsX_MIDI/dsp/resonator.cpp ****   // Reduces the range of brightness when structure is very low, to prevent
+ 538              		.loc 1 64 3 is_stmt 1 view .LVU139
+  67:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+ 539              		.loc 1 67 3 view .LVU140
+  68:mi/ringsX_MIDI/dsp/resonator.cpp ****   brightness_attenuation *= brightness_attenuation;
+ 540              		.loc 1 68 3 view .LVU141
+  69:mi/ringsX_MIDI/dsp/resonator.cpp ****   float brightness = brightness_ * (1.0f - 0.2f * brightness_attenuation);
+ 541              		.loc 1 69 3 view .LVU142
+  70:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss = brightness * (2.0f - brightness) * 0.85f + 0.15f;
+ 542              		.loc 1 70 3 view .LVU143
+  71:mi/ringsX_MIDI/dsp/resonator.cpp ****   float q_loss_damping_rate = structure_ * (2.0f - structure_) * 0.1f;
+ 543              		.loc 1 71 3 view .LVU144
+  72:mi/ringsX_MIDI/dsp/resonator.cpp ****   int32_t num_modes = 0;
+ 544              		.loc 1 72 3 view .LVU145
+ 545              		.loc 1 73 3 view .LVU146
+  74:mi/ringsX_MIDI/dsp/resonator.cpp ****   for (int32_t i = 0; i < min(kMaxModes, resolution_); ++i) {
+ 546              		.loc 1 74 3 view .LVU147
+ 547              		.loc 1 74 3 is_stmt 0 view .LVU148
+ 548 00da 3CE0     		b	.L14
+ 549              	.LVL16:
+ 550              	.L20:
+ 551              	.LBB223:
+ 552              	.LBB180:
+ 553              	.LBB181:
+ 554              	.LBB182:
+ 555              	.LBB183:
+ 556              	.LBB184:
+ 122:mi/stmlib/dsp/filter.h ****       return f * (M_PI_F + f2 * (a + b * f2));
+ 557              		.loc 2 122 13 view .LVU149
+ 558 00dc 67EE077A 		vmul.f32	s15, s14, s14
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 24
+
+
+ 559              	.LBE184:
+ 560              	.LBE183:
+ 561              	.LBE182:
+ 562              	.LBE181:
+  75:mi/ringsX_MIDI/dsp/resonator.cpp ****     float partial_frequency = harmonic * stretch_factor;
+  76:mi/ringsX_MIDI/dsp/resonator.cpp ****     if (partial_frequency >= 0.49f) {
+  77:mi/ringsX_MIDI/dsp/resonator.cpp ****       partial_frequency = 0.49f;
+  78:mi/ringsX_MIDI/dsp/resonator.cpp ****     } else {
+  79:mi/ringsX_MIDI/dsp/resonator.cpp ****       num_modes = i + 1;
+ 563              		.loc 1 79 17 view .LVU150
+ 564 00e0 0846     		mov	r0, r1
+ 565              	.LVL17:
+ 566              	.LBB199:
+ 567              	.LBB192:
+ 568              	.LBB188:
+ 569              	.LBB185:
+ 123:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_ACCURATE) {
+ 570              		.loc 2 123 36 view .LVU151
+ 571 00e2 E7EE822A 		vfma.f32	s5, s15, s4
+ 123:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_ACCURATE) {
+ 572              		.loc 2 123 26 view .LVU152
+ 573 00e6 E7EEA23A 		vfma.f32	s7, s15, s5
+ 123:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_ACCURATE) {
+ 574              		.loc 2 123 45 view .LVU153
+ 575 00ea 67EE236A 		vmul.f32	s13, s14, s7
+ 576              	.LBE185:
+ 577              	.LBE188:
+ 578              		.loc 2 226 38 view .LVU154
+ 579 00ee 26EEA63A 		vmul.f32	s6, s13, s13
+ 580              	.LVL18:
+ 581              	.L10:
+ 582              		.loc 2 226 38 view .LVU155
+ 583              	.LBE192:
+ 584              	.LBE199:
+  80:mi/ringsX_MIDI/dsp/resonator.cpp ****     }
+  81:mi/ringsX_MIDI/dsp/resonator.cpp ****     f_[i].set_f_q<FREQUENCY_FAST>(
+ 585              		.loc 1 81 5 is_stmt 1 view .LVU156
+  82:mi/ringsX_MIDI/dsp/resonator.cpp ****         partial_frequency,
+  83:mi/ringsX_MIDI/dsp/resonator.cpp ****         1.0f + partial_frequency * q);
+  84:mi/ringsX_MIDI/dsp/resonator.cpp ****     stretch_factor += stiffness;
+  85:mi/ringsX_MIDI/dsp/resonator.cpp ****     if (stiffness < 0.0f) {
+  86:mi/ringsX_MIDI/dsp/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+  87:mi/ringsX_MIDI/dsp/resonator.cpp ****       stiffness *= 0.93f;
+ 586              		.loc 1 87 7 view .LVU157
+  88:mi/ringsX_MIDI/dsp/resonator.cpp ****     } else {
+  89:mi/ringsX_MIDI/dsp/resonator.cpp ****       // This helps adding a few extra partials in the highest frequencies.
+  90:mi/ringsX_MIDI/dsp/resonator.cpp ****       stiffness *= 0.98f;
+ 587              		.loc 1 90 7 view .LVU158
+  81:mi/ringsX_MIDI/dsp/resonator.cpp ****         partial_frequency,
+ 588              		.loc 1 81 34 is_stmt 0 view .LVU159
+ 589 00f2 F7EE007A 		vmov.f32	s15, #1.0e+0
+ 590              	.LBB200:
+ 591              	.LBB193:
+ 224:mi/stmlib/dsp/filter.h ****     r_ = 1.0f / resonance;
+ 592              		.loc 2 224 8 view .LVU160
+ 593 00f6 C3ED076A 		vstr.32	s13, [r3, #28]
+ 594              	.LBE193:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 25
+
+
+ 595              	.LBE200:
+  85:mi/ringsX_MIDI/dsp/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+ 596              		.loc 1 85 5 view .LVU161
+ 597 00fa B5EEC06A 		vcmpe.f32	s12, #0
+ 598              		.loc 1 90 17 view .LVU162
+ 599 00fe 9FED2B2A 		vldr.32	s4, .L21+32
+  87:mi/ringsX_MIDI/dsp/resonator.cpp ****     } else {
+ 600              		.loc 1 87 17 view .LVU163
+ 601 0102 9FED2B1A 		vldr.32	s2, .L21+36
+  84:mi/ringsX_MIDI/dsp/resonator.cpp ****     if (stiffness < 0.0f) {
+ 602              		.loc 1 84 20 view .LVU164
+ 603 0106 74EE864A 		vadd.f32	s9, s9, s12
+ 604              	.LVL19:
+  81:mi/ringsX_MIDI/dsp/resonator.cpp ****         partial_frequency,
+ 605              		.loc 1 81 34 view .LVU165
+ 606 010a F0EE672A 		vmov.f32	s5, s15
+ 607 010e 0131     		adds	r1, r1, #1
+  85:mi/ringsX_MIDI/dsp/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+ 608              		.loc 1 85 5 view .LVU166
+ 609 0110 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 610 0114 03F11403 		add	r3, r3, #20
+  91:mi/ringsX_MIDI/dsp/resonator.cpp ****     }
+  92:mi/ringsX_MIDI/dsp/resonator.cpp ****     // This prevents the highest partials from decaying too fast.
+  93:mi/ringsX_MIDI/dsp/resonator.cpp ****     q_loss += q_loss_damping_rate * (1.0f - q_loss);
+  94:mi/ringsX_MIDI/dsp/resonator.cpp ****     harmonic += frequency_;
+ 611              		.loc 1 94 14 view .LVU167
+ 612 0118 34EE204A 		vadd.f32	s8, s8, s1
+ 613              	.LVL20:
+  81:mi/ringsX_MIDI/dsp/resonator.cpp ****         partial_frequency,
+ 614              		.loc 1 81 34 view .LVU168
+ 615 011c E5EE072A 		vfma.f32	s5, s10, s14
+ 616              	.LVL21:
+ 617              	.LBB201:
+ 618              	.LBI181:
+ 223:mi/stmlib/dsp/filter.h ****     g_ = OnePole::tan<approximation>(f);
+ 619              		.loc 2 223 15 is_stmt 1 view .LVU169
+ 620              	.LBB194:
+ 621              	.LBB189:
+ 622              	.LBI183:
+ 107:mi/stmlib/dsp/filter.h ****     if (approximation == FREQUENCY_EXACT) {
+ 623              		.loc 2 107 23 view .LVU170
+ 107:mi/stmlib/dsp/filter.h ****     if (approximation == FREQUENCY_EXACT) {
+ 624              		.loc 2 107 23 is_stmt 0 view .LVU171
+ 625              	.LBE189:
+ 626              		.loc 2 226 23 view .LVU172
+ 627 0120 B0EE677A 		vmov.f32	s14, s15
+ 628              	.LBE194:
+ 629              	.LBE201:
+  87:mi/ringsX_MIDI/dsp/resonator.cpp ****     } else {
+ 630              		.loc 1 87 17 view .LVU173
+ 631 0124 4CBF     		ite	mi
+ 632 0126 26EE016A 		vmulmi.f32	s12, s12, s2
+ 633              	.LVL22:
+  90:mi/ringsX_MIDI/dsp/resonator.cpp ****     }
+ 634              		.loc 1 90 17 view .LVU174
+ 635 012a 26EE026A 		vmulpl.f32	s12, s12, s4
+ 636              	.LBB202:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 26
+
+
+ 637              	.LBB195:
+ 225:mi/stmlib/dsp/filter.h ****     h_ = 1.0f / (1.0f + r_ * g_ + g_ * g_);
+ 638              		.loc 2 225 15 view .LVU175
+ 639 012e C7EEA23A 		vdiv.f32	s7, s15, s5
+ 640              		.loc 2 226 23 view .LVU176
+ 641 0132 A3EEA67A 		vfma.f32	s14, s7, s13
+ 225:mi/stmlib/dsp/filter.h ****     h_ = 1.0f / (1.0f + r_ * g_ + g_ * g_);
+ 642              		.loc 2 225 8 view .LVU177
+ 643 0136 C3ED033A 		vstr.32	s7, [r3, #12]
+ 644              		.loc 2 226 33 view .LVU178
+ 645 013a 37EE037A 		vadd.f32	s14, s14, s6
+ 646              		.loc 2 226 15 view .LVU179
+ 647 013e C7EE876A 		vdiv.f32	s13, s15, s14
+ 648              	.LBE195:
+ 649              	.LBE202:
+  93:mi/ringsX_MIDI/dsp/resonator.cpp ****     harmonic += frequency_;
+ 650              		.loc 1 93 43 view .LVU180
+ 651 0142 F7EE007A 		vmov.f32	s15, #1.0e+0
+  93:mi/ringsX_MIDI/dsp/resonator.cpp ****     harmonic += frequency_;
+ 652              		.loc 1 93 43 view .LVU181
+ 653 0146 77EEE57A 		vsub.f32	s15, s15, s11
+  93:mi/ringsX_MIDI/dsp/resonator.cpp ****     harmonic += frequency_;
+ 654              		.loc 1 93 12 view .LVU182
+ 655 014a E7EEA15A 		vfma.f32	s11, s15, s3
+ 656              	.LVL23:
+ 657              	.LBB203:
+ 658              	.LBB196:
+ 659              		.loc 2 226 8 view .LVU183
+ 660 014e C3ED046A 		vstr.32	s13, [r3, #16]
+ 661              	.LVL24:
+ 662              		.loc 2 226 8 view .LVU184
+ 663              	.LBE196:
+ 664              	.LBE203:
+  84:mi/ringsX_MIDI/dsp/resonator.cpp ****     if (stiffness < 0.0f) {
+ 665              		.loc 1 84 5 is_stmt 1 view .LVU185
+  85:mi/ringsX_MIDI/dsp/resonator.cpp ****       // Make sure that the partials do not fold back into negative frequencies.
+ 666              		.loc 1 85 5 view .LVU186
+  93:mi/ringsX_MIDI/dsp/resonator.cpp ****     harmonic += frequency_;
+ 667              		.loc 1 93 5 view .LVU187
+ 668              		.loc 1 94 5 view .LVU188
+  95:mi/ringsX_MIDI/dsp/resonator.cpp ****     q *= q_loss;
+ 669              		.loc 1 95 5 view .LVU189
+ 670              		.loc 1 95 7 is_stmt 0 view .LVU190
+ 671 0152 25EE255A 		vmul.f32	s10, s10, s11
+ 672              	.LVL25:
+ 673              		.loc 1 95 7 view .LVU191
+ 674              	.LBE180:
+  74:mi/ringsX_MIDI/dsp/resonator.cpp ****     float partial_frequency = harmonic * stretch_factor;
+ 675              		.loc 1 74 3 is_stmt 1 view .LVU192
+ 676              	.L14:
+  74:mi/ringsX_MIDI/dsp/resonator.cpp ****     float partial_frequency = harmonic * stretch_factor;
+ 677              		.loc 1 74 25 discriminator 1 view .LVU193
+ 678              	.LBB206:
+ 679              	.LBI178:
+ 230:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ 680              		.loc 5 230 5 discriminator 1 view .LVU194
+ 230:/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_algobase.h ****     {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 27
+
+
+ 681              		.loc 5 230 5 is_stmt 0 discriminator 1 view .LVU195
+ 682              	.LBE206:
+ 683              	.LBB207:
+  75:mi/ringsX_MIDI/dsp/resonator.cpp ****     if (partial_frequency >= 0.49f) {
+ 684              		.loc 1 75 5 is_stmt 1 discriminator 1 view .LVU196
+  79:mi/ringsX_MIDI/dsp/resonator.cpp ****     }
+ 685              		.loc 1 79 7 discriminator 1 view .LVU197
+ 686              	.LBE207:
+  74:mi/ringsX_MIDI/dsp/resonator.cpp ****     float partial_frequency = harmonic * stretch_factor;
+ 687              		.loc 1 74 25 is_stmt 0 discriminator 1 view .LVU198
+ 688 0156 4A1E     		subs	r2, r1, #1
+ 689              	.LVL26:
+ 690              	.LBB208:
+ 691              	.LBB204:
+ 692              	.LBB197:
+ 693              	.LBB190:
+ 694              	.LBB186:
+ 123:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_ACCURATE) {
+ 695              		.loc 2 123 36 discriminator 1 view .LVU199
+ 696 0158 9FED162A 		vldr.32	s4, .L21+40
+ 697 015c DFED162A 		vldr.32	s5, .L21+44
+ 698              	.LBE186:
+ 699              	.LBE190:
+ 700              	.LBE197:
+ 701              	.LBE204:
+ 702              	.LBE208:
+  74:mi/ringsX_MIDI/dsp/resonator.cpp ****     float partial_frequency = harmonic * stretch_factor;
+ 703              		.loc 1 74 25 discriminator 1 view .LVU200
+ 704 0160 9445     		cmp	ip, r2
+ 705              	.LBB209:
+ 706              	.LBB205:
+ 707              	.LBB198:
+ 708              	.LBB191:
+ 709              	.LBB187:
+ 123:mi/stmlib/dsp/filter.h ****     } else if (approximation == FREQUENCY_ACCURATE) {
+ 710              		.loc 2 123 26 discriminator 1 view .LVU201
+ 711 0162 DFED163A 		vldr.32	s7, .L21+48
+ 712              	.LBE187:
+ 713              	.LBE191:
+ 714              	.LBE198:
+ 715              	.LBE205:
+  76:mi/ringsX_MIDI/dsp/resonator.cpp ****       partial_frequency = 0.49f;
+ 716              		.loc 1 76 5 discriminator 1 view .LVU202
+ 717 0166 DFED167A 		vldr.32	s15, .L21+52
+ 718 016a DFED166A 		vldr.32	s13, .L21+56
+ 719 016e 9FED163A 		vldr.32	s6, .L21+60
+ 720              	.LBE209:
+  74:mi/ringsX_MIDI/dsp/resonator.cpp ****     float partial_frequency = harmonic * stretch_factor;
+ 721              		.loc 1 74 25 discriminator 1 view .LVU203
+ 722 0172 09DD     		ble	.L8
+ 723              	.LBB210:
+  75:mi/ringsX_MIDI/dsp/resonator.cpp ****     if (partial_frequency >= 0.49f) {
+ 724              		.loc 1 75 11 view .LVU204
+ 725 0174 24EE247A 		vmul.f32	s14, s8, s9
+ 726              	.LVL27:
+  76:mi/ringsX_MIDI/dsp/resonator.cpp ****       partial_frequency = 0.49f;
+ 727              		.loc 1 76 5 is_stmt 1 view .LVU205
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 28
+
+
+ 728 0178 B4EEE77A 		vcmpe.f32	s14, s15
+ 729 017c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 730 0180 ACDB     		blt	.L20
+  77:mi/ringsX_MIDI/dsp/resonator.cpp ****     } else {
+ 731              		.loc 1 77 25 is_stmt 0 view .LVU206
+ 732 0182 B0EE677A 		vmov.f32	s14, s15
+ 733 0186 B4E7     		b	.L10
+ 734              	.LVL28:
+ 735              	.L8:
+  77:mi/ringsX_MIDI/dsp/resonator.cpp ****     } else {
+ 736              		.loc 1 77 25 view .LVU207
+ 737              	.LBE210:
+ 738              	.LBE223:
+  96:mi/ringsX_MIDI/dsp/resonator.cpp ****   }
+  97:mi/ringsX_MIDI/dsp/resonator.cpp ****   
+  98:mi/ringsX_MIDI/dsp/resonator.cpp ****   return num_modes;
+  99:mi/ringsX_MIDI/dsp/resonator.cpp **** }
+ 739              		.loc 1 99 1 view .LVU208
+ 740 0188 5DF804FB 		ldr	pc, [sp], #4
+ 741              	.L22:
+ 742              		.align	2
+ 743              	.L21:
+ 744 018c 00008043 		.word	1132462080
+ 745 0190 CDCC4C3E 		.word	1045220557
+ 746 0194 00000000 		.word	_ZN5rings13lut_4_decadesE
+ 747 0198 9A99593F 		.word	1062836634
+ 748 019c 9A99193E 		.word	1041865114
+ 749 01a0 CDCCCC3D 		.word	1036831949
+ 750 01a4 00000000 		.word	_ZN5rings13lut_stiffnessE
+ 751 01a8 0000FA43 		.word	1140457472
+ 752 01ac 48E17A3F 		.word	1065017672
+ 753 01b0 7B146E3F 		.word	1064178811
+ 754 01b4 49265F42 		.word	1113531977
+ 755 01b8 8FBA2141 		.word	1092729487
+ 756 01bc DB0F4940 		.word	1078530011
+ 757 01c0 48E1FA3E 		.word	1056629064
+ 758 01c4 F4BD8940 		.word	1082768884
+ 759 01c8 B8399441 		.word	1100233144
+ 760              		.cfi_endproc
+ 761              	.LFE1545:
+ 763              		.section	.text._ZN5rings9Resonator7ProcessEPKfPfS3_j,"ax",%progbits
+ 764              		.align	1
+ 765              		.p2align 2,,3
+ 766              		.global	_ZN5rings9Resonator7ProcessEPKfPfS3_j
+ 767              		.syntax unified
+ 768              		.thumb
+ 769              		.thumb_func
+ 771              	_ZN5rings9Resonator7ProcessEPKfPfS3_j:
+ 772              	.LVL29:
+ 773              	.LFB1546:
+ 100:mi/ringsX_MIDI/dsp/resonator.cpp **** 
+ 101:mi/ringsX_MIDI/dsp/resonator.cpp **** void Resonator::Process(const float* in, float* out, float* aux, size_t size) {
+ 774              		.loc 1 101 79 is_stmt 1 view -0
+ 775              		.cfi_startproc
+ 776              		@ args = 4, pretend = 0, frame = 0
+ 777              		@ frame_needed = 0, uses_anonymous_args = 0
+ 102:mi/ringsX_MIDI/dsp/resonator.cpp ****   int32_t num_modes = ComputeFilters();
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 29
+
+
+ 778              		.loc 1 102 3 view .LVU210
+ 101:mi/ringsX_MIDI/dsp/resonator.cpp ****   int32_t num_modes = ComputeFilters();
+ 779              		.loc 1 101 79 is_stmt 0 view .LVU211
+ 780 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 781              		.cfi_def_cfa_offset 32
+ 782              		.cfi_offset 3, -32
+ 783              		.cfi_offset 4, -28
+ 784              		.cfi_offset 5, -24
+ 785              		.cfi_offset 6, -20
+ 786              		.cfi_offset 7, -16
+ 787              		.cfi_offset 8, -12
+ 788              		.cfi_offset 9, -8
+ 789              		.cfi_offset 14, -4
+ 790 0004 2DED048B 		vpush.64	{d8, d9}
+ 791              		.cfi_def_cfa_offset 48
+ 792              		.cfi_offset 80, -48
+ 793              		.cfi_offset 81, -44
+ 794              		.cfi_offset 82, -40
+ 795              		.cfi_offset 83, -36
+ 101:mi/ringsX_MIDI/dsp/resonator.cpp ****   int32_t num_modes = ComputeFilters();
+ 796              		.loc 1 101 79 view .LVU212
+ 797 0008 8046     		mov	r8, r0
+ 798 000a DDF83090 		ldr	r9, [sp, #48]
+ 799 000e 0F46     		mov	r7, r1
+ 800 0010 1646     		mov	r6, r2
+ 801 0012 1D46     		mov	r5, r3
+ 802              		.loc 1 102 37 view .LVU213
+ 803 0014 FFF7FEFF 		bl	_ZN5rings9Resonator14ComputeFiltersEv
+ 804              	.LVL30:
+ 805              	.LBB252:
+ 806              	.LBB253:
+ 807              	.LBB254:
+ 808              		.file 6 "mi/stmlib/dsp/parameter_interpolator.h"
+   1:mi/stmlib/dsp/parameter_interpolator.h **** // Copyright 2015 Emilie Gillet.
+   2:mi/stmlib/dsp/parameter_interpolator.h **** //
+   3:mi/stmlib/dsp/parameter_interpolator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/parameter_interpolator.h **** //
+   5:mi/stmlib/dsp/parameter_interpolator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/parameter_interpolator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/parameter_interpolator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/parameter_interpolator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/parameter_interpolator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/parameter_interpolator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  12:mi/stmlib/dsp/parameter_interpolator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/parameter_interpolator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  15:mi/stmlib/dsp/parameter_interpolator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/parameter_interpolator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/parameter_interpolator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/parameter_interpolator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/parameter_interpolator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/parameter_interpolator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/parameter_interpolator.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/parameter_interpolator.h **** // 
+  23:mi/stmlib/dsp/parameter_interpolator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+  24:mi/stmlib/dsp/parameter_interpolator.h **** //
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 30
+
+
+  25:mi/stmlib/dsp/parameter_interpolator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/parameter_interpolator.h **** //
+  27:mi/stmlib/dsp/parameter_interpolator.h **** // Linear interpolation of parameters in rendering loops.
+  28:mi/stmlib/dsp/parameter_interpolator.h **** 
+  29:mi/stmlib/dsp/parameter_interpolator.h **** #ifndef STMLIB_DSP_PARAMETER_INTERPOLATOR_H_
+  30:mi/stmlib/dsp/parameter_interpolator.h **** #define STMLIB_DSP_PARAMETER_INTERPOLATOR_H_
+  31:mi/stmlib/dsp/parameter_interpolator.h **** 
+  32:mi/stmlib/dsp/parameter_interpolator.h **** #include "stmlib/stmlib.h"
+  33:mi/stmlib/dsp/parameter_interpolator.h **** 
+  34:mi/stmlib/dsp/parameter_interpolator.h **** namespace stmlib {
+  35:mi/stmlib/dsp/parameter_interpolator.h **** 
+  36:mi/stmlib/dsp/parameter_interpolator.h **** class ParameterInterpolator {
+  37:mi/stmlib/dsp/parameter_interpolator.h ****  public:
+  38:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator() { }
+  39:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator(float* state, float new_value, size_t size) {
+  40:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+  41:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  42:mi/stmlib/dsp/parameter_interpolator.h **** 
+  43:mi/stmlib/dsp/parameter_interpolator.h ****   ParameterInterpolator(float* state, float new_value, float step) {
+  44:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+  45:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+  46:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) * step;
+  47:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  48:mi/stmlib/dsp/parameter_interpolator.h **** 
+  49:mi/stmlib/dsp/parameter_interpolator.h ****   ~ParameterInterpolator() {
+  50:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+  51:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  52:mi/stmlib/dsp/parameter_interpolator.h ****   
+  53:mi/stmlib/dsp/parameter_interpolator.h ****   inline void Init(float* state, float new_value, size_t size) {
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 809              		.loc 6 55 14 view .LVU214
+ 810 0018 98ED048A 		vldr.32	s16, [r8, #16]
+  56:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 811              		.loc 6 56 41 view .LVU215
+ 812 001c 07EE109A 		vmov	s14, r9	@ int
+ 813              		.loc 6 56 29 view .LVU216
+ 814 0020 D8ED037A 		vldr.32	s15, [r8, #12]
+ 815              		.loc 6 56 41 view .LVU217
+ 816 0024 B8EE477A 		vcvt.f32.u32	s14, s14
+ 817              	.LVL31:
+ 818              		.loc 6 56 41 view .LVU218
+ 819              	.LBE254:
+ 820              	.LBE253:
+ 821              	.LBE252:
+ 103:mi/ringsX_MIDI/dsp/resonator.cpp ****   
+ 104:mi/ringsX_MIDI/dsp/resonator.cpp ****   ParameterInterpolator position(&previous_position_, position_, size);
+ 822              		.loc 1 104 3 is_stmt 1 view .LVU219
+ 823              	.LBB257:
+ 824              	.LBI252:
+  39:mi/stmlib/dsp/parameter_interpolator.h ****     Init(state, new_value, size);
+ 825              		.loc 6 39 3 view .LVU220
+ 826              	.LBE257:
+  40:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 827              		.loc 6 40 5 view .LVU221
+ 828              	.LBB258:
+ 829              	.LBB256:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 31
+
+
+ 830              	.LBI253:
+  53:mi/stmlib/dsp/parameter_interpolator.h ****     state_ = state;
+ 831              		.loc 6 53 15 view .LVU222
+ 832              	.LBB255:
+  54:mi/stmlib/dsp/parameter_interpolator.h ****     value_ = *state;
+ 833              		.loc 6 54 5 view .LVU223
+  55:mi/stmlib/dsp/parameter_interpolator.h ****     increment_ = (new_value - *state) / static_cast<float>(size);
+ 834              		.loc 6 55 5 view .LVU224
+ 835              		.loc 6 56 5 view .LVU225
+ 836              		.loc 6 56 29 is_stmt 0 view .LVU226
+ 837 0028 77EEC87A 		vsub.f32	s15, s15, s16
+ 838              	.LVL32:
+ 839              		.loc 6 56 39 view .LVU227
+ 840 002c C7EE878A 		vdiv.f32	s17, s15, s14
+ 841              	.LVL33:
+ 842              		.loc 6 56 39 view .LVU228
+ 843              	.LBE255:
+ 844              	.LBE256:
+ 845              	.LBE258:
+ 105:mi/ringsX_MIDI/dsp/resonator.cpp ****   while (size--) {
+ 846              		.loc 1 105 3 is_stmt 1 view .LVU229
+ 847              		.loc 1 105 14 view .LVU230
+ 848              		.loc 1 105 14 is_stmt 0 view .LVU231
+ 849 0030 B9F1000F 		cmp	r9, #0
+ 850 0034 00F09980 		beq	.L24
+ 851 0038 09F1FF34 		add	r4, r9, #-1
+ 852              	.LVL34:
+ 853              	.L31:
+ 854              	.LBB259:
+ 106:mi/ringsX_MIDI/dsp/resonator.cpp ****     CosineOscillator amplitudes;
+ 855              		.loc 1 106 5 is_stmt 1 view .LVU232
+ 856              	.LBB260:
+ 857              	.LBI260:
+ 858              		.file 7 "mi/stmlib/dsp/cosine_oscillator.h"
+   1:mi/stmlib/dsp/cosine_oscillator.h **** // Copyright 2014 Emilie Gillet.
+   2:mi/stmlib/dsp/cosine_oscillator.h **** //
+   3:mi/stmlib/dsp/cosine_oscillator.h **** // Author: Emilie Gillet (emilie.o.gillet@gmail.com)
+   4:mi/stmlib/dsp/cosine_oscillator.h **** //
+   5:mi/stmlib/dsp/cosine_oscillator.h **** // Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:mi/stmlib/dsp/cosine_oscillator.h **** // of this software and associated documentation files (the "Software"), to deal
+   7:mi/stmlib/dsp/cosine_oscillator.h **** // in the Software without restriction, including without limitation the rights
+   8:mi/stmlib/dsp/cosine_oscillator.h **** // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:mi/stmlib/dsp/cosine_oscillator.h **** // copies of the Software, and to permit persons to whom the Software is
+  10:mi/stmlib/dsp/cosine_oscillator.h **** // furnished to do so, subject to the following conditions:
+  11:mi/stmlib/dsp/cosine_oscillator.h **** // 
+  12:mi/stmlib/dsp/cosine_oscillator.h **** // The above copyright notice and this permission notice shall be included in
+  13:mi/stmlib/dsp/cosine_oscillator.h **** // all copies or substantial portions of the Software.
+  14:mi/stmlib/dsp/cosine_oscillator.h **** // 
+  15:mi/stmlib/dsp/cosine_oscillator.h **** // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:mi/stmlib/dsp/cosine_oscillator.h **** // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:mi/stmlib/dsp/cosine_oscillator.h **** // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:mi/stmlib/dsp/cosine_oscillator.h **** // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:mi/stmlib/dsp/cosine_oscillator.h **** // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:mi/stmlib/dsp/cosine_oscillator.h **** // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:mi/stmlib/dsp/cosine_oscillator.h **** // THE SOFTWARE.
+  22:mi/stmlib/dsp/cosine_oscillator.h **** // 
+  23:mi/stmlib/dsp/cosine_oscillator.h **** // See http://creativecommons.org/licenses/MIT/ for more information.
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 32
+
+
+  24:mi/stmlib/dsp/cosine_oscillator.h **** //
+  25:mi/stmlib/dsp/cosine_oscillator.h **** // -----------------------------------------------------------------------------
+  26:mi/stmlib/dsp/cosine_oscillator.h **** //
+  27:mi/stmlib/dsp/cosine_oscillator.h **** // Cosine oscillator. Generates a cosine between 0.0 and 1.0 with minimal
+  28:mi/stmlib/dsp/cosine_oscillator.h **** // CPU use.
+  29:mi/stmlib/dsp/cosine_oscillator.h **** 
+  30:mi/stmlib/dsp/cosine_oscillator.h **** #ifndef STMLIB_DSP_COSINE_OSCILLATOR_H_
+  31:mi/stmlib/dsp/cosine_oscillator.h **** #define STMLIB_DSP_COSINE_OSCILLATOR_H_
+  32:mi/stmlib/dsp/cosine_oscillator.h **** 
+  33:mi/stmlib/dsp/cosine_oscillator.h **** #include "stmlib/stmlib.h"
+  34:mi/stmlib/dsp/cosine_oscillator.h **** 
+  35:mi/stmlib/dsp/cosine_oscillator.h **** #include <cmath>
+  36:mi/stmlib/dsp/cosine_oscillator.h **** 
+  37:mi/stmlib/dsp/cosine_oscillator.h **** namespace stmlib {
+  38:mi/stmlib/dsp/cosine_oscillator.h **** 
+  39:mi/stmlib/dsp/cosine_oscillator.h **** enum CosineOscillatorMode {
+  40:mi/stmlib/dsp/cosine_oscillator.h ****   COSINE_OSCILLATOR_APPROXIMATE,
+  41:mi/stmlib/dsp/cosine_oscillator.h ****   COSINE_OSCILLATOR_EXACT
+  42:mi/stmlib/dsp/cosine_oscillator.h **** };
+  43:mi/stmlib/dsp/cosine_oscillator.h **** 
+  44:mi/stmlib/dsp/cosine_oscillator.h **** class CosineOscillator {
+  45:mi/stmlib/dsp/cosine_oscillator.h ****  public:
+  46:mi/stmlib/dsp/cosine_oscillator.h ****   CosineOscillator() { }
+ 859              		.loc 7 46 3 view .LVU233
+ 860              		.loc 7 46 3 is_stmt 0 view .LVU234
+ 861              	.LBE260:
+ 107:mi/ringsX_MIDI/dsp/resonator.cpp ****     amplitudes.Init<COSINE_OSCILLATOR_APPROXIMATE>(position.Next());
+ 862              		.loc 1 107 5 is_stmt 1 view .LVU235
+ 863              	.LBB261:
+ 864              	.LBI261:
+  57:mi/stmlib/dsp/parameter_interpolator.h ****   }
+  58:mi/stmlib/dsp/parameter_interpolator.h **** 
+  59:mi/stmlib/dsp/parameter_interpolator.h ****   inline float Next() {
+ 865              		.loc 6 59 16 view .LVU236
+ 866              	.LBB262:
+  60:mi/stmlib/dsp/parameter_interpolator.h ****     value_ += increment_;
+ 867              		.loc 6 60 5 view .LVU237
+ 868              		.loc 6 60 12 is_stmt 0 view .LVU238
+ 869 003c 38EE288A 		vadd.f32	s16, s16, s17
+ 870              	.LVL35:
+  61:mi/stmlib/dsp/parameter_interpolator.h ****     return value_;
+ 871              		.loc 6 61 5 is_stmt 1 view .LVU239
+ 872              		.loc 6 61 5 is_stmt 0 view .LVU240
+ 873              	.LBE262:
+ 874              	.LBE261:
+ 875              	.LBB263:
+ 876              	.LBI263:
+  47:mi/stmlib/dsp/cosine_oscillator.h ****   ~CosineOscillator() { }
+  48:mi/stmlib/dsp/cosine_oscillator.h **** 
+  49:mi/stmlib/dsp/cosine_oscillator.h ****   template<CosineOscillatorMode mode>
+  50:mi/stmlib/dsp/cosine_oscillator.h ****   inline void Init(float frequency) {
+ 877              		.loc 7 50 15 is_stmt 1 view .LVU241
+ 878              	.LBB264:
+ 879              	.LBI264:
+  51:mi/stmlib/dsp/cosine_oscillator.h ****     if (mode == COSINE_OSCILLATOR_APPROXIMATE) {
+  52:mi/stmlib/dsp/cosine_oscillator.h ****       InitApproximate(frequency);
+  53:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 33
+
+
+  54:mi/stmlib/dsp/cosine_oscillator.h ****       iir_coefficient_ = 2.0f * cosf(2.0f * float(M_PI) * frequency);
+  55:mi/stmlib/dsp/cosine_oscillator.h ****       initial_amplitude_ = iir_coefficient_ * 0.25f;
+  56:mi/stmlib/dsp/cosine_oscillator.h ****     }
+  57:mi/stmlib/dsp/cosine_oscillator.h ****     Start();
+  58:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  59:mi/stmlib/dsp/cosine_oscillator.h ****   
+  60:mi/stmlib/dsp/cosine_oscillator.h ****   inline void InitApproximate(float frequency) {
+ 880              		.loc 7 60 15 view .LVU242
+ 881              	.LBB265:
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     float sign = 16.0f;
+ 882              		.loc 7 61 5 view .LVU243
+  62:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+ 883              		.loc 7 62 5 view .LVU244
+ 884              		.loc 7 62 15 is_stmt 0 view .LVU245
+ 885 0040 F5EE007A 		vmov.f32	s15, #2.5e-1
+ 886 0044 78EE677A 		vsub.f32	s15, s16, s15
+ 887              	.LVL36:
+  63:mi/stmlib/dsp/cosine_oscillator.h ****     if (frequency < 0.0f) {
+ 888              		.loc 7 63 5 is_stmt 1 view .LVU246
+ 889 0048 F5EEC07A 		vcmpe.f32	s15, #0
+ 890 004c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 891 0050 00F19180 		bmi	.L44
+  64:mi/stmlib/dsp/cosine_oscillator.h ****       frequency = -frequency;
+  65:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+  66:mi/stmlib/dsp/cosine_oscillator.h ****       if (frequency > 0.5f) {
+ 892              		.loc 7 66 7 view .LVU247
+ 893 0054 B6EE007A 		vmov.f32	s14, #5.0e-1
+ 894 0058 F4EEC77A 		vcmpe.f32	s15, s14
+ 895 005c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 896 0060 40F38E80 		ble	.L42
+  67:mi/stmlib/dsp/cosine_oscillator.h ****         frequency -= 0.5f;
+ 897              		.loc 7 67 9 view .LVU248
+ 898              		.loc 7 67 19 is_stmt 0 view .LVU249
+ 899 0064 77EEC77A 		vsub.f32	s15, s15, s14
+ 900              	.LVL37:
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+ 901              		.loc 7 61 11 view .LVU250
+ 902 0068 B3EE007A 		vmov.f32	s14, #1.6e+1
+ 903              	.L27:
+ 904              	.LVL38:
+  68:mi/stmlib/dsp/cosine_oscillator.h ****       } else {
+  69:mi/stmlib/dsp/cosine_oscillator.h ****         sign = -16.0f;
+  70:mi/stmlib/dsp/cosine_oscillator.h ****       }
+  71:mi/stmlib/dsp/cosine_oscillator.h ****     }
+  72:mi/stmlib/dsp/cosine_oscillator.h ****     iir_coefficient_ = sign * frequency * (1.0f - 2.0f * frequency);
+ 905              		.loc 7 72 5 is_stmt 1 view .LVU251
+ 906              		.loc 7 72 49 is_stmt 0 view .LVU252
+ 907 006c B0EE006A 		vmov.f32	s12, #2.0e+0
+ 908              	.LBE265:
+ 909              	.LBE264:
+ 910              	.LBE263:
+ 108:mi/ringsX_MIDI/dsp/resonator.cpp ****     
+ 109:mi/ringsX_MIDI/dsp/resonator.cpp ****     float input = *in++ * 0.125f;
+ 911              		.loc 1 109 27 view .LVU253
+ 912 0070 F7EC011A 		vldmia.32	r7!, {s3}
+ 913              	.LVL39:
+ 914              	.LBB280:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 34
+
+
+ 915              	.LBB271:
+ 916              	.LBB266:
+ 917              		.loc 7 72 49 view .LVU254
+ 918 0074 B7EE002A 		vmov.f32	s4, #1.0e+0
+ 919              	.LBE266:
+ 920              	.LBE271:
+ 921              	.LBE280:
+ 922              	.LBB281:
+ 110:mi/ringsX_MIDI/dsp/resonator.cpp ****     float odd = 0.0f;
+ 111:mi/ringsX_MIDI/dsp/resonator.cpp ****     float even = 0.0f;
+ 112:mi/ringsX_MIDI/dsp/resonator.cpp ****     amplitudes.Start();
+ 113:mi/ringsX_MIDI/dsp/resonator.cpp ****     for (int32_t i = 0; i < num_modes;) {
+ 923              		.loc 1 113 27 view .LVU255
+ 924 0078 0028     		cmp	r0, #0
+ 925              	.LBE281:
+ 926              	.LBB341:
+ 927              	.LBB272:
+ 928              	.LBB267:
+ 929              		.loc 7 72 29 view .LVU256
+ 930 007a 27EE877A 		vmul.f32	s14, s15, s14
+ 931              	.LVL40:
+ 932              		.loc 7 72 29 view .LVU257
+ 933              	.LBE267:
+ 934              	.LBE272:
+ 935              	.LBE341:
+ 111:mi/ringsX_MIDI/dsp/resonator.cpp ****     amplitudes.Start();
+ 936              		.loc 1 111 11 view .LVU258
+ 937 007e 9FED431A 		vldr.32	s2, .L45
+ 938              	.LBB342:
+ 939              	.LBB273:
+ 940              	.LBB268:
+  73:mi/stmlib/dsp/cosine_oscillator.h ****     initial_amplitude_ = iir_coefficient_ * 0.25f;
+ 941              		.loc 7 73 43 view .LVU259
+ 942 0082 B5EE003A 		vmov.f32	s6, #2.5e-1
+  72:mi/stmlib/dsp/cosine_oscillator.h ****     initial_amplitude_ = iir_coefficient_ * 0.25f;
+ 943              		.loc 7 72 49 view .LVU260
+ 944 0086 A7EEC62A 		vfms.f32	s4, s15, s12
+ 945              	.LBE268:
+ 946              	.LBE273:
+ 947              	.LBE342:
+ 109:mi/ringsX_MIDI/dsp/resonator.cpp ****     float odd = 0.0f;
+ 948              		.loc 1 109 27 view .LVU261
+ 949 008a F4EE006A 		vmov.f32	s13, #1.25e-1
+ 950 008e 61EEA61A 		vmul.f32	s3, s3, s13
+ 951              	.LBB343:
+ 952              	.LBB274:
+ 953              	.LBB269:
+  72:mi/stmlib/dsp/cosine_oscillator.h ****     initial_amplitude_ = iir_coefficient_ * 0.25f;
+ 954              		.loc 7 72 41 view .LVU262
+ 955 0092 27EE022A 		vmul.f32	s4, s14, s4
+ 956              		.loc 7 73 5 is_stmt 1 view .LVU263
+ 957              		.loc 7 73 43 is_stmt 0 view .LVU264
+ 958 0096 22EE033A 		vmul.f32	s6, s4, s6
+ 959              	.LVL41:
+ 960              		.loc 7 73 43 view .LVU265
+ 961              	.LBE269:
+ 962              	.LBE274:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 35
+
+
+ 963              	.LBB275:
+ 964              	.LBI275:
+  74:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  75:mi/stmlib/dsp/cosine_oscillator.h ****   
+  76:mi/stmlib/dsp/cosine_oscillator.h ****   inline void Start() {
+ 965              		.loc 7 76 15 is_stmt 1 view .LVU266
+ 966              	.LBB276:
+  77:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = initial_amplitude_;
+ 967              		.loc 7 77 5 view .LVU267
+  78:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = 0.5f;
+ 968              		.loc 7 78 5 view .LVU268
+ 969              		.loc 7 78 5 is_stmt 0 view .LVU269
+ 970              	.LBE276:
+ 971              	.LBE275:
+ 972              	.LBE343:
+ 109:mi/ringsX_MIDI/dsp/resonator.cpp ****     float odd = 0.0f;
+ 973              		.loc 1 109 5 is_stmt 1 view .LVU270
+ 110:mi/ringsX_MIDI/dsp/resonator.cpp ****     float even = 0.0f;
+ 974              		.loc 1 110 5 view .LVU271
+ 111:mi/ringsX_MIDI/dsp/resonator.cpp ****     amplitudes.Start();
+ 975              		.loc 1 111 5 view .LVU272
+ 112:mi/ringsX_MIDI/dsp/resonator.cpp ****     for (int32_t i = 0; i < num_modes;) {
+ 976              		.loc 1 112 5 view .LVU273
+ 112:mi/ringsX_MIDI/dsp/resonator.cpp ****     for (int32_t i = 0; i < num_modes;) {
+ 977              		.loc 1 112 5 is_stmt 0 view .LVU274
+ 978              	.LBE259:
+  77:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = 0.5f;
+ 979              		.loc 7 77 5 is_stmt 1 view .LVU275
+ 980              		.loc 7 78 5 view .LVU276
+ 981              	.LBB349:
+ 982              		.loc 1 113 5 view .LVU277
+ 983              	.LBB344:
+ 984              		.loc 1 113 27 view .LVU278
+ 985 009a 74DD     		ble	.L33
+ 986              	.LBE344:
+ 987              	.LBB345:
+ 988              	.LBB278:
+ 989              	.LBB277:
+ 990              		.loc 7 78 9 is_stmt 0 view .LVU279
+ 991 009c F6EE002A 		vmov.f32	s5, #5.0e-1
+ 992 00a0 C446     		mov	ip, r8
+ 993              	.LBE277:
+ 994              	.LBE278:
+ 995              	.LBE345:
+ 110:mi/ringsX_MIDI/dsp/resonator.cpp ****     float even = 0.0f;
+ 996              		.loc 1 110 11 view .LVU280
+ 997 00a2 F0EE410A 		vmov.f32	s1, s2
+ 998              	.LBB346:
+ 999              		.loc 1 113 18 view .LVU281
+ 1000 00a6 4FF0000E 		mov	lr, #0
+ 1001              	.LVL42:
+ 1002              	.L30:
+ 114:mi/ringsX_MIDI/dsp/resonator.cpp ****       odd += amplitudes.Next() * f_[i++].Process<FILTER_MODE_BAND_PASS>(input);
+ 1003              		.loc 1 114 7 is_stmt 1 view .LVU282
+ 1004              	.LBB282:
+ 1005              	.LBI282:
+  79:mi/stmlib/dsp/cosine_oscillator.h ****   }
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 36
+
+
+  80:mi/stmlib/dsp/cosine_oscillator.h ****   
+  81:mi/stmlib/dsp/cosine_oscillator.h ****   inline float value() const {
+  82:mi/stmlib/dsp/cosine_oscillator.h ****     return y1_ + 0.5f;
+  83:mi/stmlib/dsp/cosine_oscillator.h ****   }
+  84:mi/stmlib/dsp/cosine_oscillator.h **** 
+  85:mi/stmlib/dsp/cosine_oscillator.h ****   inline float Next() {
+ 1006              		.loc 7 85 16 view .LVU283
+ 1007              	.LBB283:
+  86:mi/stmlib/dsp/cosine_oscillator.h ****     float temp = y0_;
+ 1008              		.loc 7 86 5 view .LVU284
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = iir_coefficient_ * y0_ - y1_;
+ 1009              		.loc 7 87 5 view .LVU285
+ 1010              	.LBE283:
+ 1011              	.LBE282:
+ 1012              	.LBB287:
+ 1013              	.LBB288:
+ 227:mi/stmlib/dsp/filter.h ****   }
+ 228:mi/stmlib/dsp/filter.h ****   
+ 229:mi/stmlib/dsp/filter.h ****   template<FilterMode mode>
+ 230:mi/stmlib/dsp/filter.h ****   inline float Process(float in) {
+ 231:mi/stmlib/dsp/filter.h ****     float hp, bp, lp;
+ 232:mi/stmlib/dsp/filter.h ****     hp = (in - r_ * state_1_ - g_ * state_1_ - state_2_) * h_;
+ 1014              		.loc 2 232 14 is_stmt 0 view .LVU286
+ 1015 00aa B0EE616A 		vmov.f32	s12, s3
+ 1016              		.loc 2 232 21 view .LVU287
+ 1017 00ae 9CED0A7A 		vldr.32	s14, [ip, #40]
+ 1018              		.loc 2 232 14 view .LVU288
+ 1019 00b2 DCED086A 		vldr.32	s13, [ip, #32]
+ 1020              	.LBE288:
+ 1021              	.LBE287:
+ 1022              	.LBB299:
+ 1023              	.LBB284:
+ 1024              		.loc 7 87 34 view .LVU289
+ 1025 00b6 92EE823A 		vfnms.f32	s6, s5, s4
+ 1026              	.LVL43:
+  88:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = temp;
+ 1027              		.loc 7 88 5 is_stmt 1 view .LVU290
+  89:mi/stmlib/dsp/cosine_oscillator.h ****     return temp + 0.5f;
+ 1028              		.loc 7 89 5 view .LVU291
+ 1029              		.loc 7 89 5 is_stmt 0 view .LVU292
+ 1030              	.LBE284:
+ 1031              	.LBE299:
+ 1032              	.LBB300:
+ 1033              	.LBI287:
+ 230:mi/stmlib/dsp/filter.h ****     float hp, bp, lp;
+ 1034              		.loc 2 230 16 is_stmt 1 view .LVU293
+ 1035              	.LBE300:
+ 1036              	.LBB301:
+ 1037              	.LBB302:
+ 1038              		.loc 2 232 21 is_stmt 0 view .LVU294
+ 1039 00ba DCED0F7A 		vldr.32	s15, [ip, #60]
+ 1040              	.LBE302:
+ 1041              	.LBE301:
+ 1042              	.LBB313:
+ 1043              	.LBB285:
+ 1044              		.loc 7 89 19 view .LVU295
+ 1045 00be F6EE003A 		vmov.f32	s7, #5.0e-1
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 37
+
+
+ 1046              	.LBE285:
+ 1047              	.LBE313:
+ 1048              	.LBB314:
+ 1049              	.LBB289:
+ 1050              		.loc 2 232 14 view .LVU296
+ 1051 00c2 A6EEC76A 		vfms.f32	s12, s13, s14
+ 1052              	.LVL44:
+ 1053              		.loc 2 232 14 view .LVU297
+ 1054              	.LBE289:
+ 1055              	.LBE314:
+ 1056              	.LBB315:
+ 1057              	.LBB303:
+ 1058 00c6 DCED0D5A 		vldr.32	s11, [ip, #52]
+ 1059 00ca F0EE616A 		vmov.f32	s13, s3
+ 1060              	.LBE303:
+ 1061              	.LBE315:
+ 1062              	.LBB316:
+ 1063              	.LBB290:
+ 1064              		.loc 2 232 32 view .LVU298
+ 1065 00ce 9CED074A 		vldr.32	s8, [ip, #28]
+ 1066              	.LBE290:
+ 1067              	.LBE316:
+ 1068              	.LBB317:
+ 1069              	.LBB304:
+ 1070 00d2 DCED0C4A 		vldr.32	s9, [ip, #48]
+ 1071              	.LBE304:
+ 1072              	.LBE317:
+ 115:mi/ringsX_MIDI/dsp/resonator.cpp ****       even += amplitudes.Next() * f_[i++].Process<FILTER_MODE_BAND_PASS>(input);
+ 1073              		.loc 1 115 39 view .LVU299
+ 1074 00d6 0EF1020E 		add	lr, lr, #2
+ 1075              	.LVL45:
+ 1076              	.LBB318:
+ 1077              	.LBB291:
+ 1078              		.loc 2 232 48 view .LVU300
+ 1079 00da 9CED0B5A 		vldr.32	s10, [ip, #44]
+ 1080              	.LBE291:
+ 1081              	.LBE318:
+ 1082              	.LBB319:
+ 1083              	.LBB286:
+ 1084              		.loc 7 89 19 view .LVU301
+ 1085 00de 32EEA39A 		vadd.f32	s18, s5, s7
+ 1086              	.LBE286:
+ 1087              	.LBE319:
+ 1088              	.LBB320:
+ 1089              	.LBB305:
+ 1090              		.loc 2 232 14 view .LVU302
+ 1091 00e2 E5EEE76A 		vfms.f32	s13, s11, s15
+ 1092              		.loc 2 232 48 view .LVU303
+ 1093 00e6 DCED105A 		vldr.32	s11, [ip, #64]
+ 1094              		.loc 2 232 8 view .LVU304
+ 1095 00ea 9CED0E0A 		vldr.32	s0, [ip, #56]
+ 1096              	.LBE305:
+ 1097              	.LBE320:
+ 1098              	.LBB321:
+ 1099              	.LBB322:
+ 1100              		.loc 7 89 19 view .LVU305
+ 1101 00ee 73EE233A 		vadd.f32	s7, s6, s7
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 38
+
+
+ 1102              	.LBE322:
+ 1103              	.LBE321:
+ 1104              	.LBB325:
+ 1105              	.LBB292:
+ 1106              		.loc 2 232 30 view .LVU306
+ 1107 00f2 A7EE446A 		vfms.f32	s12, s14, s8
+ 1108              		.loc 2 232 8 view .LVU307
+ 1109 00f6 DCED099A 		vldr.32	s19, [ip, #36]
+ 1110              	.LBE292:
+ 1111              	.LBE325:
+ 113:mi/ringsX_MIDI/dsp/resonator.cpp ****       odd += amplitudes.Next() * f_[i++].Process<FILTER_MODE_BAND_PASS>(input);
+ 1112              		.loc 1 113 27 view .LVU308
+ 1113 00fa 7045     		cmp	r0, lr
+ 1114 00fc 0CF1280C 		add	ip, ip, #40
+ 1115              	.LBB326:
+ 1116              	.LBB323:
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = temp;
+ 1117              		.loc 7 87 34 view .LVU309
+ 1118 0100 D3EE022A 		vfnms.f32	s5, s6, s4
+ 1119              	.LVL46:
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = temp;
+ 1120              		.loc 7 87 34 view .LVU310
+ 1121              	.LBE323:
+ 1122              	.LBE326:
+ 1123              	.LBB327:
+ 1124              	.LBB306:
+ 1125              		.loc 2 232 30 view .LVU311
+ 1126 0104 E7EEE46A 		vfms.f32	s13, s15, s9
+ 1127              	.LBE306:
+ 1128              	.LBE327:
+ 1129              	.LBB328:
+ 1130              	.LBB293:
+ 1131              		.loc 2 232 46 view .LVU312
+ 1132 0108 36EE456A 		vsub.f32	s12, s12, s10
+ 1133              		.loc 2 232 8 view .LVU313
+ 1134 010c 26EE296A 		vmul.f32	s12, s12, s19
+ 1135              	.LVL47:
+ 1136              		.loc 2 232 8 view .LVU314
+ 1137              	.LBE293:
+ 1138              	.LBE328:
+ 1139              	.LBB329:
+ 1140              	.LBB307:
+ 1141              		.loc 2 232 46 view .LVU315
+ 1142 0110 76EEE56A 		vsub.f32	s13, s13, s11
+ 1143              	.LBE307:
+ 1144              	.LBE329:
+ 1145              	.LBB330:
+ 1146              	.LBB294:
+ 233:mi/stmlib/dsp/filter.h ****     bp = g_ * hp + state_1_;
+ 1147              		.loc 2 233 8 view .LVU316
+ 1148 0114 A4EE067A 		vfma.f32	s14, s8, s12
+ 1149              	.LVL48:
+ 1150              		.loc 2 233 8 view .LVU317
+ 1151              	.LBE294:
+ 1152              	.LBE330:
+ 1153              	.LBB331:
+ 1154              	.LBB308:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 39
+
+
+ 232:mi/stmlib/dsp/filter.h ****     bp = g_ * hp + state_1_;
+ 1155              		.loc 2 232 8 view .LVU318
+ 1156 0118 66EE806A 		vmul.f32	s13, s13, s0
+ 1157              		.loc 2 233 8 view .LVU319
+ 1158 011c E4EEA67A 		vfma.f32	s15, s9, s13
+ 1159              	.LBE308:
+ 1160              	.LBE331:
+ 1161              	.LBB332:
+ 1162              	.LBB295:
+ 234:mi/stmlib/dsp/filter.h ****     state_1_ = g_ * hp + bp;
+ 235:mi/stmlib/dsp/filter.h ****     lp = g_ * bp + state_2_;
+ 1163              		.loc 2 235 8 view .LVU320
+ 1164 0120 A4EE075A 		vfma.f32	s10, s8, s14
+ 1165              	.LVL49:
+ 234:mi/stmlib/dsp/filter.h ****     state_1_ = g_ * hp + bp;
+ 1166              		.loc 2 234 24 view .LVU321
+ 1167 0124 B0EE470A 		vmov.f32	s0, s14
+ 1168              	.LBE295:
+ 1169              	.LBE332:
+ 114:mi/ringsX_MIDI/dsp/resonator.cpp ****       even += amplitudes.Next() * f_[i++].Process<FILTER_MODE_BAND_PASS>(input);
+ 1170              		.loc 1 114 11 view .LVU322
+ 1171 0128 E9EE070A 		vfma.f32	s1, s18, s14
+ 1172              	.LVL50:
+ 1173              	.LBB333:
+ 1174              	.LBB309:
+ 1175              		.loc 2 235 8 view .LVU323
+ 1176 012c E4EEA75A 		vfma.f32	s11, s9, s15
+ 1177              	.LBE309:
+ 1178              	.LBE333:
+ 1179              	.LBB334:
+ 1180              	.LBB296:
+ 234:mi/stmlib/dsp/filter.h ****     state_1_ = g_ * hp + bp;
+ 1181              		.loc 2 234 24 view .LVU324
+ 1182 0130 A4EE060A 		vfma.f32	s0, s8, s12
+ 1183              	.LBE296:
+ 1184              	.LBE334:
+ 1185              	.LBB335:
+ 1186              	.LBB310:
+ 1187 0134 B0EE676A 		vmov.f32	s12, s15
+ 1188              	.LVL51:
+ 234:mi/stmlib/dsp/filter.h ****     state_1_ = g_ * hp + bp;
+ 1189              		.loc 2 234 24 view .LVU325
+ 1190              	.LBE310:
+ 1191              	.LBE335:
+ 1192              	.LBB336:
+ 1193              	.LBB297:
+ 236:mi/stmlib/dsp/filter.h ****     state_2_ = g_ * bp + lp;
+ 1194              		.loc 2 236 24 view .LVU326
+ 1195 0138 A4EE075A 		vfma.f32	s10, s8, s14
+ 1196              	.LVL52:
+ 1197              		.loc 2 236 24 view .LVU327
+ 1198              	.LBE297:
+ 1199              	.LBE336:
+ 1200              		.loc 1 115 12 view .LVU328
+ 1201 013c A3EEA71A 		vfma.f32	s2, s7, s15
+ 1202              	.LVL53:
+ 1203              	.LBB337:
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 40
+
+
+ 1204              	.LBB311:
+ 234:mi/stmlib/dsp/filter.h ****     state_1_ = g_ * hp + bp;
+ 1205              		.loc 2 234 24 view .LVU329
+ 1206 0140 A4EEA66A 		vfma.f32	s12, s9, s13
+ 1207              		.loc 2 236 24 view .LVU330
+ 1208 0144 E4EEA75A 		vfma.f32	s11, s9, s15
+ 1209              	.LBE311:
+ 1210              	.LBE337:
+ 1211              	.LBB338:
+ 1212              	.LBB298:
+ 234:mi/stmlib/dsp/filter.h ****     state_1_ = g_ * hp + bp;
+ 1213              		.loc 2 234 14 view .LVU331
+ 1214 0148 8CED000A 		vstr.32	s0, [ip]
+ 1215              	.LVL54:
+ 1216              		.loc 2 236 14 view .LVU332
+ 1217 014c 8CED015A 		vstr.32	s10, [ip, #4]
+ 1218              	.LVL55:
+ 1219              		.loc 2 236 14 view .LVU333
+ 1220              	.LBE298:
+ 1221              	.LBE338:
+ 1222              		.loc 1 115 7 is_stmt 1 view .LVU334
+ 1223              	.LBB339:
+ 1224              	.LBI321:
+  85:mi/stmlib/dsp/cosine_oscillator.h ****     float temp = y0_;
+ 1225              		.loc 7 85 16 view .LVU335
+ 1226              	.LBB324:
+  86:mi/stmlib/dsp/cosine_oscillator.h ****     y0_ = iir_coefficient_ * y0_ - y1_;
+ 1227              		.loc 7 86 5 view .LVU336
+  87:mi/stmlib/dsp/cosine_oscillator.h ****     y1_ = temp;
+ 1228              		.loc 7 87 5 view .LVU337
+  88:mi/stmlib/dsp/cosine_oscillator.h ****     return temp + 0.5f;
+ 1229              		.loc 7 88 5 view .LVU338
+ 1230              		.loc 7 89 5 view .LVU339
+ 1231              		.loc 7 89 5 is_stmt 0 view .LVU340
+ 1232              	.LBE324:
+ 1233              	.LBE339:
+ 1234              	.LBB340:
+ 1235              	.LBI301:
+ 230:mi/stmlib/dsp/filter.h ****     float hp, bp, lp;
+ 1236              		.loc 2 230 16 is_stmt 1 view .LVU341
+ 1237              	.LBB312:
+ 234:mi/stmlib/dsp/filter.h ****     lp = g_ * bp + state_2_;
+ 1238              		.loc 2 234 14 is_stmt 0 view .LVU342
+ 1239 0150 8CED056A 		vstr.32	s12, [ip, #20]
+ 1240              		.loc 2 236 14 view .LVU343
+ 1241 0154 CCED065A 		vstr.32	s11, [ip, #24]
+ 1242              	.LVL56:
+ 1243              		.loc 2 236 14 view .LVU344
+ 1244              	.LBE312:
+ 1245              	.LBE340:
+ 113:mi/ringsX_MIDI/dsp/resonator.cpp ****       odd += amplitudes.Next() * f_[i++].Process<FILTER_MODE_BAND_PASS>(input);
+ 1246              		.loc 1 113 27 is_stmt 1 view .LVU345
+ 1247 0158 A7DC     		bgt	.L30
+ 1248              	.LVL57:
+ 1249              	.L29:
+ 113:mi/ringsX_MIDI/dsp/resonator.cpp ****       odd += amplitudes.Next() * f_[i++].Process<FILTER_MODE_BAND_PASS>(input);
+ 1250              		.loc 1 113 27 is_stmt 0 view .LVU346
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 41
+
+
+ 1251              	.LBE346:
+ 116:mi/ringsX_MIDI/dsp/resonator.cpp ****     }
+ 117:mi/ringsX_MIDI/dsp/resonator.cpp ****     *out++ = odd;
+ 1252              		.loc 1 117 5 is_stmt 1 view .LVU347
+ 1253              		.loc 1 117 5 is_stmt 0 view .LVU348
+ 1254              	.LBE349:
+ 105:mi/ringsX_MIDI/dsp/resonator.cpp ****     CosineOscillator amplitudes;
+ 1255              		.loc 1 105 14 view .LVU349
+ 1256 015a 013C     		subs	r4, r4, #1
+ 1257              	.LVL58:
+ 1258              	.LBB350:
+ 1259              		.loc 1 117 12 view .LVU350
+ 1260 015c E6EC010A 		vstmia.32	r6!, {s1}
+ 1261              	.LVL59:
+ 118:mi/ringsX_MIDI/dsp/resonator.cpp ****     *aux++ = even;
+ 1262              		.loc 1 118 5 is_stmt 1 view .LVU351
+ 1263              		.loc 1 118 12 is_stmt 0 view .LVU352
+ 1264 0160 A5EC011A 		vstmia.32	r5!, {s2}
+ 1265              	.LVL60:
+ 1266              	.LBB347:
+ 1267              	.LBI347:
+  47:mi/stmlib/dsp/cosine_oscillator.h **** 
+ 1268              		.loc 7 47 3 is_stmt 1 view .LVU353
+  47:mi/stmlib/dsp/cosine_oscillator.h **** 
+ 1269              		.loc 7 47 3 is_stmt 0 view .LVU354
+ 1270              	.LBE347:
+ 1271              	.LBE350:
+ 105:mi/ringsX_MIDI/dsp/resonator.cpp ****     CosineOscillator amplitudes;
+ 1272              		.loc 1 105 3 is_stmt 1 view .LVU355
+ 105:mi/ringsX_MIDI/dsp/resonator.cpp ****     CosineOscillator amplitudes;
+ 1273              		.loc 1 105 14 view .LVU356
+ 105:mi/ringsX_MIDI/dsp/resonator.cpp ****     CosineOscillator amplitudes;
+ 1274              		.loc 1 105 14 is_stmt 0 view .LVU357
+ 1275 0164 631C     		adds	r3, r4, #1
+ 1276 0166 7FF469AF 		bne	.L31
+ 1277              	.LVL61:
+ 1278              	.L24:
+ 1279              	.LBB351:
+ 1280              	.LBI351:
+  49:mi/stmlib/dsp/parameter_interpolator.h ****     *state_ = value_;
+ 1281              		.loc 6 49 3 is_stmt 1 view .LVU358
+ 1282              	.LBB352:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1283              		.loc 6 50 5 view .LVU359
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1284              		.loc 6 50 13 is_stmt 0 view .LVU360
+ 1285 016a 88ED048A 		vstr.32	s16, [r8, #16]
+ 1286              	.LVL62:
+  50:mi/stmlib/dsp/parameter_interpolator.h ****   }
+ 1287              		.loc 6 50 13 view .LVU361
+ 1288              	.LBE352:
+ 1289              	.LBE351:
+ 119:mi/ringsX_MIDI/dsp/resonator.cpp ****   }
+ 120:mi/ringsX_MIDI/dsp/resonator.cpp **** }
+ 1290              		.loc 1 120 1 view .LVU362
+ 1291 016e BDEC048B 		vldm	sp!, {d8-d9}
+ 1292              		.cfi_remember_state
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 42
+
+
+ 1293              		.cfi_restore 82
+ 1294              		.cfi_restore 83
+ 1295              		.cfi_restore 80
+ 1296              		.cfi_restore 81
+ 1297              		.cfi_def_cfa_offset 32
+ 1298              	.LVL63:
+ 1299              		.loc 1 120 1 view .LVU363
+ 1300 0172 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 1301              	.LVL64:
+ 1302              	.L44:
+ 1303              		.cfi_restore_state
+ 1304              	.LBB353:
+ 1305              	.LBB348:
+ 1306              	.LBB279:
+ 1307              	.LBB270:
+  64:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+ 1308              		.loc 7 64 7 is_stmt 1 view .LVU364
+  64:mi/stmlib/dsp/cosine_oscillator.h ****     } else {
+ 1309              		.loc 7 64 17 is_stmt 0 view .LVU365
+ 1310 0176 F1EE677A 		vneg.f32	s15, s15
+ 1311              	.LVL65:
+  61:mi/stmlib/dsp/cosine_oscillator.h ****     frequency -= 0.25f;
+ 1312              		.loc 7 61 11 view .LVU366
+ 1313 017a B3EE007A 		vmov.f32	s14, #1.6e+1
+ 1314 017e 75E7     		b	.L27
+ 1315              	.L42:
+  69:mi/stmlib/dsp/cosine_oscillator.h ****       }
+ 1316              		.loc 7 69 14 view .LVU367
+ 1317 0180 BBEE007A 		vmov.f32	s14, #-1.6e+1
+ 1318 0184 72E7     		b	.L27
+ 1319              	.LVL66:
+ 1320              	.L33:
+  69:mi/stmlib/dsp/cosine_oscillator.h ****       }
+ 1321              		.loc 7 69 14 view .LVU368
+ 1322              	.LBE270:
+ 1323              	.LBE279:
+ 1324              	.LBE348:
+ 110:mi/ringsX_MIDI/dsp/resonator.cpp ****     float even = 0.0f;
+ 1325              		.loc 1 110 11 view .LVU369
+ 1326 0186 F0EE410A 		vmov.f32	s1, s2
+ 1327 018a E6E7     		b	.L29
+ 1328              	.L46:
+ 1329              		.align	2
+ 1330              	.L45:
+ 1331 018c 00000000 		.word	0
+ 1332              	.LBE353:
+ 1333              		.cfi_endproc
+ 1334              	.LFE1546:
+ 1336              		.text
+ 1337              	.Letext0:
+ 1338              		.file 8 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/machine/_default_types.h"
+ 1339              		.file 9 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/sys/_stdint.h"
+ 1340              		.file 10 "/Library/DaisyToolchain/0.2.0/arm/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ 1341              		.file 11 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cmath"
+ 1342              		.file 12 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/std_abs.h"
+ 1343              		.file 13 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/type_traits"
+ 1344              		.file 14 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/debug/debug.h"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 43
+
+
+ 1345              		.file 15 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/cstdlib"
+ 1346              		.file 16 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v
+ 1347              		.file 17 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/algorithmfwd.h"
+ 1348              		.file 18 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/stl_pair.h"
+ 1349              		.file 19 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/exception_ptr.h"
+ 1350              		.file 20 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/bits/predefined_ops.h
+ 1351              		.file 21 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/math.h"
+ 1352              		.file 22 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/stdlib.h"
+ 1353              		.file 23 "/Library/DaisyToolchain/0.2.0/arm/arm-none-eabi/include/c++/10.3.1/math.h"
+ 1354              		.file 24 "mi/stmlib/stmlib.h"
+ 1355              		.file 25 "mi/ringsX_MIDI/dsp/dsp.h"
+ 1356              		.file 26 "mi/ringsX_MIDI/resources.h"
+ 1357              		.file 27 "<built-in>"
+ARM GAS  /var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s 			page 44
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 rings_resonator_rg.cpp
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:19     .text._ZN5rings9Resonator4InitEv:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:26     .text._ZN5rings9Resonator4InitEv:0000000000000000 _ZN5rings9Resonator4InitEv
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:263    .text._ZN5rings9Resonator4InitEv:0000000000000048 $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:273    .text._ZN5rings9Resonator14ComputeFiltersEv:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:280    .text._ZN5rings9Resonator14ComputeFiltersEv:0000000000000000 _ZN5rings9Resonator14ComputeFiltersEv
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:744    .text._ZN5rings9Resonator14ComputeFiltersEv:000000000000018c $d
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:764    .text._ZN5rings9Resonator7ProcessEPKfPfS3_j:0000000000000000 $t
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:771    .text._ZN5rings9Resonator7ProcessEPKfPfS3_j:0000000000000000 _ZN5rings9Resonator7ProcessEPKfPfS3_j
+/var/folders/9k/zk1mgrrd7wg4__6zvxvr9w8m0000gn/T//ccSy1TvE.s:1331   .text._ZN5rings9Resonator7ProcessEPKfPfS3_j:000000000000018c $d
+
+UNDEFINED SYMBOLS
+_ZN5rings13lut_4_decadesE
+_ZN5rings13lut_stiffnessE
