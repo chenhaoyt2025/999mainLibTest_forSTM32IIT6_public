@@ -1,6 +1,8 @@
 # Project Name
 TARGET = TDM_AK4619_DaisySP
 
+include build_config.mk
+
 # Sources
 CPP_SOURCES = main.cpp
 CPP_SOURCES += plaits_adapter.cpp
@@ -22,14 +24,17 @@ CPP_SOURCES += $(PLAITS_DSP_SOURCES)
 CPP_SOURCES += plaits_pm_string.cpp
 CPP_SOURCES += plaits_pm_resonator.cpp
 CPP_SOURCES += plaits_resources_pl.cpp
-CPP_SOURCES += assets_gen/rings_panel.cpp
-CPP_SOURCES += assets_gen/plaits_panel.cpp
-CPP_SOURCES += assets_gen/scope_panel.cpp
 CPP_SOURCES += assets_gen/vcv_knob_big.cpp
 CPP_SOURCES += assets_gen/vcv_knob_small.cpp
 CPP_SOURCES += mi/stmlib/dsp/units.cpp
 CPP_SOURCES += mi/stmlib/dsp/atan.cpp
 CPP_SOURCES += mi/stmlib/utils/random.cpp
+
+ifeq ($(USE_PANEL_BACKGROUNDS),1)
+CPP_SOURCES += assets_gen/rings_panel.cpp
+CPP_SOURCES += assets_gen/plaits_panel.cpp
+CPP_SOURCES += assets_gen/scope_panel.cpp
+endif
 C_SOURCES = \
 	BSP/LTDC/lcd_rgb.c \
 	BSP/LTDC/lcd_fonts.c \
@@ -44,6 +49,8 @@ C_INCLUDES += -Imi
 C_INCLUDES += -Imi/stmlib
 C_INCLUDES += -Imi/ringsX_MIDI
 C_INCLUDES += -Imi/plaits
+
+C_DEFS += -DUSE_PANEL_BACKGROUNDS=$(USE_PANEL_BACKGROUNDS)
 
 # Library Locations
 LIBDAISY_DIR = ../libdaisy_IIT6/libDaisy

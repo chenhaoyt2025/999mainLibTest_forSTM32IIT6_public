@@ -4,9 +4,14 @@
 #include "ringsX_MIDI/dsp/patch.h"
 #include "ringsX_MIDI/dsp/performance_state.h"
 #include "plaits_adapter.h"
+#ifndef USE_PANEL_BACKGROUNDS
+#define USE_PANEL_BACKGROUNDS 0
+#endif
+#if USE_PANEL_BACKGROUNDS
 #include "assets_gen/rings_panel.h"
 #include "assets_gen/plaits_panel.h"
 #include "assets_gen/scope_panel.h"
+#endif
 #include "assets_gen/vcv_knob_big.h"
 #include "assets_gen/vcv_knob_small.h"
 #include <cmath>
@@ -37,7 +42,16 @@ constexpr size_t  kModePrintMs          = 2000;
 constexpr uint8_t kCodecAddrCandidates[] = {0x10, 0x11};
 constexpr size_t  kCodecProbeRetries    = 12;
 constexpr size_t  kCodecProbeDelayMs    = 25;
+constexpr size_t  kCodecInitRetries     = 4;
+constexpr size_t  kAudioStallRecoverMs  = 400;
 constexpr bool    kUiOnlyVcv            = false;
+#if USE_PANEL_BACKGROUNDS
+constexpr uint16_t kRingsPanelH = rings_panel_h;
+constexpr uint16_t kPlaitsPanelH = plaits_panel_h;
+#else
+constexpr uint16_t kRingsPanelH = 442;
+constexpr uint16_t kPlaitsPanelH = 379;
+#endif
 
 enum class StreamMode
 {
@@ -77,6 +91,10 @@ volatile uint8_t  g_usb_cmd_byte   = 0;
 volatile bool     g_usb_cmd_pending = false;
 volatile float    g_monitor_l = 0.0f;
 volatile float    g_monitor_r = 0.0f;
+int8_t            g_loop_input_rotate = 0;
+uint32_t          g_audio_restart_count = 0;
+uint32_t          g_audio_restart_fail_count = 0;
+uint32_t          g_audio_stall_count = 0;
 
 constexpr uint16_t kVisHistory = 320;
 float              g_vis_l[kVisHistory];
@@ -229,6 +247,15 @@ static const char* StreamModeName(StreamMode mode)
     }
 }
 
+static int8_t WrapRotate(int value, int modulo)
+{
+    while(value < 0)
+        value += modulo;
+    while(value >= modulo)
+        value -= modulo;
+    return static_cast<int8_t>(value);
+}
+
 static const char* RunModeName(RunMode mode)
 {
     return mode == RunMode::ACTIVE ? "ACTIVE" : "STOP";
@@ -248,6 +275,33 @@ static const char* UiSceneName(UiScene scene)
         case UiScene::NEON: return "NEON";
         case UiScene::ORBIT: return "ORBIT";
         default: return "SCOPE";
+    }
+}
+
+static void ApplyAudioModeForScene()
+{
+    if(kUiOnlyVcv)
+    {
+        g_run_mode = RunMode::STOP;
+        return;
+    }
+
+    switch(g_ui_scene)
+    {
+        case UiScene::RINGS_CTRL:
+        case UiScene::RINGS_VCV_UI:
+            g_stream_mode = StreamMode::RINGS_TEST_SQUARE;
+            g_run_mode    = RunMode::ACTIVE;
+            break;
+        case UiScene::PLAITS_CTRL:
+        case UiScene::PLAITS_VCV_UI:
+            g_stream_mode = StreamMode::PLAITS_TEST_SQUARE;
+            g_run_mode    = RunMode::ACTIVE;
+            break;
+        default:
+            g_stream_mode = StreamMode::LOOP_4IN_4OUT;
+            g_run_mode    = RunMode::ACTIVE;
+            break;
     }
 }
 
@@ -582,13 +636,22 @@ static void ClearVisualArea(uint32_t color)
 
 static void DrawScopeScene()
 {
+#if USE_PANEL_BACKGROUNDS
     constexpr int16_t kPanelX = 0;
     constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - scope_panel_h) / 2u);
     constexpr int16_t kPanelW = static_cast<int16_t>(scope_panel_w);
     constexpr int16_t kPanelH = static_cast<int16_t>(scope_panel_h);
+#else
+    constexpr int16_t kPanelX = 0;
+    constexpr int16_t kPanelY = 0;
+    constexpr int16_t kPanelW = static_cast<int16_t>(LCD_Width);
+    constexpr int16_t kPanelH = static_cast<int16_t>(LCD_Height);
+#endif
     LCD_SetColor(0xffE2E2E2);
     LCD_FillRect(0, 0, LCD_Width, LCD_Height);
+#if USE_PANEL_BACKGROUNDS
     DrawRgb8Image(kPanelX, kPanelY, scope_panel_w, scope_panel_h, scope_panel_rgb8);
+#endif
 
     constexpr float kOrigWmm = 66.04f;
     constexpr float kOrigHmm = 128.69331f;
@@ -1267,7 +1330,7 @@ static void DrawToneControlScene()
 static void DrawRingsCtrlScene()
 {
     constexpr float kScale = 800.0f / 380.0f;
-    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - rings_panel_h) / 2);
+    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - kRingsPanelH) / 2);
     auto RX = [](float y) -> int16_t { return static_cast<int16_t>(y * kScale + 0.5f); };
     auto RY = [&](float x) -> int16_t { return static_cast<int16_t>((210.0f - x) * kScale + 0.5f) + kPanelY; };
     constexpr float kRogan3Half = 25.921875f;
@@ -1305,11 +1368,13 @@ static void DrawRingsCtrlScene()
         LCD_SetColor(0xff111111);
         LCD_SetBackColor(0xff111111);
         LCD_Clear();
+#if USE_PANEL_BACKGROUNDS
         DrawRgb565Image(0,
-                        static_cast<int16_t>((LCD_Height - rings_panel_h) / 2),
+                        static_cast<int16_t>((LCD_Height - kRingsPanelH) / 2),
                         rings_panel_w,
-                        rings_panel_h,
+                        kRingsPanelH,
                         rings_panel_rgb565);
+#endif
         LCD_SetTextFont(&CH_Font16);
         LCD_SetColor(0xff101010);
         LCD_DisplayString(8, 8, const_cast<char*>("RINGS"));
@@ -1368,9 +1433,6 @@ static void DrawRingsCtrlScene()
         g_rings_mode_btn_latch = false;
     }
 
-    g_stream_mode = StreamMode::RINGS_TEST_SQUARE;
-    g_run_mode    = kUiOnlyVcv ? RunMode::STOP : RunMode::ACTIVE;
-
     const bool rings_ui_dirty
         = !g_rings_ui_cache.valid || touch_active
           || DiffEnough(g_rings_ui_cache.pitch_norm, g_rings_pitch_norm)
@@ -1384,11 +1446,16 @@ static void DrawRingsCtrlScene()
     if(!rings_ui_dirty)
         return;
 
+#if USE_PANEL_BACKGROUNDS
     DrawRgb565Image(0,
-                    static_cast<int16_t>((LCD_Height - rings_panel_h) / 2),
+                    static_cast<int16_t>((LCD_Height - kRingsPanelH) / 2),
                     rings_panel_w,
-                    rings_panel_h,
+                    kRingsPanelH,
                     rings_panel_rgb565);
+#else
+    LCD_SetColor(0xffE6E6E6);
+    LCD_FillRect(0, 0, LCD_Width, LCD_Height);
+#endif
     DrawKnob(kKFreqX, kFreqY, kKRBig, g_rings_pitch_norm, "", 0xff4CC3FF);
     DrawKnob(kKStruX, kStruY, kKRBig, g_rings_structure_norm, "", 0xff4CF6FF);
     DrawKnob(kKBriX, kBriY, kKRSmall, g_rings_brightness_norm, "", 0xffFFD166);
@@ -1452,7 +1519,7 @@ static void DrawRingsCtrlScene()
 static void DrawPlaitsCtrlScene()
 {
     constexpr float kScale = 800.0f / 128.69331f;
-    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - plaits_panel_h) / 2);
+    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - kPlaitsPanelH) / 2);
     auto PX = [](float y_mm) -> int16_t { return static_cast<int16_t>(y_mm * kScale + 0.5f); };
     auto PY = [&](float x_mm) -> int16_t { return static_cast<int16_t>((60.959999f - x_mm) * kScale + 0.5f) + kPanelY; };
     constexpr float kRogan3HalfMm = 8.7800f;
@@ -1487,11 +1554,13 @@ static void DrawPlaitsCtrlScene()
         LCD_SetColor(0xff111111);
         LCD_SetBackColor(0xff111111);
         LCD_Clear();
+#if USE_PANEL_BACKGROUNDS
         DrawRgb565Image(0,
-                        static_cast<int16_t>((LCD_Height - plaits_panel_h) / 2),
+                        static_cast<int16_t>((LCD_Height - kPlaitsPanelH) / 2),
                         plaits_panel_w,
-                        plaits_panel_h,
+                        kPlaitsPanelH,
                         plaits_panel_rgb565);
+#endif
         LCD_SetTextFont(&CH_Font16);
         LCD_SetColor(0xff101010);
         LCD_DisplayString(8, 8, const_cast<char*>("PLAITS"));
@@ -1575,9 +1644,6 @@ static void DrawPlaitsCtrlScene()
         g_plaits_model_norm = static_cast<float>(g_plaits_model_index) / 23.0f;
     }
 
-    g_stream_mode = StreamMode::PLAITS_TEST_SQUARE;
-    g_run_mode    = kUiOnlyVcv ? RunMode::STOP : RunMode::ACTIVE;
-
     const bool plaits_ui_dirty
         = !g_plaits_ui_cache.valid || touch_active
           || DiffEnough(g_plaits_ui_cache.pitch_norm, g_plaits_pitch_norm)
@@ -1591,11 +1657,16 @@ static void DrawPlaitsCtrlScene()
     if(!plaits_ui_dirty)
         return;
 
+#if USE_PANEL_BACKGROUNDS
     DrawRgb565Image(0,
-                    static_cast<int16_t>((LCD_Height - plaits_panel_h) / 2),
+                    static_cast<int16_t>((LCD_Height - kPlaitsPanelH) / 2),
                     plaits_panel_w,
-                    plaits_panel_h,
+                    kPlaitsPanelH,
                     plaits_panel_rgb565);
+#else
+    LCD_SetColor(0xffE6E6E6);
+    LCD_FillRect(0, 0, LCD_Width, LCD_Height);
+#endif
     DrawKnob(kKFreqX, kFreqY, kKRBig, g_plaits_pitch_norm, "", 0xffFF9AD5);
     DrawKnob(kKHarmX, kHarmY, kKRBig, g_plaits_harmonics_norm, "", 0xffFFD166);
     DrawKnob(kKTimX, kTimY, kKRSmall, g_plaits_timbre_norm, "", 0xffB38BFF);
@@ -1655,9 +1726,8 @@ static void DrawPlaitsCtrlScene()
 
 static void DrawRingsVcvUiScene()
 {
-    g_run_mode = RunMode::STOP;
     constexpr float kScale = 800.0f / 380.0f;
-    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - rings_panel_h) / 2u);
+    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - kRingsPanelH) / 2u);
     auto RX = [](float y_mm) -> int16_t { return static_cast<int16_t>(y_mm * kScale + 0.5f); };
     auto RY = [&](float x_mm) -> int16_t { return static_cast<int16_t>((210.0f - x_mm) * kScale + 0.5f) + kPanelY; };
     constexpr float kRogan3Half = 25.921875f;
@@ -1724,11 +1794,16 @@ static void DrawRingsVcvUiScene()
         g_rings_gate_btn_latch = false;
     }
 
+#if USE_PANEL_BACKGROUNDS
     DrawRgb565Image(0,
-                    static_cast<int16_t>((LCD_Height - rings_panel_h) / 2),
+                    static_cast<int16_t>((LCD_Height - kRingsPanelH) / 2),
                     rings_panel_w,
-                    rings_panel_h,
+                    kRingsPanelH,
                     rings_panel_rgb565);
+#else
+    LCD_SetColor(0xffE6E6E6);
+    LCD_FillRect(0, 0, LCD_Width, LCD_Height);
+#endif
     const float freq_angle = kStart + Clampf(g_rings_pitch_norm, 0.0f, 1.0f) * (kEnd - kStart);
     const float stru_angle = kStart + Clampf(g_rings_structure_norm, 0.0f, 1.0f) * (kEnd - kStart);
     const float bri_angle = kStart + Clampf(g_rings_brightness_norm, 0.0f, 1.0f) * (kEnd - kStart);
@@ -1759,9 +1834,8 @@ static void DrawRingsVcvUiScene()
 
 static void DrawPlaitsVcvUiScene()
 {
-    g_run_mode = RunMode::STOP;
     constexpr float kScale = 800.0f / 128.69331f;
-    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - plaits_panel_h) / 2u);
+    constexpr int16_t kPanelY = static_cast<int16_t>((LCD_Height - kPlaitsPanelH) / 2u);
     auto PX = [](float y_mm) -> int16_t { return static_cast<int16_t>(y_mm * kScale + 0.5f); };
     auto PY = [&](float x_mm) -> int16_t { return static_cast<int16_t>((60.959999f - x_mm) * kScale + 0.5f) + kPanelY; };
     constexpr float kRogan3HalfMm = 8.7800f;
@@ -1823,11 +1897,16 @@ static void DrawPlaitsVcvUiScene()
         g_plaits_model_btn_latch = false;
     }
 
+#if USE_PANEL_BACKGROUNDS
     DrawRgb565Image(0,
-                    static_cast<int16_t>((LCD_Height - plaits_panel_h) / 2),
+                    static_cast<int16_t>((LCD_Height - kPlaitsPanelH) / 2),
                     plaits_panel_w,
-                    plaits_panel_h,
+                    kPlaitsPanelH,
                     plaits_panel_rgb565);
+#else
+    LCD_SetColor(0xffE6E6E6);
+    LCD_FillRect(0, 0, LCD_Width, LCD_Height);
+#endif
     const float freq_angle = kStart + Clampf(g_plaits_pitch_norm, 0.0f, 1.0f) * (kEnd - kStart);
     const float harm_angle = kStart + Clampf(g_plaits_harmonics_norm, 0.0f, 1.0f) * (kEnd - kStart);
     const float tim_angle  = kStart + Clampf(g_plaits_timbre_norm, 0.0f, 1.0f) * (kEnd - kStart);
@@ -1913,6 +1992,7 @@ static void RenderUiFrame(float left, float right)
     VisPushSample(left, right);
     g_phase_l = Wrap01(g_phase_l + 0.0031f);
     g_phase_r = Wrap01(g_phase_r + 0.0023f);
+    ApplyAudioModeForScene();
 
     switch(g_ui_scene)
     {
@@ -2004,6 +2084,12 @@ static void HandleControlByte(uint8_t c)
                   static_cast<unsigned>(g_in_channels),
                   static_cast<unsigned>(g_out_channels));
     }
+    else if(c == 'x' || c == 'X')
+    {
+        g_loop_input_rotate = WrapRotate(static_cast<int>(g_loop_input_rotate) + 1, 4);
+        UartPrint("[CTRL] loop input rotate=%d (outN<=in(N+rot))\r\n",
+                  static_cast<int>(g_loop_input_rotate));
+    }
     else if(c == 'r' || c == 'R')
     {
         g_stream_mode = StreamMode::RINGS_TEST_SQUARE;
@@ -2078,9 +2164,15 @@ void AudioCallback(AudioHandle::InputBuffer in,
         for(size_t i = 0; i < size; i++)
         {
             for(size_t ch = 0; ch < g_out_channels; ch++)
-                out[ch][i] = in[ch][i];
-            last_l = in[0][i];
-            last_r = in[1][i];
+            {
+                int src = static_cast<int>(ch) + static_cast<int>(g_loop_input_rotate);
+                while(src < 0)
+                    src += static_cast<int>(g_in_channels);
+                src %= static_cast<int>(g_in_channels);
+                out[ch][i] = in[static_cast<size_t>(src)][i];
+            }
+            last_l = out[0][i];
+            last_r = out[1][i];
         }
     }
     else if(g_stream_mode == StreamMode::TEST_TONE_1K)
@@ -2199,6 +2291,21 @@ void AudioCallback(AudioHandle::InputBuffer in,
     g_monitor_r = last_r;
 }
 
+static bool RestartAudioStream()
+{
+    const auto stop_ok = (hw.audio_handle.Stop() == AudioHandle::Result::OK);
+    System::Delay(2);
+    g_callback_count = 0;
+    const auto start_ok = (hw.audio_handle.Start(AudioCallback) == AudioHandle::Result::OK);
+    if(stop_ok && start_ok)
+    {
+        g_audio_restart_count++;
+        return true;
+    }
+    g_audio_restart_fail_count++;
+    return false;
+}
+
 static bool InitCodecI2c(I2CHandle&                    i2c,
                          I2CHandle::Config::Peripheral periph,
                          Pin                           scl,
@@ -2239,14 +2346,33 @@ static bool InitCodecI2c(I2CHandle&                    i2c,
             if(detected_addr != 0)
             {
                 codec.SetAddress(detected_addr);
-                UartPrint("%s codec addr=0x%02X reg00=0x%02X speed=%s retry=%u\r\n",
-                          tag,
-                          static_cast<unsigned>(detected_addr),
-                          static_cast<unsigned>(reg00),
-                          cfg.speed == I2CHandle::Config::Speed::I2C_400KHZ ? "400k"
-                                                                            : "100k",
-                          static_cast<unsigned>(retry));
-                return codec.Init(i2c) == AK4619::Result::OK;
+                for(size_t init_try = 0; init_try < kCodecInitRetries; init_try++)
+                {
+                    const bool init_ok = (codec.Init(i2c) == AK4619::Result::OK);
+                    uint8_t    reg00_after = 0;
+                    const bool rd_ok
+                        = (i2c.ReadDataAtAddress(detected_addr, 0x00, 1, &reg00_after, 1, 80)
+                           == I2CHandle::Result::OK);
+                    if(init_ok && rd_ok && reg00_after != 0x00)
+                    {
+                        UartPrint("%s codec addr=0x%02X reg00=0x%02X speed=%s probe=%u init=%u\r\n",
+                                  tag,
+                                  static_cast<unsigned>(detected_addr),
+                                  static_cast<unsigned>(reg00_after),
+                                  cfg.speed == I2CHandle::Config::Speed::I2C_400KHZ ? "400k"
+                                                                                    : "100k",
+                                  static_cast<unsigned>(retry),
+                                  static_cast<unsigned>(init_try));
+                        return true;
+                    }
+                    UartPrint("%s codec init retry addr=0x%02X init_ok=%u rd_ok=%u reg00=0x%02X\r\n",
+                              tag,
+                              static_cast<unsigned>(detected_addr),
+                              static_cast<unsigned>(init_ok ? 1 : 0),
+                              static_cast<unsigned>(rd_ok ? 1 : 0),
+                              static_cast<unsigned>(reg00_after));
+                    System::Delay(kCodecProbeDelayMs);
+                }
             }
 
             System::Delay(kCodecProbeDelayMs);
@@ -2438,6 +2564,8 @@ int main(void)
     uint32_t last_print_count = 0;
     uint32_t last_led_ms      = last_print_ms;
     uint32_t last_touch_ms    = last_print_ms;
+    uint32_t cb_watch_ms      = last_print_ms;
+    uint32_t cb_watch_count   = g_callback_count;
     bool     led_on           = false;
 
     while(1)
@@ -2449,6 +2577,29 @@ int main(void)
             const uint8_t c = g_usb_cmd_byte;
             g_usb_cmd_pending = false;
             HandleControlByte(c);
+        }
+
+        if(!kUiOnlyVcv && g_run_mode == RunMode::ACTIVE)
+        {
+            const uint32_t cb_now = g_callback_count;
+            if(cb_now != cb_watch_count)
+            {
+                cb_watch_count = cb_now;
+                cb_watch_ms    = now;
+            }
+            else if((now - cb_watch_ms) >= kAudioStallRecoverMs)
+            {
+                g_audio_stall_count++;
+                UartPrint("audio stall detect: %lums without callback, recovering...\r\n",
+                          static_cast<unsigned long>(now - cb_watch_ms));
+                const bool rec_ok = RestartAudioStream();
+                UartPrint("audio recover %s total_ok=%lu total_fail=%lu\r\n",
+                          rec_ok ? "OK" : "FAIL",
+                          static_cast<unsigned long>(g_audio_restart_count),
+                          static_cast<unsigned long>(g_audio_restart_fail_count));
+                cb_watch_count = g_callback_count;
+                cb_watch_ms    = now;
+            }
         }
 
         if(now - last_touch_ms >= 20)
@@ -2531,6 +2682,11 @@ int main(void)
                       static_cast<unsigned>(g_in_channels),
                       static_cast<unsigned>(g_out_channels),
                       static_cast<unsigned>(kUiOnlyVcv ? 1u : 0u));
+            UartPrint("diag tdm rot=%d stall=%lu recov_ok=%lu recov_fail=%lu\r\n",
+                      static_cast<int>(g_loop_input_rotate),
+                      static_cast<unsigned long>(g_audio_stall_count),
+                      static_cast<unsigned long>(g_audio_restart_count),
+                      static_cast<unsigned long>(g_audio_restart_fail_count));
             UartPrint("diag ltdc=%ux%u\r\n",
                       static_cast<unsigned>(LCD_Width),
                       static_cast<unsigned>(LCD_Height));
