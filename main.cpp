@@ -2435,6 +2435,9 @@ static bool InitSai1Fixed()
 
 static bool InitAudioSingleSai()
 {
+    // TDM driver implementation references:
+    // - PMOD/eurorack-pmod-master/gateware
+    // - daisy_seed_tdm_eurorack_pmod
     if(!InitSai1Fixed())
         return false;
 

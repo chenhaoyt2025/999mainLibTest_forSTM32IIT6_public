@@ -47,3 +47,7 @@ dfu-util -a 0 -s 0x08000000:leave -D build/TDM_AK4619_DaisySP.bin
 
 ## License
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
+
+## TDM Driver References
+- `PMOD/eurorack-pmod-master/gateware`
+- `daisy_seed_tdm_eurorack_pmod`
